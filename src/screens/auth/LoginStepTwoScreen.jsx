@@ -10,40 +10,14 @@ const LoginStepTwoScreen = props => {
   const [phone, setPhone] = useState('0983783558');
 
   return (
-    <View
-      style={{
-        backgroundColor: colors.white,
-        padding: GLOBAL_KEYS.PADDING_DEFAULT,
-        gap: GLOBAL_KEYS.GAP_DEFAULT,
-        flex: 1,
-      }}>
+    <View style={styles.container}>
       <NormalHeader title="" onLeftPress={() => navigation.goBack()} />
-      <Text style={{fontSize: 24, fontWeight: 'bold'}}>
-        Nhập mã OTP để xác thực
-      </Text>
-      <Text
-        style={{
-          fontSize: 18,
-          fontWeight: '500',
-          flexShrink: 1,
-        }}>
+      <Text style={styles.headerText}>Nhập mã OTP để xác thực</Text>
+      <Text style={styles.subText}>
         A 6 digit OTP has been sent to your phone number + {phone}
-        <Text
-          style={{
-            color: colors.primary,
-            flexShrink: 1,
-          }}>
-          {' '}
-          Change
-        </Text>
+        <Text style={styles.changeText}> Change</Text>
       </Text>
-      <Text
-        style={{
-          fontSize: 18,
-          fontWeight: '500',
-        }}>
-        Enter OTP Text
-      </Text>
+      <Text style={styles.enterOTPText}>Enter OTP Text</Text>
       <OTPView />
       <PrimaryButton
         title="Xác thực OTP"
@@ -52,6 +26,7 @@ const LoginStepTwoScreen = props => {
     </View>
   );
 };
+
 const OTPView = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
 
@@ -77,7 +52,7 @@ const OTPView = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.otpContainer}>
       {otp.map((value, index) => (
         <TextInput
           key={index}
@@ -97,6 +72,29 @@ const OTPView = () => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: colors.white,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    flex: 1,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  subText: {
+    fontSize: 18,
+    fontWeight: '500',
+    flexShrink: 1,
+  },
+  changeText: {
+    color: colors.primary,
+    flexShrink: 1,
+  },
+  enterOTPText: {
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
