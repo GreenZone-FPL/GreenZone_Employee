@@ -45,7 +45,6 @@ const LoginScreen = props => {
               style={{ width: '100%' }}
               placeholder="Nhập mật khẩu của bạn"
               setValue={setPassword}
-              keyboardType=""
               isPasswordVisible={isPasswordVisible}
               setIsPasswordVisible={setIsPasswordVisible}
               secureTextEntry={true}
