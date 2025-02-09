@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Image,
   KeyboardAvoidingView,
   Pressable,
   ScrollView,
   StyleSheet,
-  Text
+  Text,
 } from 'react-native';
-import { Switch } from 'react-native-paper';
-import { Column, FlatInput, LightStatusBar, PrimaryButton, Row, NormalText } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph } from '../../layouts/graphs';
-
+import {Switch} from 'react-native-paper';
+import {
+  Column,
+  FlatInput,
+  LightStatusBar,
+  PrimaryButton,
+  Row,
+  NormalText,
+} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {AppGraph, AuthGraph} from '../../layouts/graphs';
 
 const LoginScreen = props => {
-  const navigation = props.navigation
+  const navigation = props.navigation;
   const [maNv, setMaNv] = useState();
   const [password, setPassword] = useState();
   const [checked, setChecked] = useState();
@@ -35,14 +41,14 @@ const LoginScreen = props => {
             <FlatInput
               value={maNv}
               label="Mã nhân viên"
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               placeholder="Nhập mã nhân viên của bạn"
               setValue={setMaNv}
             />
             <FlatInput
               value={password}
               label="Mật khẩu"
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               placeholder="Nhập mật khẩu của bạn"
               setValue={setPassword}
               isPasswordVisible={isPasswordVisible}
@@ -50,27 +56,35 @@ const LoginScreen = props => {
               secureTextEntry={true}
             />
 
-            <Row style={{ justifyContent: 'space-between', width: '100%' }}>
+            <Row style={{justifyContent: 'space-between', width: '100%'}}>
               <Row>
                 <Switch
                   value={checked}
                   color={colors.primary}
-                  onValueChange={(value) => setChecked(value)}
+                  onValueChange={value => setChecked(value)}
                 />
-                <NormalText text='Ghi nhớ tôi' />
-
+                <NormalText text="Ghi nhớ tôi" />
               </Row>
 
-              <Pressable >
-                <NormalText text='Quên mật khẩu?' style={{ color: colors.primary, fontWeight: '500' }} />
+              <Pressable>
+                <NormalText
+                  text="Quên mật khẩu?"
+                  style={{color: colors.primary, fontWeight: '500'}}
+                />
               </Pressable>
             </Row>
             <PrimaryButton
               title="Đăng nhập"
               onPress={() => navigation.navigate(AppGraph.MAIN)}
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
             />
-
+            <PrimaryButton
+              title="Đăng ký"
+              onPress={() =>
+                navigation.navigate(AuthGraph.RegisterStepOneScreen)
+              }
+              style={{width: '100%'}}
+            />
           </Column>
         </Column>
       </KeyboardAvoidingView>
@@ -90,7 +104,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 280,
     resizeMode: 'stretch',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   body: {
     flex: 1,
@@ -116,6 +130,4 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.primary,
   },
-
-
 });
