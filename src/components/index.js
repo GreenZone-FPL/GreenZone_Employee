@@ -18,7 +18,7 @@ export * from './buttons/QuantitySelector';
 export * from './carousel/CarouselBanner';
 
 // category
-export * from './category/CategoryMenu';
+
 
 // containers
 export * from './containers/Column';
