@@ -5,13 +5,14 @@
  * @format
  */
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AuthGraph, MainGraph } from './src/layouts/graphs';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {AuthGraph, MainGraph} from './src/layouts/graphs';
 import MainNavigation from './src/layouts/MainNavigation';
-import LoginScreen from './src/screens/auth/LoginScreen';
+import LoginStepOneScreen from './src/screens/auth/LoginStepOneScreen';
+import LoginStepTwoScreen from './src/screens/auth/LoginStepTwoScreen';
 
 const BaseStack = createNativeStackNavigator();
 function App() {
@@ -19,9 +20,13 @@ function App() {
     <SafeAreaProvider>
       <NavigationContainer>
         <BaseStack.Navigator screenOptions={{headerShown: false}}>
-        <BaseStack.Screen
-            name={AuthGraph.LoginScreen}
-            component={LoginScreen}
+          <BaseStack.Screen
+            name={AuthGraph.LoginStepOneScreen}
+            component={LoginStepOneScreen}
+          />
+          <BaseStack.Screen
+            name={AuthGraph.LoginStepTwoScreen}
+            component={LoginStepTwoScreen}
           />
           <BaseStack.Screen
             name={MainGraph.graphName}
