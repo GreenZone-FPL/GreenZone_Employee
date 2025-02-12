@@ -23,7 +23,7 @@ const LoginStepOneScreen = props => {
       <LightStatusBar />
       <Image
         style={styles.image}
-        source={require('../../assets/images/backround/backround_login.png')}
+        source={require('../../assets/images/background/background_login.png')}
       />
       <View style={styles.formContainer}>
         <Text style={styles.title}>Nhập mã nhân viên của bạn</Text>
