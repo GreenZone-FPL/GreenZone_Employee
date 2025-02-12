@@ -23,6 +23,7 @@ export const  NormalHeader = ({
   rightIcon = 'shopping-outline',
   onLeftPress,
   onRightPress,
+  enableLeftIcon = false,
   enableRightIcon = false,
   leftIconColor = colors.black,
   rightIconColor = colors.black,
@@ -31,10 +32,14 @@ export const  NormalHeader = ({
   return (
     <View style={[styles.header, style]}>
 
-      <TouchableOpacity onPress={onLeftPress}>
+      
+      {enableLeftIcon ? (
+        <TouchableOpacity onPress={onLeftPress}>
         <Icon source={leftIcon} size={24} color={leftIconColor} />
-      </TouchableOpacity>
-
+        </TouchableOpacity>
+      ) : (
+        <View style={styles.placeholderIcon} />
+      )}
 
       <Text style={styles.title}>{title}</Text>
 
@@ -61,7 +66,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: colors.white,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    paddingTop: 24
+    paddingVertical: 24,
+    borderBottomWidth: 1,
+    borderColor: colors.gray200,
   },
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
