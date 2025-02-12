@@ -11,8 +11,14 @@ import React from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AuthGraph, MainGraph} from './src/layouts/graphs';
 import MainNavigation from './src/layouts/MainNavigation';
+
 import LoginStepOneScreen from './src/screens/auth/LoginStepOneScreen';
 import LoginStepTwoScreen from './src/screens/auth/LoginStepTwoScreen';
+
+import LoginScreen from './src/screens/auth/LoginScreen';
+import DeliveryMapScreen from './src/screens/delivery/DeliveryMapScreen';
+import ChatWithUser from './src/screens/user/ChatWithUser';
+
 
 const BaseStack = createNativeStackNavigator();
 function App() {
@@ -31,6 +37,14 @@ function App() {
           <BaseStack.Screen
             name={MainGraph.graphName}
             component={MainNavigation}
+          />
+          <BaseStack.Screen
+            name={AuthGraph.DeliveryMapScreen}
+            component={DeliveryMapScreen}
+          />
+          <BaseStack.Screen
+            name={AuthGraph.ChatWithUser}
+            component={ChatWithUser}
           />
         </BaseStack.Navigator>
       </NavigationContainer>

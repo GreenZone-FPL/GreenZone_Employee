@@ -5,18 +5,33 @@ buildscript {
         compileSdkVersion = 35
         targetSdkVersion = 34
         ndkVersion = "26.1.10909125"
-        kotlinVersion = "1.9.24"
+        kotlin_version = "1.9.24"
     }
     repositories {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-
     }
     dependencies {
-        classpath("com.android.tools.build:gradle")
+        classpath("com.android.tools.build:gradle:8.1.2")
         classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+    }
+}
+
+// Ép buộc phiên bản Kotlin cho 'react-native-hmac'
+subprojects { subproject ->
+    if (subproject.name == 'react-native-hmac') {
+        subproject.buildscript {
+            ext.kotlin_version = '1.9.24'
+        }
+        subproject.configurations.all {
+            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == 'org.jetbrains.kotlin') {
+                    details.useVersion '1.9.24'
+                }
+            }
+        }
     }
 }
 

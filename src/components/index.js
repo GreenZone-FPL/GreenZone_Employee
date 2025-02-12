@@ -66,6 +66,9 @@ export * from './radio/SelectableGroup';
 export * from './status-bars/LightStatusBar';
 export * from './status-bars/OverlayStatusBar';
 
+//Stores
+export * from './stores/StoreAddress';
+
 //tabviews
 export * from './tabviews/CustomTabView';
 

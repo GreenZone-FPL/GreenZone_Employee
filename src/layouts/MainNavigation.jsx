@@ -6,7 +6,6 @@ import { colors, GLOBAL_KEYS } from '../constants';
 import { MainGraph } from './graphs';
 import HomeStackScreen from './stacks/HomeStackScreen';
 import ProfileStackScreen from './stacks/ProfileStackScreen';
-import StatisticsStackScreen from './stacks/StatisticsStackScreen';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -26,10 +25,7 @@ const MainNavigation = () => {
           let iconName;
 
           if (route.name === MainGraph.HomeStackScreen) {
-            iconName = focused ? 'home' : 'home-outline';
-          }
-          else if (route.name === MainGraph.StatisticsStackScreen) {
-            iconName = focused ? 'chart-scatter-plot' : 'chart-scatter-plot-hexbin';
+            iconName = focused ? 'text-box' : 'text-box-outline';
           }
           else if (route.name === MainGraph.ProfileStackScreen) {
             iconName = focused ? 'account-circle' : 'account-circle-outline';
@@ -47,9 +43,7 @@ const MainNavigation = () => {
           let label;
 
           if (route.name === MainGraph.HomeStackScreen) {
-            label = 'Trang chủ';
-          } else if (route.name === MainGraph.StatisticsStackScreen) {
-            label = 'Thống kê';
+            label = 'Đơn hàng';
           } else if (route.name === MainGraph.ProfileStackScreen) {
             label = 'Cá nhân';
           }
@@ -67,10 +61,6 @@ const MainNavigation = () => {
         name={MainGraph.HomeStackScreen}
         component={HomeStackScreen}
 
-      />
-      <BottomTab.Screen
-        name={MainGraph.StatisticsStackScreen}
-        component={StatisticsStackScreen}
       />
       <BottomTab.Screen
         name={MainGraph.ProfileStackScreen}
