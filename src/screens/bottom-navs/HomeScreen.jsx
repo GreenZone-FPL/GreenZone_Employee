@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, View, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { CustomTabView, LightStatusBar, NormalHeader, StoreAddress, DualTextRow, PaymentMethodRow, PrimaryButton } from '../../components';
