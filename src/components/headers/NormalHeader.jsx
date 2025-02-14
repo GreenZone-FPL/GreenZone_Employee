@@ -1,9 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { Icon } from 'react-native-paper'
-import PropTypes from 'prop-types'
-
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import {Icon} from 'react-native-paper';
+import PropTypes from 'prop-types';
 
 const NormalHeaderPropTypes = {
   title: PropTypes.string.isRequired,
@@ -17,32 +16,24 @@ const NormalHeaderPropTypes = {
   style: PropTypes.object,
 };
 
-export const  NormalHeader = ({
+export const NormalHeader = ({
   title = 'Default Title',
   leftIcon = 'arrow-left',
   rightIcon = 'shopping-outline',
   onLeftPress,
   onRightPress,
-  enableLeftIcon = false,
   enableRightIcon = false,
   leftIconColor = colors.black,
   rightIconColor = colors.black,
-  style
+  style,
 }) => {
   return (
     <View style={[styles.header, style]}>
-
-      
-      {enableLeftIcon ? (
-        <TouchableOpacity onPress={onLeftPress}>
+      <TouchableOpacity onPress={onLeftPress}>
         <Icon source={leftIcon} size={24} color={leftIconColor} />
-        </TouchableOpacity>
-      ) : (
-        <View style={styles.placeholderIcon} />
-      )}
+      </TouchableOpacity>
 
       <Text style={styles.title}>{title}</Text>
-
 
       {enableRightIcon ? (
         <TouchableOpacity onPress={onRightPress}>
@@ -55,9 +46,7 @@ export const  NormalHeader = ({
   );
 };
 
-
 NormalHeader.propTypes = NormalHeaderPropTypes;
-
 
 const styles = StyleSheet.create({
   header: {
@@ -66,9 +55,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: colors.white,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    paddingVertical: 24,
-    borderBottomWidth: 1,
-    borderColor: colors.gray200,
+    paddingTop: 24,
   },
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
@@ -82,5 +69,3 @@ const styles = StyleSheet.create({
     height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
   },
 });
-
-
