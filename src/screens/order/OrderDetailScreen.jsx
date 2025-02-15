@@ -1,9 +1,10 @@
 import React from 'react';
-import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View, } from 'react-native';
+import { FlatList, TouchableOpacity , Pressable, ScrollView, StyleSheet, Text, View, } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { DualTextRow, HorizontalProductItem, PaymentMethodRow, NormalHeader, LightStatusBar, Row, Column, NormalText } from '../../components';
+import { Send2, Call } from 'iconsax-react-native';
+import { DualTextRow, HorizontalProductItem, PaymentMethodRow, NormalHeader, LightStatusBar, PrimaryButton, StoreAddress, } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { OrderGraph } from '../../layouts/graphs';
+import { AuthGraph } from '../../layouts/graphs';
 
 const OrderDetailScreen = (props) => {
 
@@ -17,29 +18,30 @@ const OrderDetailScreen = (props) => {
             <NormalHeader
                 title='Chi tiết đơn hàng'
                 onLeftPress={() => navigation.goBack()}
+                enableLeftIcon={true}
             />
+
+
 
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 style={styles.containerContent}
             >
-
-                <Title
-                    title={'Đơn hàng đang trên đường giao đến bạn'}
-                    titleStyle={{ fontWeight: '500', marginVertical: 8 }}
-                />
-                <ShipperInfo messageClick = {() => navigation.navigate(OrderGraph.ChatScreen)}/>
-                <Image style={{ width: '100%', height: 400 }} source={require('../../assets/images/map.png')} />
-
-                <MerchantInfo />
-                <RecipientInfo />
-
-                <ProductsInfo />
+                <StoreAddress title='Quận 12' style={{ paddingHorizontal: 0 }}>
+                    <OderInfo/>
+                    <RecipientInfo 
+                        onChatPress={() => navigation.navigate(AuthGraph.ChatWithUser)}
+                        onPhonePress={() => navigation.navigate(AuthGraph.CallWithUser)}          
+                    />
+                    
+                    <ProductsInfo />
 
 
-                <PaymentDetails />
-
+                    <PaymentDetails />
+                    <TimeOrder />
+                    <PrimaryButton title="Xác thực đơn hàng" onPress={() => navigation.navigate(AuthGraph.DeliveryMapScreen)} />
+                </StoreAddress>
             </ScrollView>
 
 
@@ -51,43 +53,27 @@ const OrderDetailScreen = (props) => {
     );
 };
 
-const ShipperInfo = ({messageClick}) => {
+const OderInfo = () => {
     return (
-        <Row style={{ gap: 16, marginVertical: 8 }}>
-            <Image style={{ width: 40, height: 40 }} source={require('../../assets/images/helmet.png')} />
-            <Column style={{ flex: 1 }}>
-                <NormalText text='Shipper' style={{ fontWeight: '500' }} />
-                <Row>
-                    <Icon
-                        source="star"
-                        color={colors.yellow700}
-                        size={20}
-                    />
-                    <NormalText text='5.0' />
-                    <NormalText text='60B7-40035' style={{ color: colors.yellow700 }} />
-
-                </Row>
-            </Column>
-
-            <Row style={{ gap: 24 }}>
-
-                <Icon
-                    source="phone-outline"
-                    color={colors.black}
-                    size={20}
-                />
-                <Pressable onPress={messageClick}>
-                    <Icon
-                        source="message-outline"
-                        color={colors.black}
-                        size={20}
-                    />
-                </Pressable>
-
-            </Row>
-        </Row>
+        <View style={[styles.areaContainer, { borderBottomWidth: 0 }]}>
+            <TouchableOpacity style={styles.orderItem} onPress={() => handleOrderPress(item.orderId)}>
+                <View style={{ flex: 2 }}>
+                    <Text style={styles.orderId}>Mã đơn hàng: #02312</Text>
+                    <Text>Thời gian: 9:30</Text>
+                </View>
+                <Text style={styles.orderStatus}>Chờ xử lý</Text>
+            </TouchableOpacity>
+        </View>
     )
 }
+
+const orders = [
+    { id: 1, status: 'Chờ xử lý', orderId: '02312', time: '9:30' },
+    { id: 2, status: 'Đang xử lý', orderId: '02313', time: '10:00' },
+    { id: 3, status: 'Hoàn tất', orderId: '02314', time: '12:30' },
+    { id: 4, status: 'Hủy', orderId: '02315', time: '15:30' },
+    { id: 5, status: 'Chờ xử lý', orderId: '02316', time: '19:00' },
+];
 
 const ProductsInfo = () => {
     return (
@@ -109,25 +95,32 @@ const ProductsInfo = () => {
     )
 }
 
-const MerchantInfo = () => {
-    return (
-        <View style={styles.areaContainer}>
-            <Title title='Cửa hàng' icon='store' />
-            <Title title='Green Zone' titleStyle={{ color: colors.black }} />
-            <Text style={styles.normalText}>1 Tô Ký, Trung Mỹ Tây, Quận 12, Hồ Chí Minh</Text>
+const RecipientInfo = ({onChatPress, onPhonePress}) => (
+    <View>
+        <View style={[styles.infoRow, {justifyContent: 'space-between'}]}>
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+                <Icon source='account' size={24} color={colors.primary} />
+                <Text style={styles.customerName}>Nguyễn Văn A</Text>
+            </View>
+            
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+                <TouchableOpacity onPress={onPhonePress} style={{ backgroundColor: colors.gray200, padding: 8, borderRadius: 16 }}>
+                    <Call size="24" color={colors.primary} variant="Bold" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onChatPress} style={{ backgroundColor: colors.gray200, padding: 8, borderRadius: 16 }}>
+                    <Send2 size="24" color={colors.primary} variant="Bold" />
+                </TouchableOpacity>
+            </View>
         </View>
-    )
-}
-
-const RecipientInfo = () => (
-    <View style={styles.areaContainer}>
-        <Title title='Người nhận' icon='map-marker' />
-        <Title title='Ngọc Đại | 012345678' titleStyle={{ color: colors.black }} />
-        <Text style={styles.normalText}>
-            FPT Polytechnic TP. HCM - Tòa F, Công Viên Phần Mềm Quang Trung, Tòa nhà GenPacific Lô 3 đường 16, Trung Mỹ Tây, Quận 12, Hồ Chí Minh
-        </Text>
+        <View style={styles.infoRow}>
+            <Icon source='map-marker' size={24} color={colors.primary} />
+            <Text>Giao đến</Text>
+        </View>
+        <Text style={styles.customerAddress}>Trung Mỹ Tây 2a, Phường Tô Ký, Quận 12</Text>
     </View>
+
 );
+
 
 const Title = ({
     title,
@@ -179,12 +172,36 @@ const PaymentDetails = () => (
 
 
         <PaymentMethodRow enableChange={false} />
-
-        <Pressable style={styles.button} onPress={() => { }}>
-            <Text style={styles.normalText}>Cancel this order</Text>
-        </Pressable>
     </View>
 );
+
+const TimeOrder = ({ time }) => (
+    <View style={{ backgroundColor: colors.green200, borderRadius: 6, padding: 10, marginVertical: 10 }}>
+        <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+            <View>
+                <Text style={{ color: colors.primary, fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER }}>Đơn hẹn giờ</Text>
+                <Text style={{ color: colors.primary, fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT }}>Hôm nay</Text>
+                <Text style={{ color: colors.primary , fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT }}>{time},Tue 12/02/2025</Text>
+                
+            </View>
+            <View style={{ borderWidth: 1, borderRadius: 6, borderColor: colors.gray700, backgroundColor: colors.white, alignItems: 'center', padding: 10, borderStyle: 'dashed', }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Icon source='clock-time-three-outline' size={24} color={colors.primary} />
+                    <Text style={{ color: colors.primary, fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER}}>Còn lại</Text>
+                </View>
+                <Text style={{ color: colors.primary, fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, fontWeight: '500' }}>1:04h</Text>
+            </View>
+        </View>
+        <View style={{ justifyContent: 'space-between', flexDirection: 'row' , paddingTop: GLOBAL_KEYS.PADDING_SMALL, alignItems: 'center'}}>
+            <Text style={{ color: colors.primary , fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER }}>Cập nhật trạng thái</Text>
+            <TouchableOpacity style={{ justifyContent: 'space-between', flexDirection: 'row' , alignItems: 'center', backgroundColor: colors.white, borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT, padding: 2}}>
+                <Text style={{ color: colors.primary , fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT }}>Lựa chọn</Text>
+                <Icon source='chevron-down' size={24} color={colors.primary} />
+            </TouchableOpacity>
+        </View>
+
+    </View>
+)
 
 const OrderId = () => {
     return (
@@ -243,7 +260,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         flex: 1,
         gap: 12,
-        marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+        margin: GLOBAL_KEYS.PADDING_DEFAULT,
 
     },
     row: {
@@ -287,6 +304,50 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         marginVertical: 16
     },
+    orderItem: {
+        backgroundColor: colors.white,
+        paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+        borderStyle: 'dashed',
+        borderBottomWidth: 1,
+        borderColor: colors.gray400,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    orderId: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+        fontWeight: 'bold',
+    },
+    orderStatus: {
+        flex: 1,
+        borderRadius: 6,
+        fontWeight: '500',
+        textAlign: 'center',
+        height: 20,
+        backgroundColor: colors.green200, 
+        color: colors.orange700,
+    },
+    infoRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 5,
+        gap: GLOBAL_KEYS.GAP_SMALL
+    },
+    customerName: {
+        fontWeight: '500',
+       
+    },
+    phoneButton: {
+        backgroundColor: colors.gray200,
+        padding: 4,
+        borderRadius: 16,
+        marginLeft: 'auto',
+    },
+    customerAddress: {
+        marginLeft: 30,
+        color: colors.gray700,
+    },
+
 });
 
 export default OrderDetailScreen;

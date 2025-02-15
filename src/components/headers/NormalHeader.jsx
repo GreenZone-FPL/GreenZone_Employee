@@ -11,6 +11,7 @@ const NormalHeaderPropTypes = {
   onLeftPress: PropTypes.func,
   onRightPress: PropTypes.func,
   enableRightIcon: PropTypes.bool,
+  enableLeftIcon: PropTypes.bool,
   leftIconColor: PropTypes.string,
   rightIconColor: PropTypes.string,
   style: PropTypes.object,

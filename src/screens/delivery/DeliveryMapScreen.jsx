@@ -3,7 +3,7 @@ import React from 'react'
 import { NormalHeader, PrimaryButton } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { Icon } from 'react-native-paper'
-import { AuthGraph } from '../../layouts/graphs';
+import { AuthGraph, OrderGraph } from '../../layouts/graphs';
 
 const {width} = Dimensions.get('window');
 
@@ -17,7 +17,7 @@ const DeliveryMapScreen = (props) => {
         </View>
         <View style={{height: '30%', borderRadius: 6, backgroundColor: colors.white, padding: 16, gap: 10}}>
             <CustomerInfo navigation={navigation} />
-            <PrimaryButton title='Bắt đầu giao hàng'/>
+            <PrimaryButton title='Bắt đầu giao hàng' onPress={() => navigation.navigate(OrderGraph.OrderDoneScreen)}/>
         </View>
     </View>
   )
