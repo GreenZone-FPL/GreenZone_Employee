@@ -1,13 +1,13 @@
-import {View, Text} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import React, {useState} from 'react';
 import {
   NormalHeader,
   FlatInput,
   CustomFlatInput,
   PrimaryButton,
+  LightStatusBar,
 } from '../../components';
-import {GLOBAL_KEYS} from '../../constants';
-import {colors} from 'react-native-elements';
+import {GLOBAL_KEYS, colors} from '../../constants';
 
 const EditProfile = props => {
   const {navigation} = props;
@@ -17,24 +17,18 @@ const EditProfile = props => {
   const [email, setEmail] = useState('');
   const [dob, setDob] = useState('');
   const [gender, setGender] = useState('');
+
   return (
-    <View style={{flexDirection: 'column'}}>
+    <View style={styles.container}>
+      <LightStatusBar />
       <NormalHeader
-        title="Update Profile"
-        onLeftPress={() => navigation.goBack()}
+        title="Cập nhập người dùng"
+        onLeftPress={() => {
+          navigation.goBack();
+        }}
       />
-      <View
-        style={{
-          height: GLOBAL_KEYS.GAP_DEFAULT,
-          backgroundColor: colors.white,
-          borderBottomLeftRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-          borderBottomRightRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-        }}></View>
-      <View
-        style={{
-          padding: GLOBAL_KEYS.PADDING_DEFAULT,
-          gap: GLOBAL_KEYS.GAP_DEFAULT,
-        }}>
+      <View style={styles.headerBackground} />
+      <View style={styles.formContainer}>
         <FlatInput label={'Họ'} value={lastName} setValue={setLastName} />
         <FlatInput label={'Tên'} value={firstName} setValue={setFirstName} />
         <FlatInput label={'Email'} value={email} setValue={setEmail} />
@@ -51,5 +45,21 @@ const EditProfile = props => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  headerBackground: {
+    height: GLOBAL_KEYS.GAP_DEFAULT,
+    backgroundColor: colors.white,
+    borderBottomLeftRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
+    borderBottomRightRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
+  },
+  formContainer: {
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+  },
+});
 
 export default EditProfile;

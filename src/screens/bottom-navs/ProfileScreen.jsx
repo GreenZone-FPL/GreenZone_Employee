@@ -51,9 +51,12 @@ const Header = () => {
           </View>
         </View>
         <View style={styles.userInfo}>
-          <RowContent title={'Phong Nguyen'} icon="account" />
-          <RowContent title={'0936887373'} icon="phone" />
-          <RowContent title={'nguyenghongphong@gmail.com'} icon="email" />
+          <RowContent title={'Phong Nguyen'} icon="account-outline" />
+          <RowContent title={'0936887373'} icon="phone-outline" />
+          <RowContent
+            title={'nguyenghongphong@gmail.com'}
+            icon="email-outline"
+          />
         </View>
       </View>
     </View>
@@ -66,7 +69,7 @@ const Body = ({goScreenName, goBack}) => {
       <Text style={styles.bodyTitle}>Options</Text>
       <ItemRow
         title="Edit Profile"
-        icon="account"
+        icon="account-outline"
         onPress={() => goScreenName('EditProfile')}
         checkIcon={true}
       />
