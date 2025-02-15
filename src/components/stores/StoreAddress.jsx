@@ -1,7 +1,7 @@
 import React, { Children } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { Icon } from 'react-native-paper'
+import { Send2, Call } from 'iconsax-react-native';
 import PropTypes from 'prop-types'
 
 
@@ -21,25 +21,21 @@ export const  StoreAddress = ({
   title = 'Default Title',
   onPhonePress,
   onAdressPress,
-  phoneIcon='phone',
-  adresstIcon='send',
-  phoneIconColor=colors.primary,
-  adressIconColor=colors.primary,
   children,
   style
 }) => {
   return (
     <View style={{backgroundColor: colors.white}}>
         <View style={[styles.header, style]}>
-        <Text style={styles.title}>Green zone - {title}</Text>
-        <View style={{flexDirection:'row', gap: 10}}>
-            <TouchableOpacity onPress={onPhonePress} style={{backgroundColor: colors.gray200, padding: 4, borderRadius: 16}}>
-                <Icon source={phoneIcon} size={24} color={phoneIconColor} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={onAdressPress} style={{backgroundColor: colors.gray200, padding: 4, borderRadius: 16}}>
-                <Icon source={adresstIcon} size={24} color={adressIconColor} />
-            </TouchableOpacity>
-        </View>
+          <Text style={styles.title}>Green zone - {title}</Text>
+          <View style={{flexDirection:'row', gap: 10}}>
+              <TouchableOpacity onPress={onPhonePress} style={{backgroundColor: colors.gray200, padding: 8, borderRadius: 16}}>
+                <Call size="24" color={colors.primary} variant="Bold"/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onAdressPress} style={{backgroundColor: colors.gray200, padding: 8, borderRadius: 16}}>
+                <Send2 size="24" color={colors.primary} variant="Bold"/>
+              </TouchableOpacity>
+          </View>
         </View>
         <View>{children}</View>
     </View>
@@ -56,12 +52,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: colors.white,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    paddingVertical: 24,
+    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     borderBottomWidth: 1,
     borderColor: colors.gray300,
+    alignItems: 'center'
   },
   title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
     color: colors.black,
     flex: 1,

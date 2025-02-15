@@ -16,6 +16,8 @@ export const AuthGraph = Object.freeze({
 
     LoginScreen: 'LoginScreen',
     DeliveryMapScreen: 'DeliveryMapScreen',
-    ChatWithUser: 'ChatWithUser'
+    ChatWithUser: 'ChatWithUser',
+    CallWithUser: 'CallWithUser',
+    
 });
 
