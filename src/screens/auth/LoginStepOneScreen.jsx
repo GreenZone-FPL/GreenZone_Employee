@@ -31,9 +31,9 @@ const LoginStepOneScreen = props => {
         <View style={styles.checkboxContainer}>
           <CustomCheckBox />
           <Text style={styles.checkboxText}>
-            By signing up I agree to the
-            <Text style={styles.linkText}>Terms of use</Text> and
-            <Text style={styles.linkText}> Privacy Policy</Text>.
+            Bằng việc đăng ký, tôi đồng ý với
+            <Text style={styles.linkText}> Điều khoản sử dụng</Text> và
+            <Text style={styles.linkText}> Chính sách bảo mật</Text>.
           </Text>
         </View>
         <PrimaryButton

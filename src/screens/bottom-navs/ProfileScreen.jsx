@@ -10,6 +10,7 @@ import {
 import {LightStatusBar} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {Icon} from 'react-native-paper';
+import {AppGraph} from '../../layouts/graphs';
 
 const {width} = Dimensions.get('window');
 
@@ -25,7 +26,7 @@ const ProfileScreen = ({navigation}) => {
     <View style={styles.container}>
       <LightStatusBar />
       <Header />
-      <Body goScreenName={goScreenName} goBack={goBack} />
+      <Body goScreenName={goScreenName} navigation={navigation} />
     </View>
   );
 };
@@ -63,7 +64,7 @@ const Header = () => {
   );
 };
 
-const Body = ({goScreenName, goBack}) => {
+const Body = ({goScreenName, navigation}) => {
   return (
     <View style={styles.bodyContainer}>
       <Text style={styles.bodyTitle}>Options</Text>
@@ -85,7 +86,7 @@ const Body = ({goScreenName, goBack}) => {
         title="Log Out"
         icon="logout"
         checkIcon={false}
-        onPress={() => goScreenName('LoginStepOneScreen')}
+        onPress={() => navigation.navigate(AppGraph.AUTHENTICATION)}
       />
     </View>
   );

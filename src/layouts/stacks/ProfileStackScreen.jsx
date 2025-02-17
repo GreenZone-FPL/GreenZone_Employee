@@ -21,11 +21,6 @@ const ProfileStackScreen = () => {
         component={LoginStepTwoScreen}
       />
       <ProfileStack.Screen name={'EditProfile'} component={EditProfile} />
-
-      <ProfileStack.Screen
-        name={'LoginStepOneScreen'}
-        component={LoginStepOneScreen}
-      />
     </ProfileStack.Navigator>
   );
 };
