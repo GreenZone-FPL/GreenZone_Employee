@@ -17,6 +17,7 @@ const {width} = Dimensions.get('window');
 const LoginStepOneScreen = props => {
   const {navigation} = props;
   const [idStaff, setIdStaff] = useState('xxxx-xxxx-3333');
+  const [isCheckked, setIsCheckkid] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -25,28 +26,41 @@ const LoginStepOneScreen = props => {
         style={styles.image}
         source={require('../../assets/images/background/background_login.png')}
       />
+      <View style={styles.imageContainer}>
+        <Image
+          style={styles.image1}
+          source={require('../../assets/images/background/background_content.png')}
+        />
+        <Text style={styles.textNorman}>Trở thành Đối tác của GreenZone</Text>
+        <Text style={styles.textHeder}>Nhận thu nhập ổn định hàng tháng</Text>
+      </View>
+
       <View style={styles.formContainer}>
         <Text style={styles.title}>Nhập mã nhân viên của bạn</Text>
         <FlatInput label="Id của bạn" value={idStaff} setValue={setIdStaff} />
         <View style={styles.checkboxContainer}>
-          <CustomCheckBox />
+          <CustomCheckBox
+            isCheckked={isCheckked}
+            setIsCheckkid={setIsCheckkid}
+          />
           <Text style={styles.checkboxText}>
-            By signing up I agree to the
-            <Text style={styles.linkText}>Terms of use</Text> and
-            <Text style={styles.linkText}> Privacy Policy</Text>.
+            Bằng việc đăng ký, tôi đồng ý với
+            <Text style={styles.linkText}> Điều khoản sử dụng</Text> và
+            <Text style={styles.linkText}> Chính sách bảo mật</Text>.
           </Text>
         </View>
-        <PrimaryButton
-          title="Tiếp theo"
-          onPress={() => navigation.navigate(AuthGraph.LoginStepTwoScreen)}
-        />
+        {isCheckked && (
+          <PrimaryButton
+            title="Tiếp theo"
+            onPress={() => navigation.navigate(AuthGraph.LoginStepTwoScreen)}
+          />
+        )}
       </View>
     </View>
   );
 };
 
-const CustomCheckBox = () => {
-  const [isCheckked, setIsCheckkid] = useState(false);
+const CustomCheckBox = ({isCheckked, setIsCheckkid}) => {
   return (
     <View>
       <TouchableOpacity
@@ -74,10 +88,22 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    top: '-10%',
+    marginTop: '-10%',
+  },
+  imageContainer: {
+    position: 'absolute',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: '10%',
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+  },
+
+  image1: {
+    width: 321,
+    height: 283,
   },
   formContainer: {
-    top: '-20%',
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
     width: width,
@@ -86,6 +112,16 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
+  },
+  textNorman: {
+    fontSize: 18,
+    fontWeight: 500,
+    width: '80%',
+  },
+  textHeder: {
+    fontSize: 28,
+    fontWeight: 500,
+    width: '80%',
   },
   checkboxContainer: {
     flexDirection: 'row',

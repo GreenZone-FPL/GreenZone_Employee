@@ -1,8 +1,8 @@
 import React from 'react';
-import { createMotionTabs } from 'react-native-motion-tabs';
+import {createMotionTabs} from 'react-native-motion-tabs';
 import HomeStackScreen from './stacks/HomeStackScreen';
 import ProfileStackScreen from './stacks/ProfileStackScreen';
-import { colors } from '../constants';
+import {colors} from '../constants';
 
 // Tạo thanh tabs và đặt vị trí của tab ở dưới cùng
 const Tabs = createMotionTabs({
@@ -26,7 +26,6 @@ const Tabs = createMotionTabs({
     inactiveText: colors.primary, // Màu chữ khi tab không được chọn
     backgroundColor: colors.white, // Màu nền của thanh tab
   },
-
 });
 
 export default function MainNavigation() {

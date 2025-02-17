@@ -14,10 +14,10 @@ const LoginStepTwoScreen = props => {
       <NormalHeader title="" onLeftPress={() => navigation.goBack()} />
       <Text style={styles.headerText}>Nhập mã OTP để xác thực</Text>
       <Text style={styles.subText}>
-        A 6 digit OTP has been sent to your phone number + {phone}
-        <Text style={styles.changeText}> Change</Text>
+        Một mã OTP gồm 6 chữ số đã được gửi đến số điện thoại +{phone}
+        <Text style={styles.changeText}> Thay đổi</Text>
       </Text>
-      <Text style={styles.enterOTPText}>Enter OTP Text</Text>
+      <Text style={styles.enterOTPText}>Nhập mã OTP</Text>
       <OTPView />
       <PrimaryButton
         title="Xác thực OTP"
@@ -43,6 +43,10 @@ const OTPView = () => {
     const newOtp = [...otp];
     newOtp[index] = text;
     setOtp(newOtp);
+
+    if (text && index < inputRefs.length - 1) {
+      inputRefs[index + 1].current.focus();
+    }
   };
 
   const handleSubmitEditing = index => {
@@ -64,6 +68,8 @@ const OTPView = () => {
           style={styles.otpInput}
           onSubmitEditing={() => handleSubmitEditing(index)}
           blurOnSubmit={false}
+          returnKeyType="next"
+          autoFocus={index === 0}
         />
       ))}
     </View>
