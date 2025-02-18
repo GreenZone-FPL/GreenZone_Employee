@@ -83,7 +83,7 @@ const Body = ({goScreenName}) => {
         title="Log Out"
         icon="logout"
         checkIcon={false}
-        onPress={() => goScreenName(AuthGraph.LoginStepOneScreen)}
+        onPress={() => goScreenName(AuthGraph.LoginScreen)}
       />
     </View>
   );
@@ -138,8 +138,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: colors.white,
     padding: GLOBAL_KEYS.PADDING_DEFAULT * 2,
-    borderBottomRightRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 4,
-    borderBottomLeftRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 4,
     elevation: 1.5,
   },
   headerContent: {
@@ -176,12 +174,11 @@ const styles = StyleSheet.create({
   },
   bodyContainer: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   bodyTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
-    marginHorizontal: GLOBAL_KEYS.PADDING_SMALL,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   itemRow: {
     flexDirection: 'row',

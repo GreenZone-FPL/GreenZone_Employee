@@ -53,8 +53,6 @@ const styles = StyleSheet.create({
   headerBackground: {
     height: GLOBAL_KEYS.GAP_DEFAULT,
     backgroundColor: colors.white,
-    borderBottomLeftRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-    borderBottomRightRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
   },
   formContainer: {
     padding: GLOBAL_KEYS.PADDING_DEFAULT,

@@ -11,11 +11,9 @@ import React from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AuthGraph, MainGraph, OrderGraph} from './src/layouts/graphs';
 import MainNavigation from './src/layouts/MainNavigation';
-
-import LoginStepOneScreen from './src/screens/auth/LoginStepOneScreen';
-import LoginStepTwoScreen from './src/screens/auth/LoginStepTwoScreen';
-
+import SplashScreen from './src/screens/auth/SplashScreen';
 import LoginScreen from './src/screens/auth/LoginScreen';
+import VerifyOTPScreen from './src/screens/auth/VerifyOTPScreen';
 import DeliveryMapScreen from './src/screens/delivery/DeliveryMapScreen';
 import ChatWithUser from './src/screens/user/ChatWithUser';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
@@ -29,12 +27,16 @@ function App() {
       <NavigationContainer>
         <BaseStack.Navigator screenOptions={{headerShown: false}}>
           <BaseStack.Screen
-            name={AuthGraph.LoginStepOneScreen}
-            component={LoginStepOneScreen}
+            name={AuthGraph.SplashScreen}
+            component={SplashScreen}
           />
           <BaseStack.Screen
-            name={AuthGraph.LoginStepTwoScreen}
-            component={LoginStepTwoScreen}
+            name={AuthGraph.LoginScreen}
+            component={LoginScreen}
+          />
+          <BaseStack.Screen
+            name={AuthGraph.VerifyOTPScreen}
+            component={VerifyOTPScreen}
           />
           <BaseStack.Screen
             name={MainGraph.graphName}

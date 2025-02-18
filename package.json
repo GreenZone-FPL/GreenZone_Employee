@@ -48,6 +48,7 @@
     "react-native-material-kit": "^0.6.0-beta.1",
     "react-native-motion-tabs": "^1.0.12",
     "react-native-notifications": "^5.1.0",
+    "react-native-otp-entry": "^1.8.2",
     "react-native-pager-view": "^6.7.0",
     "react-native-paper": "^5.12.5",
     "react-native-progress": "^5.0.1",
