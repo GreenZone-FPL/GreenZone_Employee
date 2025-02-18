@@ -24,15 +24,21 @@ export const NormalHeader = ({
   onLeftPress,
   onRightPress,
   enableRightIcon = false,
+  enableLeftIcon = false,
   leftIconColor = colors.black,
   rightIconColor = colors.black,
   style,
 }) => {
   return (
     <View style={[styles.header, style]}>
-      <TouchableOpacity onPress={onLeftPress}>
+      {enableLeftIcon ? (
+        <TouchableOpacity onPress={onLeftPress}>
         <Icon source={leftIcon} size={24} color={leftIconColor} />
-      </TouchableOpacity>
+        </TouchableOpacity>
+      ) : (
+        <View style={styles.placeholderIcon} />
+      )}
+      
 
       <Text style={styles.title}>{title}</Text>
 
