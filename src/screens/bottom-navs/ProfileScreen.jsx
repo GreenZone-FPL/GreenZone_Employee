@@ -138,8 +138,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: colors.white,
     padding: GLOBAL_KEYS.PADDING_DEFAULT * 2,
-    borderBottomRightRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 4,
-    borderBottomLeftRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 4,
     elevation: 1.5,
   },
   headerContent: {
