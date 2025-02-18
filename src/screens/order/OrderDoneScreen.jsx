@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import { TickCircle } from 'iconsax-react-native';
 import { colors, GLOBAL_KEYS } from '../../constants';
@@ -9,7 +9,10 @@ const OrderDoneScreen = (props) => {
     const navigation = props.navigation;
   return (
     <View style={styles.container}>
-      <TickCircle size={80} color='#2E7D32' variant='Bold' style={styles.checkIcon} />
+      <Image 
+                          source={require('../../assets/images/done.png')} 
+                          style={styles.checkIcon} 
+                      />
       <Text style={styles.title}>Bạn đã đến nơi cần được giao hàng</Text>
       <Text style={styles.subtitle}>Hãy kiểm tra lại đơn hàng trước khi giao đến khách hàng</Text>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate(BottomGraph.HomeScreen)}>

@@ -15,7 +15,7 @@ const DeliveryMapScreen = (props) => {
     useEffect(() => {
         const loopAnimation = () => {
             animationRef.current?.play(0, 60); // Chạy animation từ frame 0 đến 60 (1.5s)
-            setTimeout(loopAnimation, 1500); // Gọi lại sau 1.5 giây
+            setTimeout(loopAnimation, 1000); // Gọi lại sau 1giây
         };
 
         loopAnimation(); // Chạy lần đầu tiên
