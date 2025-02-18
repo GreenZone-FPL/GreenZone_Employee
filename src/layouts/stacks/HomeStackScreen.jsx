@@ -2,7 +2,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import HomeScreen from '../../screens/bottom-navs/HomeScreen';
 import OrderHistoryScreen from '../../screens/order/OrderHistoryScreen';
-import LoginStepTwoScreen from '../../screens/auth/LoginStepTwoScreen';
+import VerifyOTPScreen from '../../screens/auth/VerifyOTPScreen';
 import {AuthGraph, BottomGraph, OrderGraph} from '../graphs';
 
 const HomeStack = createNativeStackNavigator();
@@ -12,8 +12,8 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name={BottomGraph.HomeScreen} component={HomeScreen} />
 
       <HomeStack.Screen
-        name={AuthGraph.LoginStepTwoScreen}
-        component={LoginStepTwoScreen}
+        name={AuthGraph.VerifyOTPScreen}
+        component={VerifyOTPScreen}
       />
       <HomeStack.Screen
         name={OrderGraph.OrderHistoryScreen}
