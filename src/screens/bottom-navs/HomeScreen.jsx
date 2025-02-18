@@ -60,13 +60,13 @@ const HomeScreen = () => {
 const getStatusStyle = (status) => {
     switch (status) {
         case 'Chờ xử lý':
-            return { backgroundColor: colors.green200, color: colors.orange700, };
+            return { backgroundColor: colors.red200, color: colors.red800, };
         case 'Đang xử lý':
-            return { backgroundColor: colors.green200, color: colors.primary };
+            return { backgroundColor: colors.blue300, color: colors.blue600 };
         case 'Hoàn tất':
             return { backgroundColor: colors.green200, color: colors.green700 };
         case 'Hủy':
-            return { backgroundColor: colors.green200, color: colors.red800 };
+            return { backgroundColor: colors.red200, color: colors.red800 };
         default:
             return { backgroundColor: colors.green200, color: colors.gray700 };
     }
