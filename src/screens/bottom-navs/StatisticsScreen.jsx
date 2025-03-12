@@ -1,8 +1,5 @@
-import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {NormalHeader} from '../../components';
-import {GLOBAL_KEYS} from '../../constants';
-import NoNewOrder from '../../components/order-status/NoNewOrder';
+import {StyleSheet, View} from 'react-native';
 import SubmittedSuccessfully from '../../components/order-status/SubmittedSuccessfully';
 
 const StatisticsScreen = () => {
@@ -16,15 +13,6 @@ const StatisticsScreen = () => {
 const Header = () => {
   return (
     <View style={{flex: 1}}>
-      {/* <Text
-        style={{
-          fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-          fontWeight: 'bold',
-          textAlign: 'center',
-        }}>
-        Thống kê
-      </Text> */}
-      {/* <NoNewOrder /> */}
       <SubmittedSuccessfully />
     </View>
   );
