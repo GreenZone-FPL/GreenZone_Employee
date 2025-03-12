@@ -1,10 +1,9 @@
-import React, {useState} from 'react';
-import {FlatList, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import {LightStatusBar, NormalHeader, StoreAddress} from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {Tab, TabView} from '@rneui/themed';
 import {useNavigation} from '@react-navigation/native';
-import {AuthGraph} from '../../layouts/graphs';
+import {Tab, TabView} from '@rneui/themed';
+import React, {useState} from 'react';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {LightStatusBar, StoreAddress} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
 
 const HomeScreen = () => {
   const [index, setIndex] = useState(0);
@@ -14,9 +13,7 @@ const HomeScreen = () => {
     navigation.navigate('OrderDetailScreen', {orderId});
   };
 
-  const filteredOrders = status => {
-    return orders.filter(order => order.status === status);
-  };
+
 
   return (
     <View style={styles.container}>
@@ -36,85 +33,70 @@ const HomeScreen = () => {
         scrollable={true}
         variant="secondary"
         indicatorStyle={{backgroundColor: 'transparent'}}>
-        {['Tất cả', 'Chờ xử lý', 'Đang xử lý', 'Hoàn tất', 'Hủy'].map(
-          (title, i) => (
-            <Tab.Item
-              key={i}
-              title={title}
-              titleStyle={{
-                fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-                color: index === i ? colors.white : colors.black,
-                height: 55,
-              }}
-              containerStyle={{
-                backgroundColor: index === i ? colors.green700 : colors.white,
-                borderRadius: 10,
-                paddingVertical: 4,
-                height: 30,
-              }}
-            />
-          ),
-        )}
+        {['Đơn Mới', 'Hoàn Tất', 'Giao Thất Bại'].map((title, i) => (
+          <Tab.Item
+            key={i}
+            title={title}
+            titleStyle={{
+              fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+              color: index === i ? colors.white : colors.black,
+              height: 55,
+            }}
+            containerStyle={{
+              backgroundColor: index === i ? colors.green700 : colors.white,
+              borderRadius: 10,
+              paddingVertical: 4,
+              height: 30,
+            }}
+          />
+        ))}
       </Tab>
       <TabView value={index} onChange={setIndex} animationType="spring">
-        {['Tất cả', 'Chờ xử lý', 'Đang xử lý', 'Hoàn tất', 'Hủy'].map(
-          (status, i) => (
-            <TabView.Item key={i} style={styles.tabView}>
-              <StoreAddress title="Quận 12">
-                <FlatList
-                  data={status === 'Tất cả' ? orders : filteredOrders(status)}
-                  keyExtractor={item => item.id.toString()}
-                  renderItem={({item}) => (
-                    <TouchableOpacity
-                      style={styles.orderItem}
-                      onPress={() => handleOrderPress(item.orderId)}>
-                      <View style={{flex: 2}}>
-                        <Text style={styles.orderId}>
-                          Mã đơn hàng: #{item.orderId}
-                        </Text>
-                        <Text>Thời gian: {item.time}</Text>
-                      </View>
-                      <Text
-                        style={[
-                          styles.orderStatus,
-                          getStatusStyle(item.status),
-                        ]}>
-                        {item.status}
+        {['Đơn Mới', 'Hoàn Tất', 'Giao Thất Bại'].map((status, i) => (
+          <TabView.Item key={i} style={styles.tabView}>
+            <StoreAddress title="Quận 12">
+              <FlatList
+                data={status === 'Tất cả' ? orders : filteredOrders(status)}
+                keyExtractor={item => item.id.toString()}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    style={styles.orderItem}
+                    onPress={() => handleOrderPress(item.orderId)}>
+                    <View style={{flex: 2}}>
+                      <Text style={styles.orderId}>
+                        Mã đơn hàng: #{item.orderId}
                       </Text>
-                    </TouchableOpacity>
-                  )}
-                />
-              </StoreAddress>
-            </TabView.Item>
-          ),
-        )}
+                      <Text>Thời gian: {item.time}</Text>
+                    </View>
+                    <Text
+                      style={[styles.orderStatus, getStatusStyle(item.status)]}>
+                      {item.status}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              />
+            </StoreAddress>
+          </TabView.Item>
+        ))}
       </TabView>
     </View>
   );
 };
 
-const getStatusStyle = (status) => {
-    switch (status) {
-        case 'Chờ xử lý':
-            return { backgroundColor: colors.red200, color: colors.red800, };
-        case 'Đang xử lý':
-            return { backgroundColor: colors.blue300, color: colors.blue600 };
-        case 'Hoàn tất':
-            return { backgroundColor: colors.green200, color: colors.green700 };
-        case 'Hủy':
-            return { backgroundColor: colors.red200, color: colors.red800 };
-        default:
-            return { backgroundColor: colors.green200, color: colors.gray700 };
-    }
+const getStatusStyle = status => {
+  switch (status) {
+    case 'Đơn Mới':
+      return {backgroundColor: colors.red200, color: colors.red800};
+    case 'Hoàn Tất':
+      return {backgroundColor: colors.blue300, color: colors.blue600};
+    case 'Thất Bại':
+      return {backgroundColor: colors.green200, color: colors.green700};
+    default:
+      return {backgroundColor: colors.green200, color: colors.gray700};
+  }
 };
 
-const orders = [
-  {id: 1, status: 'Chờ xử lý', orderId: '02312', time: '9:30'},
-  {id: 2, status: 'Đang xử lý', orderId: '02313', time: '10:00'},
-  {id: 3, status: 'Hoàn tất', orderId: '02314', time: '12:30'},
-  {id: 4, status: 'Hủy', orderId: '02315', time: '15:30'},
-  {id: 5, status: 'Chờ xử lý', orderId: '02316', time: '19:00'},
-];
+
 
 const styles = StyleSheet.create({
   container: {

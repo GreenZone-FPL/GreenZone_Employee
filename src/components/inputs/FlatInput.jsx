@@ -1,16 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { TextInput } from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
+import {StyleSheet, Text, View} from 'react-native';
+import {TextInput} from 'react-native-paper';
+import {GLOBAL_KEYS, colors} from '../../constants';
 
 // PropTypes cho FlatInput
 const FlatInputPropTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
+  value: PropTypes.string.isRequired,
   setValue: PropTypes.func.isRequired,
   message: PropTypes.string,
-  setIsPasswordVisible: PropTypes.func,
+  setIsPasswordVisible: PropTypes.func, // Có thể không truyền, tránh lỗi
   isPasswordVisible: PropTypes.bool,
   secureTextEntry: PropTypes.bool,
   style: PropTypes.object,
@@ -26,54 +27,21 @@ const FlatInputPropTypes = {
   ]),
 };
 
-// PropTypes cho CustomFlatInput
-const CustomFlatInputPropTypes = {
-  label: PropTypes.string,
-  placeholder: PropTypes.string,
-  value: PropTypes.string.isRequired,
-  setValue: PropTypes.func.isRequired,
-  message: PropTypes.string,
-  rightIcon: PropTypes.string,
-  onRightPress: PropTypes.func,
-  rightIconColor: PropTypes.string,
-  style: PropTypes.object,
-  editable: PropTypes.bool,
-  keyboardType: PropTypes.oneOf([
-    'default',
-    'number-pad',
-    'decimal-pad',
-    'numeric',
-    'email-address',
-    'phone-pad',
-    'url',
-  ]),
-};
-
-/**
- * Usage Example:
- *
- * <FlatInput
- *    label="Email"
- *    placeholder="Enter your email"
- *    setValue={(text) => setEmail(text)}
- *    message={emailError}
- *    keyboardType="email-address"
- * />
- */
+// 🔹 `FlatInput` đã sửa lỗi
 export const FlatInput = ({
   label = 'Default label',
-  placeholder = 'Default place holder',
+  placeholder = 'Default placeholder',
   value,
   setValue,
-  message,
-  setIsPasswordVisible,
+  message = '',
+  setIsPasswordVisible = () => {}, // Giá trị mặc định tránh lỗi
   isPasswordVisible = false,
   secureTextEntry = false,
   style,
   editable = true,
   keyboardType = 'default',
   onSubmitEditing,
-  returnKeyType = "done"
+  returnKeyType = 'done',
 }) => {
   return (
     <View style={[styles.inputContainer, style]}>
@@ -85,7 +53,7 @@ export const FlatInput = ({
         placeholder={placeholder}
         placeholderTextColor={colors.gray400}
         error={!!message}
-        outlineColor={!!message ? colors.red800 : colors.primary}
+        outlineColor={message ? colors.red800 : colors.primary}
         activeUnderlineColor={colors.primary}
         underlineColor={colors.primary}
         secureTextEntry={secureTextEntry && !isPasswordVisible}
@@ -104,32 +72,22 @@ export const FlatInput = ({
         onSubmitEditing={onSubmitEditing}
         returnKeyType={returnKeyType}
       />
-      {message && <Text style={styles.errorText}>{message}</Text>}
+      {message ? <Text style={styles.errorText}>{message}</Text> : null}
     </View>
   );
 };
 
 FlatInput.propTypes = FlatInputPropTypes;
 
-/**
- * Usage Example:
- *
- * <CustomFlatInput
- *    label="Email"
- *    placeholder="Enter your email"
- *    setValue={(text) => setEmail(text)}
- *    message={emailError}
- *    keyboardType="email-address"
- * />
- */
+// 🔹 `CustomFlatInput` đã sửa lỗi
 export const CustomFlatInput = ({
   label = 'Default label',
-  placeholder = 'Default place holder',
+  placeholder = 'Default placeholder',
   value,
   setValue,
-  message,
+  message = '',
   rightIcon = 'calendar',
-  onRightPress,
+  onRightPress = () => {}, // Tránh lỗi khi không truyền
   rightIconColor = colors.primary,
   style,
   editable = true,
@@ -145,7 +103,7 @@ export const CustomFlatInput = ({
         placeholder={placeholder}
         placeholderTextColor={colors.gray400}
         error={!!message}
-        outlineColor={!!message ? colors.red800 : colors.primary}
+        outlineColor={message ? colors.red800 : colors.primary}
         activeUnderlineColor={colors.primary}
         underlineColor={colors.primary}
         style={styles.input}
@@ -159,20 +117,28 @@ export const CustomFlatInput = ({
         editable={editable}
         keyboardType={keyboardType}
       />
-      {message && <Text style={styles.errorText}>{message}</Text>}
+      {message ? <Text style={styles.errorText}>{message}</Text> : null}
     </View>
   );
 };
 
-CustomFlatInput.propTypes = CustomFlatInputPropTypes;
+CustomFlatInput.propTypes = {
+  ...FlatInputPropTypes,
+  rightIcon: PropTypes.string,
+  onRightPress: PropTypes.func,
+  rightIconColor: PropTypes.string,
+};
 
 const styles = StyleSheet.create({
+  inputContainer: {
+    marginBottom: 10,
+  },
   input: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     backgroundColor: colors.white,
     elevation: 3,
     shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: {width: 0, height: 3},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
@@ -182,10 +148,4 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
     marginTop: 4,
   },
-  disabledInput: {
-    backgroundColor: colors.gray200,
-    color: colors.gray500,
-  },
 });
-
-
