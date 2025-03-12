@@ -13,7 +13,9 @@ const HomeScreen = () => {
     navigation.navigate('OrderDetailScreen', {orderId});
   };
 
-
+  const filteredOrders = status => {
+    return orders.filter(order => order.status === status);
+  };
 
   return (
     <View style={styles.container}>
@@ -96,7 +98,13 @@ const getStatusStyle = status => {
   }
 };
 
-
+const orders = [
+  {id: 1, status: 'Chờ xử lý', orderId: '02312', time: '9:30'},
+  {id: 2, status: 'Đang xử lý', orderId: '02313', time: '10:00'},
+  {id: 3, status: 'Hoàn tất', orderId: '02314', time: '12:30'},
+  {id: 4, status: 'Hủy', orderId: '02315', time: '15:30'},
+  {id: 5, status: 'Chờ xử lý', orderId: '02316', time: '19:00'},
+];
 
 const styles = StyleSheet.create({
   container: {
