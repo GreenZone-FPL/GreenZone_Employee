@@ -27,15 +27,7 @@ export const  StoreAddress = ({
   return (
     <View style={{backgroundColor: colors.white}}>
         <View style={[styles.header, style]}>
-          <Text style={styles.title}>Green zone - {title}</Text>
-          <View style={{flexDirection:'row', gap: 10}}>
-              <TouchableOpacity onPress={onPhonePress} style={{backgroundColor: colors.gray200, padding: 8, borderRadius: 16}}>
-                <Call size="24" color={colors.primary} variant="Bold"/>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={onAdressPress} style={{backgroundColor: colors.gray200, padding: 8, borderRadius: 16}}>
-                <Send2 size="24" color={colors.primary} variant="Bold"/>
-              </TouchableOpacity>
-          </View>
+          <Text style={styles.title}>{title}</Text>
         </View>
         <View>{children}</View>
     </View>
@@ -60,7 +52,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
-    color: colors.black,
+    color: colors.primary,
     flex: 1,
   },
 });
