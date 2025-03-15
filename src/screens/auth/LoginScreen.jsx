@@ -20,7 +20,7 @@ const {width} = Dimensions.get('window');
 
 const LoginScreen = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('0911111111');
-  const [password, setPassword] = useState('kyh4xk7a');
+  const [password, setPassword] = useState('123456');
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [isChecked, setIsChecked] = useState(true);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -83,6 +83,8 @@ const LoginScreen = ({navigation}) => {
         'storeId',
         response.data?.user?.workingStore,
       );
+      await AppAsyncStorage.storeData('phoneNumber', phoneNumber);
+  ;
        console.log('✅ Đăng nhập thành công, khởi tạo socket...');
        shipperSocketSevice.initialize(); // Khởi tạo socket sau khi đăng nhập thành công
 
