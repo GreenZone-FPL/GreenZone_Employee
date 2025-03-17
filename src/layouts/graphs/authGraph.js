@@ -6,6 +6,7 @@ export const AuthGraph = Object.freeze({
   graphName: AppGraph.AUTHENTICATION,
 
   SplashScreen: 'SplashScreen',
+  SplashScreen2: 'SplashScreen2',
   LoginScreen: 'LoginScreen',
   VerifyOTPScreen: 'VerifyOTPScreen',
   DeliveryMapScreen: 'DeliveryMapScreen',

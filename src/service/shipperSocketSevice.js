@@ -1,5 +1,5 @@
-import {io} from 'socket.io-client';
-import {AppAsyncStorage} from '../utils';
+import { io } from 'socket.io-client';
+import { AppAsyncStorage } from '../utils';
 import mitt from 'mitt';
 
 class ShipperSocketService {
@@ -11,11 +11,9 @@ class ShipperSocketService {
   async initialize() {
     if (!this.socket) {
       try {
-        const token = await AppAsyncStorage.readData(
-          AppAsyncStorage.STORAGE_KEYS.accessToken,
-        );
-        const storeId = await AppAsyncStorage.readData('storeId');
-        console.log('Token:', token);
+        const token = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+        const storeId = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.storeId);
+
         console.log('storeId:', storeId);
 
         if (!token || !storeId) {
@@ -28,7 +26,7 @@ class ShipperSocketService {
         this.socket = io('https://greenzone.motcaiweb.io.vn', {
           path: '/socket.io/',
           transports: ['websocket'],
-          auth: {token},
+          auth: { token },
         });
 
         this.socket.on('connect', () => {
@@ -55,7 +53,7 @@ class ShipperSocketService {
             '📩 Nhận được order.assigned:',
             JSON.stringify(data, null, 2),
           );
-         
+
         });
 
         this.socket.on('disconnect', () => {

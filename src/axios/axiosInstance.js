@@ -1,5 +1,9 @@
 import axios from 'axios';
-import {AppAsyncStorage} from '../utils';
+import { AppAsyncStorage } from '../utils';
+import { globalAuthDispatch } from '../context/appContext';
+import { AuthActionTypes } from '../reducers/authReducer';
+
+
 export const baseURL = 'https://greenzone.motcaiweb.io.vn/';
 
 const axiosInstance = axios.create({
@@ -17,7 +21,7 @@ axiosInstance.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
-    } catch (error) {}
+    } catch (error) { }
     return config;
   },
   error => Promise.reject(error),
@@ -31,14 +35,23 @@ axiosInstance.interceptors.response.use(
 
       const token = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken);
       console.log('token', token)
-      if (token) { 
-    
-        await AppAsyncStorage.removeData(
-          AppAsyncStorage.STORAGE_KEYS.accessToken,
-        )
-        await AppAsyncStorage.removeData(
-          AppAsyncStorage.STORAGE_KEYS.refreshToken,
-        )
+      if (token) {
+
+        await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken)
+        await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken)
+
+        if (globalAuthDispatch) {
+          globalAuthDispatch({
+            type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
+            payload: 'Phiên đăng nhập hết hạn'
+          })
+        }
+      } else { // đã logout và hết hạn token
+        if (globalAuthDispatch) {
+          globalAuthDispatch({
+            type: AuthActionTypes.LOGIN_SESSION_EXPIRED
+          });
+        }
       }
 
       return Promise.reject(err.response.data);
