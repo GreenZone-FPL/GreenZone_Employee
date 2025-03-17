@@ -1,11 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 export class AppAsyncStorage {
   static STORAGE_KEYS = {
     accessToken: 'accessToken',
     refreshToken: 'refreshToken',
-  };
+    merchant: 'merchant',
+    storeId: 'storeId'
+  }
 
   static async readData(key, defaultValue = null) {
     try {
@@ -52,14 +54,14 @@ export class AppAsyncStorage {
     }
 
     try {
-      const decoded = jwtDecode(accessToken); // Sử dụng jwt_decode thay vì jwtDecode
+      const decoded = jwtDecode(accessToken);
       console.log('decoded', decoded);
-      const currentTime = Math.floor(Date.now() / 1000); // Thời gian hiện tại (tính theo giây)
+      const currentTime = Math.floor(Date.now() / 1000);
 
-      return decoded.exp > currentTime; // Nếu exp lớn hơn currentTime thì token còn hạn
+      return decoded.exp > currentTime;
     } catch (error) {
       console.log('Lỗi khi decode token:', error);
-      return false; // Token không hợp lệ
+      return false;
     }
   }
 }
