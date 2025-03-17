@@ -3,15 +3,15 @@ import React, { useEffect } from 'react';
 import { AuthGraph, MainGraph } from '../../layouts/graphs';
 import { useAppContext } from '../../context/appContext';
 
-const SplashScreen = ({ navigation }) => {
+const SplashScreen2 = ({ navigation }) => {
   const { authState } = useAppContext();
   useEffect(() => {
     const timer = setTimeout(() => {
         navigation.reset({
           index: 0,
-          routes: [{ name: AuthGraph.LoginScreen }],
+          routes: [{ name: MainGraph.graphName }],
         })
-
+      
     }, 1000);
 
     return () => clearTimeout(timer);
@@ -19,12 +19,12 @@ const SplashScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>SplashScreen</Text>
+      <Text style={styles.text}>SplashScreen2</Text>
     </View>
   );
 };
 
-export default SplashScreen;
+export default SplashScreen2;
 
 const styles = StyleSheet.create({
   container: {

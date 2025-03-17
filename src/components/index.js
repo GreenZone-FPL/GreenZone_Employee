@@ -1,3 +1,6 @@
+
+export * from './animation/Ani_ModalLoading';
+
 // activity-indicator
 export * from './indicators/Indicator';
 //barcode

@@ -1,20 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { Icon } from 'react-native-paper';
-import { Column, FlatInput, LightStatusBar, OverlayStatusBar, PrimaryButton } from '../../components';
+import React, { useState } from 'react';
+import { Dimensions, Image, StyleSheet, Text } from 'react-native';
+import { login2 } from '../../axios';
+import { Column, FlatInput, LightStatusBar, PrimaryButton, Ani_ModalLoading } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph } from '../../layouts/graphs';
-import { AppAsyncStorage, Toaster } from '../../utils';
-import { login2 } from '../../axios/index';
-import { Ani_ModalLoading } from '../../components/animation/Ani_ModalLoading';
 import shipperSocketSevice from '../../service/shipperSocketSevice';
+import { AppAsyncStorage, Toaster } from '../../utils';
+import { useAppContext } from '../../context/appContext';
+import { AuthActionTypes } from '../../reducers/authReducer';
 
 const { width, height } = Dimensions.get('window');
 
@@ -25,7 +18,9 @@ const LoginScreen = ({ navigation }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState(false);
+  const { authState, authDispatch } = useAppContext()
 
+  
   const handleLogin = async () => {
     if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
       setPhoneNumberError(true);
@@ -36,7 +31,11 @@ const LoginScreen = ({ navigation }) => {
     try {
       setLoading(true);
 
-      await login2({ phoneNumber, password });
+      const respone = await login2({ phoneNumber, password });
+
+      if (respone) {
+        authDispatch({ type: AuthActionTypes.LOGIN })
+      }
       console.log('✅Khởi tạo socket...');
 
       await shipperSocketSevice.initialize();
@@ -50,7 +49,7 @@ const LoginScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
-  
+
 
   return (
     <Column style={styles.container}>
@@ -59,6 +58,11 @@ const LoginScreen = ({ navigation }) => {
         style={styles.image}
         source={require('../../assets/images/logo2.png')}
       />
+
+      {/* {
+        authState.isLoggedIn == false && AppAsyncStorage.isTokenValid() &&
+        <Ani_ModalLoading loading={true} message='Tự đăng nhập' />
+      } */}
 
       <Text style={styles.headerText}>GreenZone Delivery</Text>
 

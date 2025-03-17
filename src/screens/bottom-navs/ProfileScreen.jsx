@@ -7,14 +7,20 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import {LightStatusBar} from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {Icon} from 'react-native-paper';
-import {AuthGraph} from '../../layouts/graphs';
+import { LightStatusBar } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { Icon } from 'react-native-paper';
+import { AuthGraph } from '../../layouts/graphs';
+import { useAppContext } from '../../context/appContext';
+import { AppAsyncStorage } from '../../utils';
+import { AuthActionTypes } from '../../reducers/authReducer';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ({ navigation }) => {
+  const { authDispatch } = useAppContext()
+
+
   const goScreenName = name => {
     navigation.navigate(name);
   };
@@ -23,7 +29,7 @@ const ProfileScreen = ({navigation}) => {
     <View style={styles.container}>
       <LightStatusBar />
       <Header />
-      <Body goScreenName={goScreenName} />
+      <Body goScreenName={goScreenName} authDispatch={authDispatch} />
     </View>
   );
 };
@@ -61,7 +67,7 @@ const Header = () => {
   );
 };
 
-const Body = ({goScreenName}) => {
+const Body = ({ goScreenName, authDispatch }) => {
   return (
     <View style={styles.bodyContainer}>
       <Text style={styles.bodyTitle}>Options</Text>
@@ -83,13 +89,18 @@ const Body = ({goScreenName}) => {
         title="Log Out"
         icon="logout"
         checkIcon={false}
-        onPress={() => goScreenName(AuthGraph.LoginScreen)}
+        onPress={async () => {
+
+          await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken)
+          await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken)
+          authDispatch({ type: AuthActionTypes.LOGOUT });
+        }}
       />
     </View>
   );
 };
 
-const ItemRow = ({icon, title, onPress, checkIcon}) => {
+const ItemRow = ({ icon, title, onPress, checkIcon }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.itemRow}>
       <View style={styles.itemRowContent}>
@@ -111,7 +122,7 @@ const ItemRow = ({icon, title, onPress, checkIcon}) => {
   );
 };
 
-const RowContent = ({title, icon}) => {
+const RowContent = ({ title, icon }) => {
   return (
     <View style={styles.rowContent}>
       <Icon

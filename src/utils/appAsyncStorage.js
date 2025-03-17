@@ -46,18 +46,14 @@ export class AppAsyncStorage {
   }
 
   static async isTokenValid() {
-    const accessToken = await AppAsyncStorage.readData(
-      AppAsyncStorage.STORAGE_KEYS.accessToken,
-    );
+    const accessToken = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken)
     if (!accessToken) {
-      return false;
+      return false
     }
 
     try {
       const decoded = jwtDecode(accessToken);
-      console.log('decoded', decoded);
       const currentTime = Math.floor(Date.now() / 1000);
-
       return decoded.exp > currentTime;
     } catch (error) {
       console.log('Lỗi khi decode token:', error);
