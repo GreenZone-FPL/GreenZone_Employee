@@ -6,7 +6,8 @@ export class AppAsyncStorage {
     accessToken: 'accessToken',
     refreshToken: 'refreshToken',
     merchant: 'merchant',
-    storeId: 'storeId'
+    storeId: 'storeId',
+    phoneNumber: 'phoneNumber'
   }
 
   static async readData(key, defaultValue = null) {

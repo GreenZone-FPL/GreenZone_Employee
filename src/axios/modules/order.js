@@ -12,6 +12,18 @@ export const getOrders = async status => {
 };
 
 
+export const getOrdersByStatus = async status => {
+  try {
+    const response = await axiosInstance.get(`/v1/order/store/all?status=${status}`);
+    return response.data;
+  } catch (error) {
+    console.log(`Error`, error);
+    throw error
+  }
+};
+
+
+
 export const getOrderDetail = async orderId => {
   try {
     const response = await axiosInstance.get(`/v1/order/${orderId}`);

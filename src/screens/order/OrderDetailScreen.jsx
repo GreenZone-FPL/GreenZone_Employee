@@ -36,7 +36,7 @@ const OrderDetailScreen = ({navigation, route}) => {
   const fetchOrderDetail = async () => {
     try {
       const data = await getOrderDetail(orderId);
-      setOrderDetail(data.data);
+      setOrderDetail(data);
     } catch (error) {
       console.error('Lỗi lấy chi tiết đơn hàng:', error);
     } finally {
@@ -95,7 +95,7 @@ const OrderInfo = ({_id, status, fulfillmentDateTime}) => {
           </Text>
         </View>
         <Text style={styles.orderStatus}>
-          {status === 'readyForPickup' ? 'Sẵn sàng giao' : 'Đang xử lý'}
+          {OrderStatus.getLabelByValue(status)}
         </Text>
       </View>
     </View>
