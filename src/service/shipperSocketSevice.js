@@ -31,11 +31,10 @@ class ShipperSocketService {
           auth: {token},
         });
 
-        // Lắng nghe khi socket kết nối thành công
         this.socket.on('connect', () => {
-          console.log('Shipper connected', this.socket.id);
+          console.log('✅ Shipper đã kết nối:', this.socket.id);
           this.socket.emit('store.join', storeId);
-          console.log(`Shipper joined store room: ${storeId}`);
+          console.log(`🚀 Shipper tham gia phòng cửa hàng: ${storeId}`);
         });
 
         this.socket.on('order.updateStatus', data => {
@@ -43,35 +42,38 @@ class ShipperSocketService {
             '📦 Nhận được order.updateStatus:',
             JSON.stringify(data, null, 2),
           );
+          this.emitter.emit('order.updateStatus', data); // Phát sự kiện
 
           if (data.status === 'readyForPickup') {
-            console.log(
-              `🚀 Shipper tham gia room với orderId: ${data.orderId}`,
-            );
+            console.log(`🚀 Tham gia room với orderId: ${data.orderId}`);
             this.socket.emit('order.join', data.orderId);
-          }
+          } this.emitter.emit('order.join', data); // Phát sự kiện
         });
 
+        this.socket.on('order.assigned', data => {
+          console.log(
+            '📩 Nhận được order.assigned:',
+            JSON.stringify(data, null, 2),
+          );
+         
+        });
 
-        // Lắng nghe khi socket bị ngắt kết nối
         this.socket.on('disconnect', () => {
-          console.log(' Disconnected');
+          console.log('❌ Socket đã ngắt kết nối');
         });
 
-        // Bắt lỗi khi kết nối thất bại
         this.socket.on('connect_error', error => {
-          console.error('Lỗi kết nối:', error);
+          console.error('⚠️ Lỗi kết nối:', error);
         });
 
-        // Bắt tất cả sự kiện để debug
         this.socket.onAny((event, ...args) => {
           console.log(
-            `Nhận được sự kiện: ${event}`,
+            `📡 Nhận sự kiện: ${event}`,
             JSON.stringify(args, null, 2),
           );
         });
       } catch (error) {
-        console.log('Lỗi khi khởi tạo socket:', error);
+        console.log('❌ Lỗi khi khởi tạo socket:', error);
       }
     }
   }
@@ -88,10 +90,9 @@ class ShipperSocketService {
     if (this.socket) {
       this.socket.disconnect();
       this.socket = null;
-      console.log('Socket đã ngắt kết nối');
+      console.log('🔌 Socket đã ngắt kết nối');
     }
   }
 }
 
-// Xuất đối tượng ShipperSocketService
 export default new ShipperSocketService();

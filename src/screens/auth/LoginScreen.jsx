@@ -83,8 +83,10 @@ const LoginScreen = ({ navigation }) => {
         'storeId',
         response.data?.user?.workingStore,
       );
-      console.log('✅ Đăng nhập thành công, khởi tạo socket...');
-      shipperSocketSevice.initialize(); // Khởi tạo socket sau khi đăng nhập thành công
+      await AppAsyncStorage.storeData('phoneNumber', phoneNumber);
+  
+       console.log('✅ Đăng nhập thành công, khởi tạo socket...');
+       shipperSocketSevice.initialize(); // Khởi tạo socket sau khi đăng nhập thành công
 
       // console.log(merchant);
       navigation.navigate(AppGraph.MAIN);
