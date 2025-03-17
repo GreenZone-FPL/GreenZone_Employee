@@ -1,6 +1,7 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import HomeScreen from '../../screens/bottom-navs/HomeScreen';
+import HomeScreen2 from '../../screens/bottom-navs/HomeScreen2';
 import OrderHistoryScreen from '../../screens/order/OrderHistoryScreen';
 import {AuthGraph, BottomGraph, OrderGraph} from '../graphs';
 
@@ -8,7 +9,9 @@ const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
   return (
     <HomeStack.Navigator screenOptions={{headerShown: false}}>
-      <HomeStack.Screen name={BottomGraph.HomeScreen} component={HomeScreen} />
+      <HomeStack.Screen name={'HomeScreen2'} component={HomeScreen2} />
+
+      {/* <HomeStack.Screen name={BottomGraph.HomeScreen} component={HomeScreen} /> */}
 
       <HomeStack.Screen
         name={OrderGraph.OrderHistoryScreen}

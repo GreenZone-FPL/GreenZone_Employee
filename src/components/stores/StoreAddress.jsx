@@ -17,7 +17,7 @@ const StoreAddressPropTypes = {
   style: PropTypes.object,
 };
 
-export const  StoreAddress = ({
+export const StoreAddress = ({
   title = 'Default Title',
   onPhonePress,
   onAdressPress,
@@ -25,11 +25,11 @@ export const  StoreAddress = ({
   style
 }) => {
   return (
-    <View style={{backgroundColor: colors.white}}>
-        <View style={[styles.header, style]}>
-          <Text style={styles.title}>{title}</Text>
-        </View>
-        <View>{children}</View>
+    <View style={{ backgroundColor: colors.white, gap: 8 }}>
+      <View style={[styles.header, style]}>
+        <Text style={styles.title}>{title}</Text>
+      </View>
+      <View>{children}</View>
     </View>
   );
 };
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     borderBottomWidth: 1,
-    borderColor: colors.gray300,
+    borderColor: colors.gray200,
     alignItems: 'center'
   },
   title: {
