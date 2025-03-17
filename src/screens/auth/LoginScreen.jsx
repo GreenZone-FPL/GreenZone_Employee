@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dimensions,
   Image,
@@ -7,25 +7,25 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {FlatInput, LightStatusBar, PrimaryButton} from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {AppGraph} from '../../layouts/graphs';
-import {AppAsyncStorage, Toaster} from '../../utils';
-import {login} from '../../axios/index';
-import {Ani_ModalLoading} from '../../components/animation/Ani_ModalLoading';
+import { Icon } from 'react-native-paper';
+import { FlatInput, LightStatusBar, PrimaryButton } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { AppGraph } from '../../layouts/graphs';
+import { AppAsyncStorage, Toaster } from '../../utils';
+import { login } from '../../axios/index';
+import { Ani_ModalLoading } from '../../components/animation/Ani_ModalLoading';
 import shipperSocketSevice from '../../service/shipperSocketSevice';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('0911111111');
-  const [password, setPassword] = useState('kyh4xk7a');
+  const [password, setPassword] = useState('123456');
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [isChecked, setIsChecked] = useState(true);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [loading, setLoading] = useState(false);  
+  const [loading, setLoading] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState(false);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const LoginScreen = ({navigation}) => {
     setLoading(true);
 
     try {
-      const response = await login({phoneNumber, password});
+      const response = await login({ phoneNumber, password });
       console.log('>>>>>>>>>>>>>>>>', JSON.stringify(response, null, 2));
       // Kiểm tra dữ liệu trả về có hợp lệ không
       const accessToken = response.data?.token?.accessToken?.token;
@@ -83,8 +83,8 @@ const LoginScreen = ({navigation}) => {
         'storeId',
         response.data?.user?.workingStore,
       );
-       console.log('✅ Đăng nhập thành công, khởi tạo socket...');
-       shipperSocketSevice.initialize(); // Khởi tạo socket sau khi đăng nhập thành công
+      console.log('✅ Đăng nhập thành công, khởi tạo socket...');
+      shipperSocketSevice.initialize(); // Khởi tạo socket sau khi đăng nhập thành công
 
       // console.log(merchant);
       navigation.navigate(AppGraph.MAIN);
@@ -112,7 +112,7 @@ const LoginScreen = ({navigation}) => {
         <Text style={styles.title}>Nhập số điện thoại của bạn</Text>
         <FlatInput
           label="Nhập số điện thoại"
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
           placeholder="Nhập số điện thoại của bạn"
           setValue={setPhoneNumber}
           value={phoneNumber}
@@ -127,28 +127,21 @@ const LoginScreen = ({navigation}) => {
           isPasswordVisible={isPasswordVisible}
           setIsPasswordVisible={setIsPasswordVisible}
         />
-        <View style={styles.checkboxContainer}>
-          <CustomCheckBox isChecked={isChecked} setIsChecked={setIsChecked} />
-          <Text style={styles.checkboxText}>
-            Bằng việc đăng ký, tôi đồng ý với
-            <Text style={styles.linkText}> Điều khoản sử dụng</Text> và
-            <Text style={styles.linkText}> Chính sách bảo mật</Text>.
-          </Text>
-        </View>
-        {isChecked && <PrimaryButton title="Đăng Nhập" onPress={handleLogin} />}
+
+        <PrimaryButton title="Đăng Nhập" onPress={handleLogin} />
       </View>
       <Ani_ModalLoading loading={loading} message="Đang xử lý..." />
     </View>
   );
 };
 
-const CustomCheckBox = ({isChecked, setIsChecked}) => {
+const CustomCheckBox = ({ isChecked, setIsChecked }) => {
   return (
     <TouchableOpacity
       onPress={() => setIsChecked(prev => !prev)}
       style={[
         styles.checkboxButton,
-        isChecked && {backgroundColor: colors.primary},
+        isChecked && { backgroundColor: colors.primary },
       ]}>
       {isChecked && (
         <Icon
@@ -184,6 +177,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: colors.primary,
     marginVertical: '10%',
+    fontWeight: '700'
   },
   title: {
     flexShrink: 1,
