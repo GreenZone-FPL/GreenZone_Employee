@@ -103,6 +103,16 @@ const OrderDetailScreen = props => {
 
 
 
+        {status === OrderStatus.COMPLETED.value && (
+
+          <PrimaryButton
+            style={{ flex: 1, margin: 16 }}
+            onPress={() => onApprove("Tiến hành giao hàng", OrderStatus.SHIPPING_ORDER.value)}
+            title='Tiến hành giao hàng'
+          />
+        )}
+
+
         {status === OrderStatus.SHIPPING_ORDER.value && (
           <Row style={{ gap: 16, backgroundColor: colors.white, padding: 16 }}>
             <PrimaryButton
@@ -138,7 +148,7 @@ const OrderDetailScreen = props => {
 
 
 const ShipperInfo = ({ messageClick, shipper }) => {
-  console.log('shipper', shipper)
+
   return (
     <Row style={{ gap: 16, padding: 16, backgroundColor: colors.white, marginBottom: 5 }}>
       <Image
@@ -313,7 +323,7 @@ const PaymentDetails = ({
         leftText="Tổng tiền"
         rightText={`${totalPrice.toLocaleString()}đ`}
         leftTextStyle={{ color: colors.primary, fontWeight: '700' }}
-        rightTextStyle={{ color: colors.primary, fontWeight: '700' }}
+        rightTextStyle={{ color: colors.primary, fontWeight: '700', fontSize: 16 }}
       />
       <DualTextRow
         leftText="Trạng thái thanh toán"
