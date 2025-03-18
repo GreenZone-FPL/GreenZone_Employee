@@ -1,5 +1,6 @@
 
 export * from './animation/Ani_ModalLoading';
+export * from './animation/NormalLoading';
 
 // activity-indicator
 export * from './indicators/Indicator';
@@ -32,6 +33,7 @@ export * from './dialogs/DialogShippingMethod';
 export * from './dialogs/DialogFeedback';
 export * from './dialogs/DialogBasic';
 export * from './dialogs/DialogReviewOder';
+export * from './dialogs/ActionDialog';
 
 // flatlists
 export * from './flatlists/ProductsListHorizontal';

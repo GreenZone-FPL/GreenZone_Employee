@@ -53,7 +53,7 @@ export const HorizontalProductItem = ({
       {item.variantName && !item.isVariantDefault && (
         <Text
           style={[styles.normalText, {color: colors.yellow700}, optionStyle]}>
-          Size: {item.variantName}
+          {item.variantName}
         </Text>
       )}
 
@@ -107,17 +107,11 @@ HorizontalProductItem.propTypes = HorizontalProductItemPropTypes;
 const styles = StyleSheet.create({
   itemProduct: {
     flexDirection: 'row',
-    padding: GLOBAL_KEYS.PADDING_SMALL,
+    paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     borderRadius: 4,
     gap: GLOBAL_KEYS.GAP_SMALL,
     backgroundColor: colors.white,
-    // borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    elevation: 3,
-    shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    marginBottom: 8,
   },
   itemImage: {
     width: 50,

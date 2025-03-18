@@ -22,7 +22,6 @@ import CallWithUser from './src/screens/user/CallWithUser';
 import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
 
 
-
 const BaseStack = createNativeStackNavigator();
 
 function App() {

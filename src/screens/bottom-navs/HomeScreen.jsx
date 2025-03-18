@@ -1,19 +1,22 @@
-import {useNavigation} from '@react-navigation/native';
-import {Tab, TabView} from '@rneui/themed';
-import React, {useEffect, useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from 'react-native';
-import {LightStatusBar, StoreAddress} from '../../components';
-import {colors, GLOBAL_KEYS, OrderStatus} from '../../constants';
-import { getOrders } from '../../axios';
-import { AppAsyncStorage } from '../../utils';
+import { getOrdersByStatus } from '../../axios';
+import { Column, CustomTabView, LightStatusBar, NormalText, Row, StoreAddress, TitleText } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { AppAsyncStorage, TextFormatter } from '../../utils';
+import { OrderGraph } from '../../layouts/graphs';
 
+
+const statuses = ['readyForPickup', 'shippingOrder', 'completed', 'failedDelivery'];
+const tabTitles = ['Đơn Mới', 'Đang Giao', 'Hoàn Tất', 'Giao Thất Bại'];
 
 const HomeScreen = () => {
   const [index, setIndex] = useState(0);
@@ -22,138 +25,111 @@ const HomeScreen = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
- const fetchOrders = async () => {
-   setLoading(true);
-   try {
-     const assignedShipperId = await AppAsyncStorage.readData('phoneNumber');
-     console.log('Shipper phoneNumber:', assignedShipperId);
+    const fetchOrders = async () => {
+      setLoading(true);
+      try {
+        const phoneNumber = await AppAsyncStorage.readData('phoneNumber');
+        const response = await getOrdersByStatus(statuses[index]);
 
-     if (!assignedShipperId) {
-       console.error('Không tìm thấy shipperId');
-       setLoading(false);
-       return;
-     }
-
-     const statusList = [
-       'readyForPickup',
-       'shippingOrder',
-       'completed',
-       'failedDelivery',
-     ];
-     const response = await getOrders(statusList[index]);
-
-     console.log('API Response:', JSON.stringify(response,null,2)); // Kiểm tra dữ liệu API
-
-     if (response?.success) {
-       const filteredOrders = response.data.filter(
-         order =>
-           String(order.shipper.phoneNumber) === String(assignedShipperId),
-       );
-       console.log('Filtered Orders:', JSON.stringify(filteredOrders,null,2)); // Kiểm tra danh sách đã lọc
-       setOrders(filteredOrders);
-     }
-   } catch (error) {
-     console.error('Lỗi khi lấy đơn hàng:', error);
-   } finally {
-     setLoading(false);
-   }
- };
-
+        const filteredOrders = response.filter(o => o.shipper.phoneNumber === phoneNumber);
+        setOrders(filteredOrders);
+      } catch (error) {
+        console.error('Error', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchOrders();
-  }, [index]); // Gọi lại khi index (trạng thái đơn hàng) thay đổi
+  }, [index]);
 
-  const handleOrderPress = orderId => {
-    navigation.navigate('OrderDetailScreen', {orderId});
-  };
-  const getStatusLabel = value => {
-    const statusEntry = Object.values(OrderStatus).find(
-      status => status.value === value,
-    );
-    return statusEntry ? statusEntry.label : 'Không xác định';
-  };
+ 
 
   return (
     <View style={styles.container}>
       <LightStatusBar />
-      <Text style={styles.headerText}>Đơn hàng</Text>
-      <Tab value={index} onChange={setIndex} scrollable variant="secondary">
-        {['Đơn Mới', 'Đang Giao', 'Hoàn Tất', 'Giao Thất Bại'].map(
-          (title, i) => (
-            <Tab.Item
-              key={i}
-              title={title}
-              titleStyle={styles.tabTitle(index === i)}
-              containerStyle={styles.tabContainer(index === i)}
-            />
-          ),
-        )}
-      </Tab>
-      <TabView value={index} onChange={setIndex} animationType="spring">
-        {[
-          'readyForPickup',
-          'shippingOrder',
-          'completed',
-          'failedDelivery',
-        ].map((status, i) => (
-          <TabView.Item key={i} style={styles.tabView}>
+      <Text style={styles.headerText}>Đơn hàng2</Text>
+
+      <CustomTabView
+        tabIndex={index}
+        setTabIndex={setIndex}
+        tabBarConfig={{
+          titles: tabTitles,
+          titleActiveColor: colors.primary,
+          titleInActiveColor: colors.gray700,
+        }}
+      >
+        {statuses.map((status, i) => (
+          <Column key={i} style={styles.tabView}>
             <StoreAddress title="GREEN ZONE">
               {loading ? (
                 <ActivityIndicator size="large" color={colors.green700} />
               ) : (
                 <FlatList
+                  showsVerticalScrollIndicator={false}
                   data={orders.filter(order => order.status === status)}
                   keyExtractor={item => item._id}
-                  renderItem={({item}) => (
-                    <TouchableOpacity
-                      style={styles.orderItem}
-                      onPress={() => handleOrderPress(item._id)}>
-                      <View style={{flex: 2}}>
-                        <Text style={styles.orderId}>
-                          Mã đơn hàng: #{item._id}
-                        </Text>
-                        <Text>
-                          Thời gian:{' '}
-                          {new Date(item.fulfillmentDateTime).toLocaleString()}
-                        </Text>
-                      </View>
-                      <Text
-                        style={[
-                          styles.orderStatus,
-                          getStatusStyle(item.status),
-                        ]}>
-                        {getStatusLabel(item.status)}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+                  contentContainerStyle={{ gap: 5, backgroundColor: colors.fbBg }}
+                  renderItem={({ item }) =>
+                    <OrderItem
+                      item={item}
+                      handleOrderPress={() => navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: item._id })}
+                    />
+                  }
                 />
+
               )}
             </StoreAddress>
-          </TabView.Item>
+          </Column>
         ))}
-      </TabView>
+      </CustomTabView>
     </View>
   );
 };
 
 
-const getStatusStyle = status => {
-  switch (status) {
-    case 'readyForPickup':
-      return {backgroundColor: colors.red200, color: colors.red800};
-    case 'shippingOrder':
-      return {backgroundColor: colors.red200, color: colors.red800};
-    case 'completed':
-      return {backgroundColor: colors.blue300, color: colors.blue600};
-    case 'failedDelivery':
-      return {backgroundColor: colors.green200, color: colors.green700};
-    default:
-      return {backgroundColor: colors.gray200, color: colors.gray700};
-  }
+const OrderItem = ({ item, handleOrderPress }) => {
+  const { _id, totalPrice, shippingAddress, fulfillmentDateTime } = item;
+  const { consigneeName, consigneePhone, specificAddress, ward, district, province } = shippingAddress;
+  const formattedAddress = `${specificAddress}, ${ward}, ${district}, ${province}`;
+
+  const getOrderItemsText = () => {
+    const items = item?.orderItems || [];
+    if (items.length > 2) {
+      return `${items[0].product.name} - ${items[1].product.name} và ${items.length - 2
+        } sản phẩm khác`;
+    }
+    return (
+      items.map(item => item.product.name).join(' - ') || 'Chưa có sản phẩm'
+    );
+  };
+
+
+  return (
+    <TouchableOpacity style={styles.orderItem} onPress={handleOrderPress}>
+      <Column style={{ flex: 2 }}>
+        <Row style={{ justifyContent: 'space-between' }}>
+          <NormalText text={`#${_id}`} style={styles.orderIdText} />
+          <TitleText text={TextFormatter.formatCurrency(totalPrice)} style={styles.priceText} />
+        </Row>
+
+        <Text numberOfLines={2} style={styles.orderName}>
+          {getOrderItemsText()}
+        </Text>
+
+
+
+        <NormalText text={`${consigneeName} || ${consigneePhone}`} style={styles.recipientText} />
+        <NormalText text={formattedAddress} />
+        <NormalText text={new Date(fulfillmentDateTime).toLocaleString()} style={styles.dateText} />
+      </Column>
+    </TouchableOpacity>
+  );
 };
 
+
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: colors.white},
+  container: { flex: 1, backgroundColor: colors.white },
   headerText: {
     fontWeight: 'bold',
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
@@ -162,38 +138,22 @@ const styles = StyleSheet.create({
   },
   tabView: {
     width: '100%',
-    backgroundColor: colors.gray200,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    backgroundColor: colors.fbBg,
+    gap: 8
   },
   orderItem: {
     backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderBottomWidth: 1,
-    borderColor: colors.gray400,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingVertical: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  orderId: {fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, fontWeight: 'bold'},
-  orderStatus: {
-    flex: 1,
-    borderRadius: 6,
-    fontWeight: '500',
-    textAlign: 'center',
-    height: 25,
-    paddingVertical: 4,
-  },
-  tabTitle: active => ({
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: active ? colors.white : colors.black,
-    height: 55,
-  }),
-  tabContainer: active => ({
-    backgroundColor: active ? colors.green700 : colors.white,
-    borderRadius: 10,
-    paddingVertical: 4,
-    height: 30,
-  }),
+  recipientText: { color: colors.black, fontWeight: '500' },
+  orderIdText: { color: colors.pink500 },
+  priceText: { color: colors.primary },
+  dateText: { color: colors.gray700 },
+  orderName: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, fontWeight: '500', color: colors.primary },
 });
 
 export default HomeScreen;
