@@ -128,6 +128,7 @@ function AppNavigator({ navigation }) {
           )}
 
           <BaseStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
+          {/* <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} /> */}
 
         </>
 

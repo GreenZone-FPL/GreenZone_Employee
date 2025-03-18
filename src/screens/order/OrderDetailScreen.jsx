@@ -81,14 +81,14 @@ const OrderDetailScreen = props => {
         </Row>
 
         {["shippingOrder", "failedDelivery", "readyForPickup", "completed"].includes(status) && (
-          <ShipperInfo messageClick={() => navigation.navigate(ShoppingGraph.ChatScreen)} shipper={shipper} />
+          <ShipperInfo shipper={shipper} />
         )}
 
-        {store && <MerchantInfo store={store} />}
+        <MerchantInfo store={store} />
 
         <RecipientInfo deliveryMethod={deliveryMethod} owner={owner} shippingAddress={shippingAddress} />
 
-        {orderItems && <ProductsInfo orderItems={orderItems} />}
+        <ProductsInfo orderItems={orderItems} />
 
         <PaymentDetails
           _id={_id}
@@ -103,12 +103,12 @@ const OrderDetailScreen = props => {
 
 
 
-        {status === OrderStatus.COMPLETED.value && (
+        {status === OrderStatus.READY_FOR_PICKUP.value && (
 
           <PrimaryButton
             style={{ flex: 1, margin: 16 }}
-            onPress={() => onApprove("Tiến hành giao hàng", OrderStatus.SHIPPING_ORDER.value)}
-            title='Tiến hành giao hàng'
+            onPress={() => onApprove("Bắt đầu giao hàng", OrderStatus.SHIPPING_ORDER.value)}
+            title='Bắt đầu giao hàng'
           />
         )}
 

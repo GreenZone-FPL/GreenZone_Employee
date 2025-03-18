@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
 import React, { useEffect } from 'react';
-import { AuthGraph, MainGraph } from '../../layouts/graphs';
+import { StyleSheet, Text, View } from 'react-native';
 import { useAppContext } from '../../context/appContext';
+import { MainGraph } from '../../layouts/graphs';
 
 const SplashScreen2 = ({ navigation }) => {
   const { authState } = useAppContext();
@@ -12,7 +12,7 @@ const SplashScreen2 = ({ navigation }) => {
           routes: [{ name: MainGraph.graphName }],
         })
       
-    }, 1000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
