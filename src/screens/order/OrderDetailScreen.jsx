@@ -7,6 +7,7 @@ import { ActionDialog, Column, DualTextRow, HorizontalProductItem, LightStatusBa
 import { DeliveryMethod, GLOBAL_KEYS, OrderStatus, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { ShoppingGraph } from '../../layouts/graphs';
+import { Toaster } from '../../utils';
 
 const OrderDetailScreen = props => {
   const { navigation, route } = props;
@@ -16,7 +17,7 @@ const OrderDetailScreen = props => {
   const [actionDialogVisible, setActionDialogVisible] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
   const [approveAction, setApproveAction] = useState(null);
-  const { updateOrderMessage } = useAppContext();
+  const { updateOrderMessage, setOrderDualStatuses } = useAppContext();
 
   const fetchOrderDetail = async () => {
     try {
@@ -34,10 +35,15 @@ const OrderDetailScreen = props => {
     setDialogMessage(message);
     setApproveAction(() => async () => {
       try {
+        const oldStatus = orderDetail?.status
+
         await updateOrderStatus(_id, newStatus);
         await fetchOrderDetail();
+        setOrderDualStatuses({ status: newStatus, oldStatus })
+        Toaster.show('Cập nhật đơn hàng thành công')
       } catch (error) {
         console.log("error", error);
+        Toaster.show('Cập nhật đơn hàng thất bại')
       } finally {
         setActionDialogVisible(false);
       }
@@ -47,6 +53,7 @@ const OrderDetailScreen = props => {
   useEffect(() => {
     fetchOrderDetail();
   }, [orderId, updateOrderMessage]);
+
 
   if (loading) {
     return (
@@ -109,6 +116,15 @@ const OrderDetailScreen = props => {
             style={{ flex: 1, margin: 16 }}
             onPress={() => onApprove("Bắt đầu giao hàng", OrderStatus.SHIPPING_ORDER.value)}
             title='Bắt đầu giao hàng'
+          />
+        )}
+
+        {status === OrderStatus.FAILED_DELIVERY.value && (
+
+          <PrimaryButton
+            style={{ flex: 1, margin: 16 }}
+            onPress={() => onApprove("Giao lại đơn hàng", OrderStatus.SHIPPING_ORDER.value)}
+            title='Giao lại đơn hàng'
           />
         )}
 

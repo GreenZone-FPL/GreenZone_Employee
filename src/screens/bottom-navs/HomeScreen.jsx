@@ -1,5 +1,5 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useEffect, useState, useCallback  } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -13,37 +13,61 @@ import { Column, CustomTabView, LightStatusBar, NormalText, Row, StoreAddress, T
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppAsyncStorage, TextFormatter } from '../../utils';
 import { OrderGraph } from '../../layouts/graphs';
-
+import { useAppContext } from '../../context/appContext';
 
 const statuses = ['readyForPickup', 'shippingOrder', 'completed', 'failedDelivery'];
-const tabTitles = ['Đơn Mới', 'Đang Giao', 'Hoàn Tất', 'Giao Thất Bại'];
+const tabTitles = ['Đơn Mới', 'Đang Giao', 'Hoàn Thành', 'Giao Thất Bại'];
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const [index, setIndex] = useState(0);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigation = useNavigation();
 
+  const { orderDualStatuses } = useAppContext();
+console.log('orderDualStatuses', orderDualStatuses)
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const phoneNumber = await AppAsyncStorage.readData('phoneNumber');
+      const response = await getOrdersByStatus(statuses[index]);
+
+      const filteredOrders = response.filter(o => o.shipper.phoneNumber === phoneNumber);
+      setOrders(filteredOrders);
+    } catch (error) {
+      console.error('Error', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  // Luôn tải danh sách đơn hàng khi chuyển tab
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const phoneNumber = await AppAsyncStorage.readData('phoneNumber');
-        const response = await getOrdersByStatus(statuses[index]);
-
-        const filteredOrders = response.filter(o => o.shipper.phoneNumber === phoneNumber);
-        setOrders(filteredOrders);
-      } catch (error) {
-        console.error('Error', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchOrders();
   }, [index]);
 
- 
+
+  // Tải lại danh sách nếu trạng thái đơn hàng thay đổi trùng với tab hiện tại
+  useFocusEffect(
+    useCallback(() => {
+      if (!orderDualStatuses) return;
+
+      const { oldStatus, status } = orderDualStatuses;
+
+      console.log(`📌 Trạng thái đơn hàng thay đổi: ${oldStatus} ➝ ${status}`);
+
+      if (statuses[index] === status || statuses[index] === oldStatus ) {
+        console.log(`🔄 Reload danh sách đơn hàng cho tab: ${statuses[index]}`);
+        fetchOrders();
+      }
+    }, [orderDualStatuses])
+  );
+
+
+
+
+
+
 
   return (
     <View style={styles.container}>

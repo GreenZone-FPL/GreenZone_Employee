@@ -1,96 +1,129 @@
 import { io } from 'socket.io-client';
 import { AppAsyncStorage } from '../utils';
-import mitt from 'mitt';
+
 
 class ShipperSocketService {
   constructor() {
     this.socket = null;
-    this.emitter = mitt(); // Tạo emitter để phát sự kiện
   }
 
   async initialize() {
-    if (!this.socket) {
-      try {
-        const token = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken);
-        const storeId = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.storeId);
+    if (this.socket && this.socket.connected) return;
 
-        console.log('storeId:', storeId);
+    try {
 
-        if (!token || !storeId) {
-          console.log(
-            'Không tìm thấy token hoặc storeId, không thể kết nối socket!',
-          );
-          return;
-        }
+      const token = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+      const storeId = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.storeId);
 
-        this.socket = io('https://greenzone.motcaiweb.io.vn', {
-          path: '/socket.io/',
-          transports: ['websocket'],
-          auth: { token },
-        });
-
-        this.socket.on('connect', () => {
-          console.log('✅ Shipper đã kết nối:', this.socket.id);
-          this.socket.emit('store.join', storeId);
-          console.log(`🚀 Shipper tham gia phòng cửa hàng: ${storeId}`);
-        });
-
-        this.socket.on('order.updateStatus', data => {
-          console.log(
-            '📦 Nhận được order.updateStatus:',
-            JSON.stringify(data, null, 2),
-          );
-          this.emitter.emit('order.updateStatus', data); // Phát sự kiện
-
-          if (data.status === 'readyForPickup') {
-            console.log(`🚀 Tham gia room với orderId: ${data.orderId}`);
-            this.socket.emit('order.join', data.orderId);
-          } this.emitter.emit('order.join', data); // Phát sự kiện
-        });
-
-        this.socket.on('order.assigned', data => {
-          console.log(
-            '📩 Nhận được order.assigned:',
-            JSON.stringify(data, null, 2),
-          );
-
-        });
-
-        this.socket.on('disconnect', () => {
-          console.log('❌ Socket đã ngắt kết nối');
-        });
-
-        this.socket.on('connect_error', error => {
-          console.error('⚠️ Lỗi kết nối:', error);
-        });
-
-        this.socket.onAny((event, ...args) => {
-          console.log(
-            `📡 Nhận sự kiện: ${event}`,
-            JSON.stringify(args, null, 2),
-          );
-        });
-      } catch (error) {
-        console.log('❌ Lỗi khi khởi tạo socket:', error);
+      if (!storeId) {
+        console.log('Không tìm thấy storeId, không thể kết nối socket!');
+        return;
       }
+
+      this.socket = io('https://greenzone.motcaiweb.io.vn', {
+        path: '/socket.io/',
+        transports: ['websocket'],
+        auth: { token },
+      });
+
+      this.socket.on('connect', () => {
+        console.log('Socket connected');
+
+        this.socket.emit('store.join', storeId);
+        console.log(`Shipper join store room: ${storeId}`);
+
+
+      });
+
+      this.socket.on('order.updateStatus', data => {
+        /**
+          order.updateStatus: {
+          "orderId": "67d98b951f29e18a94db03d5",
+          "status": "readyForPickup",
+          "message": "🏬 Đơn hàng 67d98b951f29e18a94db03d5 sẵn sàng giao cho khách."
+          }
+         */
+        console.log('order.updateStatus:', data);
+      });
+
+      this.socket.on('order.assigned', (data) => {
+
+        console.log('order.assigned:', data);
+
+        this.socket.emit('order.join', data.orderId);
+
+
+        console.log(`Shipper join order: ${data.orderId}`);
+
+      });
+
+      this.socket.on('connect_error', error => {
+        console.error('Lỗi kết nối socket:', error);
+      });
+
+
+      this.socket.on('disconnect', () => {
+        console.log('Socket đã ngắt kết nối');
+      });
+
+
+    } catch (error) {
+      console.log('Lỗi khi khởi tạo socket:', error);
     }
+
   }
 
-  on(event, callback) {
-    this.emitter.on(event, callback);
-  }
-
-  off(event, callback) {
-    this.emitter.off(event, callback);
-  }
 
   disconnect() {
     if (this.socket) {
+      this.socket.off('order.assigned');
+      this.socket.off('order.updateStatus');
+      this.socket.off('disconnect');
       this.socket.disconnect();
       this.socket = null;
       console.log('🔌 Socket đã ngắt kết nối');
     }
   }
+
 }
 
+// customer 
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlVG9rZW4iOiJhY2Nlc3NUb2tlbiIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImlhdCI6MTc0MjMwOTc5MSwiZXhwIjoxNzQzMTczNzkxfQ.UXGO5kpJbvVS43AiLwI8z4VPA5Pp-nDh2vXMlQf4Kik
+
+
+
+// merchant nv2
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlVG9rZW4iOiJhY2Nlc3NUb2tlbiIsInBob25lTnVtYmVyIjoiMDkyMjIyMjIyMiIsImlhdCI6MTc0MjMxMDczNSwiZXhwIjoxNzQzMTc0NzM1fQ.Nrq1amC-2d44cfSnKZ_YJZ4x4hE1ekVmI5T4R322eHw
+/**
+{
+  "deliveryMethod": "delivery",
+  "fulfillmentDateTime": "2025-03-18T14:28:15.135Z",
+  "note": "",
+  "totalPrice": 111200,
+  "paymentMethod": "cod",
+  "shippingAddress": "67bf1b2556cc7b945d83f52f",
+  "store": "67b68d7698c1fc822e49fabd",
+  "voucher": "67be982856cc7b945d83be16",
+  "orderItems": [
+    {
+      "variant": "67ae040d145c78765a8f8aff",
+      "quantity": 2,
+      "price": 47000,
+      "toppingItems": [
+        {
+          "topping": "67aca53c145c78765a8f88b3",
+          "quantity": 2,
+          "price": 5000
+        }
+      ]
+    },
+    {
+      "variant": "67c12cc615f3b6d663e4f747",
+      "quantity": 2,
+      "price": 29000,
+      "toppingItems": []
+    }
+  ]
+}
+ */
 export default new ShipperSocketService();

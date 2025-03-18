@@ -55,16 +55,19 @@ function AppNavigator({ navigation }) {
   useEffect(() => {
     async function checkLoginStatus() {
 
-      if (AppAsyncStorage.isTokenValid()) {
+      if (await AppAsyncStorage.isTokenValid()) {
         await initializeSocket();
       }
     }
     checkLoginStatus();
-  }, []);
+    return (() => {
+      ShipperSocketService.disconnect()
+    })
+  }, [authState]);
 
   // Khởi tạo socket khi đăng nhập thành công
   const initializeSocket = async () => {
-    console.log('🔌 Đang khởi tạo socket...');
+   
     await ShipperSocketService.initialize();
 
     // Lắng nghe sự kiện từ socket
