@@ -48,7 +48,7 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <LightStatusBar />
-      <Text style={styles.headerText}>Đơn hàng2</Text>
+      <Text style={styles.headerText}>Đơn hàng</Text>
 
       <CustomTabView
         tabIndex={index}
@@ -156,4 +156,4 @@ const styles = StyleSheet.create({
   orderName: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, fontWeight: '500', color: colors.primary },
 });
 
-export default HomeScreen;
+export default HomeScreen

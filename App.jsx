@@ -15,11 +15,12 @@ import MainNavigation from './src/layouts/MainNavigation';
 import SplashScreen from './src/screens/auth/SplashScreen';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import LoginScreen from './src/screens/auth/LoginScreen';
-import DeliveryMapScreen from './src/screens/delivery/DeliveryMapScreen';
-import ChatWithUser from './src/screens/user/ChatWithUser';
+import DeliveryMapScreen from './src/screens/order/DeliveryMapScreen';
+import ChatWithUser from './src/screens/order/ChatWithUser';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
-import CallWithUser from './src/screens/user/CallWithUser';
+import CallWithUser from './src/screens/order/CallWithUser';
 import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
+import EditProfile from './src/screens/user-profile/EditProfile';
 
 
 const BaseStack = createNativeStackNavigator();
@@ -116,6 +117,7 @@ function AppNavigator({ navigation }) {
           <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
           <BaseStack.Screen name={AuthGraph.CallWithUser} component={CallWithUser} />
           <BaseStack.Screen name={OrderGraph.OrderDoneScreen} component={OrderDoneScreen} />
+          <BaseStack.Screen name={'EditProfile'} component={EditProfile} />
         </>
       ) : (
         <>
@@ -128,8 +130,6 @@ function AppNavigator({ navigation }) {
           )}
 
           <BaseStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
-          {/* <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} /> */}
-
         </>
 
       )}
