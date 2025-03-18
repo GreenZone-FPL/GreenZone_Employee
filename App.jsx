@@ -18,11 +18,8 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import DeliveryMapScreen from './src/screens/delivery/DeliveryMapScreen';
 import ChatWithUser from './src/screens/user/ChatWithUser';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
-import OrderDetailScreen2 from './src/screens/order/OrderDetailScreen2';
 import CallWithUser from './src/screens/user/CallWithUser';
 import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
-
-
 
 
 const BaseStack = createNativeStackNavigator();
@@ -117,7 +114,6 @@ function AppNavigator({ navigation }) {
           <BaseStack.Screen name={AuthGraph.DeliveryMapScreen} component={DeliveryMapScreen} />
           <BaseStack.Screen name={AuthGraph.ChatWithUser} component={ChatWithUser} />
           <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
-          <BaseStack.Screen name={'OrderDetailScreen2'} component={OrderDetailScreen2} />
           <BaseStack.Screen name={AuthGraph.CallWithUser} component={CallWithUser} />
           <BaseStack.Screen name={OrderGraph.OrderDoneScreen} component={OrderDoneScreen} />
         </>

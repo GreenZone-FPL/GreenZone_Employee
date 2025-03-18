@@ -1,7 +1,7 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import HomeScreen from '../../screens/bottom-navs/HomeScreen';
-import HomeScreen2 from '../../screens/bottom-navs/HomeScreen2';
+import HomeScreen2 from '../../screens/bottom-navs/HomeScreen';
 import OrderHistoryScreen from '../../screens/order/OrderHistoryScreen';
 import {AuthGraph, BottomGraph, OrderGraph} from '../graphs';
 
