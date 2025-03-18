@@ -72,7 +72,7 @@ const HomeScreen2 = () => {
                   renderItem={({ item }) =>
                     <OrderItem
                       item={item}
-                      handleOrderPress={() => navigation.navigate('OrderDetailScreen', { orderId: item._id })}
+                      handleOrderPress={() => navigation.navigate('OrderDetailScreen2', { orderId: item._id })}
                     />
                   }
                 />
