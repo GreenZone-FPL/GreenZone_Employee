@@ -34,70 +34,29 @@ export const OrderStatus = Object.freeze({
   getValues() {
     return Object.values(this).map(status => status.value);
   },
-  getMessageByOrder(order) {
-    const orderId = order?.data?._id;
+  getMessageInfoByStatus(status) {
+    switch (status) {
+        case this.AWAITING_PAYMENT.value:
+            return { type: "warning", icon: status === this.AWAITING_PAYMENT.value ? "warning" : "info" };
+        case this.PENDING_CONFIRMATION.value:
+            return { type: "success", icon: "success" };
 
-    switch (order.data.status) {
-      case this.AWAITING_PAYMENT.value:
-        return {
-          message: `Đơn hàng ${orderId} đang chờ thanh toán${
-            order.data.paymentMethod === 'online'
-              ? '.\nVui lòng thanh toán trực tuyến.'
-              : ''
-          }`,
-          type: 'warning',
-          icon: 'warning',
-        };
-      case this.PENDING_CONFIRMATION.value:
-        return {
-          message: `Đơn hàng ${orderId} của bạn đang chờ xác nhận từ cửa hàng.`,
-          type: 'warning',
-          icon: 'info',
-        };
-      case this.PROCESSING.value:
-        return {
-          message: `Đơn hàng ${orderId} đang được xử lý.`,
-          type: 'info',
-          icon: 'info',
-        };
-      case this.READY_FOR_PICKUP.value:
-        return {
-          message: `Đơn hàng ${orderId} đã chuẩn bị xong. Sẵn sàng giao hàng.`,
-          type: 'success',
-          icon: 'success',
-        };
-      case this.SHIPPING_ORDER.value:
-        return {
-          message: `Đơn hàng ${orderId} đang trên đường giao.Hãy theo dõi tình trạng vận chuyển.`,
-          type: 'info',
-          icon: 'info',
-        };
-      case this.COMPLETED.value:
-        return {
-          message: `Đơn hàng ${orderId} đã giao thành công.Cảm ơn bạn đã mua sắm!`,
-          type: 'success',
-          icon: 'success',
-        };
-      case this.CANCELLED.value:
-        return {
-          message: `Đơn hàng ${orderId} đã bị hủy. Nếu có thắc mắc, vui lòng liên hệ hỗ trợ.`,
-          type: 'danger',
-          icon: 'danger',
-        };
-      case this.FAILED_DELIVERY.value:
-        return {
-          message: `Đơn hàng ${orderId} giao hàng không thành công. Vui lòng kiểm tra lại thông tin giao hàng.`,
-          type: 'danger',
-          icon: 'danger',
-        };
-      default:
-        return {
-          message: `Đơn hàng ${orderId} có trạng thái không xác định.`,
-          type: 'default',
-          icon: 'info',
-        };
+        case this.PROCESSING.value:
+        case this.SHIPPING_ORDER.value:
+            return { type: "info", icon: "info" };
+
+        case this.READY_FOR_PICKUP.value:
+        case this.COMPLETED.value:
+            return { type: "success", icon: "success" };
+
+        case this.CANCELLED.value:
+        case this.FAILED_DELIVERY.value:
+            return { type: "danger", icon: "danger" };
+
+        default:
+            return { type: "default", icon: "info" };
     }
-  },
+}
 });
 
 // Cách sử dụng:

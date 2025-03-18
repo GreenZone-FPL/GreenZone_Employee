@@ -13,6 +13,7 @@ export const AppContextProvider = ({ children }) => {
   const [authState, authDispatch] = useReducer(authReducer, authInitialState);
 
   const [updateOrderMessage, setUpdateOrderMessage] = useState({ visible: false, order: null });
+  const [orderDualStatuses, setOrderDualStatuses] = useState(null);
   const [activeOrders, setActiveOrders] = useState([]);
 
 
@@ -36,7 +37,8 @@ export const AppContextProvider = ({ children }) => {
 
   return (
     <AppContext.Provider value={{
-      authState, authDispatch, updateOrderMessage, setUpdateOrderMessage, activeOrders, setActiveOrders
+      authState, authDispatch, updateOrderMessage, setUpdateOrderMessage, activeOrders, setActiveOrders,
+      orderDualStatuses, setOrderDualStatuses
     }}>
       {children}
     </AppContext.Provider>

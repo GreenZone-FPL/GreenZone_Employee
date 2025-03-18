@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Dimensions, Image, StyleSheet, Text } from 'react-native';
 import { login2 } from '../../axios';
-import { Column, FlatInput, LightStatusBar, PrimaryButton, Ani_ModalLoading } from '../../components';
+import { Ani_ModalLoading, Column, FlatInput, LightStatusBar, PrimaryButton } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph } from '../../layouts/graphs';
-import shipperSocketSevice from '../../service/shipperSocketSevice';
-import { AppAsyncStorage, Toaster } from '../../utils';
 import { useAppContext } from '../../context/appContext';
+import { AppGraph } from '../../layouts/graphs';
 import { AuthActionTypes } from '../../reducers/authReducer';
+import shipperSocketSevice from '../../service/shipperSocketSevice';
+import { Toaster } from '../../utils';
 
 const { width, height } = Dimensions.get('window');
 

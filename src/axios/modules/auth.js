@@ -24,7 +24,7 @@ export const login2 = async ({ phoneNumber, password }) => {
     const accessToken = data?.token?.accessToken?.token;
     const refreshToken = data?.token?.refreshToken?.token;
     const storeId = merchant?.workingStore;
-    // const phoneNumber = merchant?.phoneNumber;
+
 
 
     await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.accessToken, accessToken);

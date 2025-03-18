@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT * 2,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
     elevation: 1.5,
   },
   headerContent: {

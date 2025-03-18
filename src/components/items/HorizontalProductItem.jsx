@@ -52,7 +52,7 @@ export const HorizontalProductItem = ({
       <Text style={[styles.productName, titleStyle]}>{item.productName}</Text>
       {item.variantName && !item.isVariantDefault && (
         <Text
-          style={[styles.normalText, {color: colors.yellow700}, optionStyle]}>
+          style={[styles.normalText, {color: colors.yellow700, fontWeight: '500'}, optionStyle]}>
           {item.variantName}
         </Text>
       )}
@@ -88,7 +88,7 @@ export const HorizontalProductItem = ({
         </Pressable>
       )}
 
-      {/* <Text style={[styles.lineThroughText, oldPriceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text> */}
+    
       {enableAction && (
         <Pressable onPress={onAction}>
           <Icon
