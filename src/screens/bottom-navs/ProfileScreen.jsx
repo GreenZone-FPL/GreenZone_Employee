@@ -19,9 +19,8 @@ const { width } = Dimensions.get('window');
 
 const ProfileScreen = ({ navigation }) => {
   const { authDispatch } = useAppContext()
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
-
 
   const fetchProfile = async () => {
 
@@ -113,7 +112,7 @@ const Header = ({ profile }) => {
         </View>
       </View>
       <Column>
-        <RowContent title={profile.firstName} icon="account-outline" />
+        <RowContent title={`${profile.firstName} ${profile.lastName}`} icon="account-outline" />
         <RowContent title={profile.phoneNumber} icon="phone-outline" />
         <RowContent
           title={profile.email}
@@ -167,6 +166,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.fbBg,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
+    flex: 1
   },
 
   headerTitle: {
