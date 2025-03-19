@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import { TickCircle } from 'iconsax-react-native';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { BottomGraph } from '../../layouts/graphs';
+import { BottomGraph, MainGraph } from '../../layouts/graphs';
 
 const OrderDoneScreen = (props) => {
 
@@ -15,7 +15,7 @@ const OrderDoneScreen = (props) => {
                       />
       <Text style={styles.title}>Bạn đã đến nơi cần được giao hàng</Text>
       <Text style={styles.subtitle}>Hãy kiểm tra lại đơn hàng trước khi giao đến khách hàng</Text>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate(BottomGraph.HomeScreen)}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate(MainGraph.graphName)}>
         <Text style={styles.buttonText}>Hoàn tất</Text>
       </TouchableOpacity>
     </View>

@@ -1,98 +1,197 @@
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity } from 'react-native';
-import React, { useEffect, useRef } from 'react';
-import { NormalHeader, PrimaryButton } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
+import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { NormalHeader, PrimaryButton, ActionDialog, Row, Column, NormalText } from '../../components';
+import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { Icon } from 'react-native-paper';
-import { AuthGraph, OrderGraph } from '../../layouts/graphs';
+import { AuthGraph, MainGraph, OrderGraph } from '../../layouts/graphs';
 import LottieView from 'lottie-react-native';
+import { getOrderDetail, updateOrderStatus } from '../../axios';
+import { Toaster } from '../../utils';
+import { useAppContext } from '../../context/appContext';
 
 const { width } = Dimensions.get('window');
 
-const DeliveryMapScreen = (props) => {
-    const navigation = props.navigation;
+const DeliveryMapScreen = ({ navigation, route }) => {
+
     const animationRef = useRef(null);
+    const [actionDialogVisible, setActionDialogVisible] = useState(false);
+    const [dialogMessage, setDialogMessage] = useState("");
+    const [approveAction, setApproveAction] = useState(null);
+    const [orderDetail, setOrderDetail] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const { orderId } = route.params;
+    const { setOrderDualStatuses } = useAppContext();
+    const fetchOrderDetail = async () => {
+        try {
+            const response = await getOrderDetail(orderId);
+            setOrderDetail(response);
+            console.log('response', JSON.stringify(response, null, 3))
+        } catch (error) {
+            console.error('error', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchOrderDetail();
+    }, [orderId]);
+
+
+    const onApprove = (message, newStatus, callback) => {
+        setActionDialogVisible(true);
+        setDialogMessage(message);
+        setApproveAction(() => async () => {
+            try {
+                const oldStatus = orderDetail?.status
+
+                await updateOrderStatus(orderId, newStatus);
+                await fetchOrderDetail();
+                setOrderDualStatuses({ status: newStatus, oldStatus })
+                Toaster.show('Cập nhật đơn hàng thành công')
+                if (callback) {
+                    callback()
+                }
+            } catch (error) {
+                console.log("error", error);
+                Toaster.show('Cập nhật đơn hàng thất bại')
+            } finally {
+                setActionDialogVisible(false);
+            }
+        });
+    };
 
     useEffect(() => {
         const loopAnimation = () => {
-            animationRef.current?.play(0, 60); // Chạy animation từ frame 0 đến 60 (1.5s)
-            setTimeout(loopAnimation, 1000); // Gọi lại sau 1giây
+            animationRef.current?.play(0, 60);
+            setTimeout(loopAnimation, 1000);
         };
 
-        loopAnimation(); // Chạy lần đầu tiên
+        loopAnimation();
 
-        return () => clearTimeout(); // Xóa timeout khi unmount
+        return () => clearTimeout();
     }, []);
 
+
+
     return (
-        <View style={{ flex: 1 }}>
-            <NormalHeader title='Giao Hàng' enableLeftIcon={true} onLeftPress={() => navigation.goBack()} />
-            <View style={{ height: '70%', position: 'relative' }}>
-                <Image 
-                    source={require('../../assets/images/map.png')} 
-                    style={{ width: '100%', height: '100%' }} 
-                />
-                <LottieView 
-                    ref={animationRef} 
-                    source={require('../../assets/animations/shipbear.json')} 
-                    autoPlay={false} 
-                    loop={false} 
-                    style={StyleSheet.absoluteFillObject} 
-                />
+        <Column style={{ flex: 1 }}>
+            <NormalHeader title="Giao Hàng" enableLeftIcon={true} onLeftPress={() => navigation.goBack()} />
+
+            <View style={{ flex: 1, backgroundColor: colors.white }}>
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                    <View style={{ width: '100%', height: '60%' }}>
+                        <Image
+                            source={require('../../assets/images/map.png')}
+                            style={{ width: '100%', height: '100%' }}
+                        />
+                        <View style={styles.lottieContainer}>
+                            <LottieView
+                                ref={animationRef}
+                                source={require('../../assets/animations/shipbear.json')}
+                                autoPlay={false}
+                                loop={false}
+                                style={styles.lottieView}
+                            />
+                        </View>
+                    </View>
+
+                    <CustomerInfo navigation={navigation} orderDetail={orderDetail} />
+
+                </ScrollView>
+
+                <View style={{ padding: 16 }}>
+                    {orderDetail?.status === OrderStatus.FAILED_DELIVERY.value ? (
+                        <PrimaryButton
+                            onPress={() => navigation.reset({
+                                index: 0,
+                                routes: [{ name: MainGraph.graphName }],
+                            })}
+                            title="Quay về trang chủ"
+                        />
+                    ) : (
+                        <Row style={{ gap: 16 }}>
+                            <PrimaryButton
+                                style={{ flex: 1 }}
+                                onPress={() => onApprove("Hoàn tất đơn hàng", OrderStatus.COMPLETED.value, () => navigation.navigate(OrderGraph.OrderDoneScreen))}
+                                title="Hoàn thành"
+                            />
+                            <PrimaryButton
+                                style={{ flex: 1, backgroundColor: colors.orange700 }}
+                                onPress={() => onApprove("Giao hàng thất bại", OrderStatus.FAILED_DELIVERY.value)}
+                                title="Giao hàng thất bại"
+                            />
+                        </Row>
+                    )}
+                </View>
+
             </View>
-            <View style={{ height: '30%', borderRadius: 6, backgroundColor: colors.white, padding: 16, gap: 10 }}>
-                <CustomerInfo navigation={navigation} />
-                <PrimaryButton title='Bắt đầu giao hàng' onPress={() => navigation.navigate(OrderGraph.OrderDoneScreen)} />
-            </View>
-        </View>
+
+            <ActionDialog
+                visible={actionDialogVisible}
+                title="Xác nhận"
+                content={dialogMessage}
+                cancelText="Đóng"
+                approveText="Đồng ý"
+                onCancel={() => setActionDialogVisible(false)}
+                onApprove={approveAction}
+            />
+        </Column>
     );
+
 };
 
-const CustomerInfo = ({ navigation }) => (
-    <View>
-        <View style={styles.infoRow}>
-            <Icon source='account' size={24} color={colors.primary} />
-            <Text style={styles.customerName}>Nguyễn Văn A</Text>
-            <View style={{ flexDirection: 'row', gap: 16 }}>
+const CustomerInfo = ({ navigation, orderDetail }) => (
+    <Column style={{ padding: 16, flex: 1 }}>
+        <Row style={{ marginVertical: 8, gap: 16, justifyContent: 'space-between' }}>
+            <Row>
+                <Icon source='account' size={24} color={colors.primary} />
+
+                <NormalText text='Nguyễn Văn A' style={{ fontWeight: '500' }} />
+
+            </Row>
+
+
+            <Row style={{ gap: 16 }}>
                 <TouchableOpacity style={styles.phoneButton}>
                     <Icon source='phone' size={24} color={colors.primary} />
                 </TouchableOpacity>
-                <TouchableOpacity 
-                    style={styles.phoneButton} 
-                    onPress={() => navigation.navigate(AuthGraph.ChatWithUser)} 
+                <TouchableOpacity
+
+                    onPress={() => navigation.navigate(AuthGraph.ChatWithUser)}
                 >
-                    <Icon source='message-badge-outline' size={24} color={colors.primary} />
+                    <Icon source='message-badge-outline' size={22} color={colors.primary} />
                 </TouchableOpacity>
-            </View>
-        </View>
-        <View style={styles.infoRow}>
-            <Icon source='map-marker' size={24} color={colors.primary} />
-            <Text>Giao đến</Text>
-        </View>
-        <Text style={styles.customerAddress}>123 Đường ABC, Quận 1, TP.HCM</Text>
-    </View>
+            </Row>
+        </Row>
+
+        <Row style={{ marginVertical: 8 }}>
+            <Icon source='map-marker' size={22} color={colors.primary} />
+            <NormalText text='123 Đường ABC, Quận 1, TP.HCM' style={{ color: colors.gray700 }} />
+
+        </Row>
+
+        {orderDetail?.status === OrderStatus.FAILED_DELIVERY.value && (
+
+            <NormalText text={OrderStatus.getLabelByValue(orderDetail?.status)} style={{ color: colors.red900, fontWeight: '500' }} />
+
+        )}
+
+
+    </Column>
 );
 
 export default DeliveryMapScreen;
 
 const styles = StyleSheet.create({
-    infoRow: {
-        flexDirection: 'row',
+    lottieContainer: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'center',
         alignItems: 'center',
-        marginVertical: 5,
-        gap: 10
     },
-    customerName: {
-        fontWeight: '500',
-        marginLeft: 10,
-    },
-    phoneButton: {
-        backgroundColor: colors.gray200,
-        padding: 6,
-        borderRadius: 16,
-        marginLeft: 'auto',
-    },
-    customerAddress: {
-        marginLeft: 20,
-        color: colors.gray700,
+    lottieView: {
+        width: 200,
+        height: 200,
     },
 });
+

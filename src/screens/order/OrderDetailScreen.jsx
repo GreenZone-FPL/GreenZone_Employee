@@ -23,6 +23,7 @@ const OrderDetailScreen = props => {
     try {
       const response = await getOrderDetail(orderId);
       setOrderDetail(response);
+      console.log('response', JSON.stringify(response, null, 3))
     } catch (error) {
       console.error('error', error);
     } finally {
@@ -30,7 +31,7 @@ const OrderDetailScreen = props => {
     }
   };
 
-  const onApprove = (message, newStatus) => {
+  const onApprove = (message, newStatus, callback) => {
     setActionDialogVisible(true);
     setDialogMessage(message);
     setApproveAction(() => async () => {
@@ -41,6 +42,9 @@ const OrderDetailScreen = props => {
         await fetchOrderDetail();
         setOrderDualStatuses({ status: newStatus, oldStatus })
         Toaster.show('Cập nhật đơn hàng thành công')
+        if(callback){
+          callback()
+        }
       } catch (error) {
         console.log("error", error);
         Toaster.show('Cập nhật đơn hàng thất bại')
@@ -123,7 +127,9 @@ const OrderDetailScreen = props => {
 
           <PrimaryButton
             style={{ flex: 1, margin: 16 }}
-            onPress={() => onApprove("Giao lại đơn hàng", OrderStatus.SHIPPING_ORDER.value)}
+            onPress={() => onApprove("Giao lại đơn hàng", OrderStatus.SHIPPING_ORDER.value, () => {
+              navigation.navigate('DeliveryMapScreen', {orderId: _id})
+            })}
             title='Giao lại đơn hàng'
           />
         )}
