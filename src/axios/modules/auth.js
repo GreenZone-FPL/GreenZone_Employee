@@ -40,3 +40,14 @@ export const login2 = async ({ phoneNumber, password }) => {
     throw error;
   }
 };
+
+export const getProfile = async () => {
+  try {
+      const response = await axiosInstance.get("/auth/profile");
+
+      return response.data
+  } catch (error) {
+      console.log("error:", error); // debug
+      throw error;
+  }
+};

@@ -20,7 +20,7 @@ import ChatWithUser from './src/screens/order/ChatWithUser';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import CallWithUser from './src/screens/order/CallWithUser';
 import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
-import EditProfile from './src/screens/user-profile/EditProfile';
+import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
 
 
 const BaseStack = createNativeStackNavigator();
@@ -120,7 +120,7 @@ function AppNavigator({ navigation }) {
           <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
           <BaseStack.Screen name={AuthGraph.CallWithUser} component={CallWithUser} />
           <BaseStack.Screen name={OrderGraph.OrderDoneScreen} component={OrderDoneScreen} />
-          <BaseStack.Screen name={'EditProfile'} component={EditProfile} />
+          <BaseStack.Screen name={'UpdateProfileScreen'} component={UpdateProfileScreen} />
         </>
       ) : (
         <>
