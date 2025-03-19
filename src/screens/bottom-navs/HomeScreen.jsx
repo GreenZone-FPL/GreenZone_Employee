@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useEffect, useState, useCallback  } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { getOrdersByStatus } from '../../axios';
 import { Column, CustomTabView, LightStatusBar, NormalText, Row, StoreAddress, TitleText } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
+import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { AppAsyncStorage, TextFormatter } from '../../utils';
 import { OrderGraph } from '../../layouts/graphs';
 import { useAppContext } from '../../context/appContext';
@@ -24,7 +24,7 @@ const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
 
   const { orderDualStatuses } = useAppContext();
-console.log('orderDualStatuses', orderDualStatuses)
+  console.log('orderDualStatuses', orderDualStatuses)
   const fetchOrders = async () => {
     setLoading(true);
     try {
@@ -56,7 +56,7 @@ console.log('orderDualStatuses', orderDualStatuses)
 
       console.log(`📌 Trạng thái đơn hàng thay đổi: ${oldStatus} ➝ ${status}`);
 
-      if (statuses[index] === status || statuses[index] === oldStatus ) {
+      if (statuses[index] === status || statuses[index] === oldStatus) {
         console.log(`🔄 Reload danh sách đơn hàng cho tab: ${statuses[index]}`);
         fetchOrders();
       }
@@ -97,7 +97,15 @@ console.log('orderDualStatuses', orderDualStatuses)
                   renderItem={({ item }) =>
                     <OrderItem
                       item={item}
-                      handleOrderPress={() => navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: item._id })}
+                      handleOrderPress={() => {
+                        if (statuses[index] === OrderStatus.SHIPPING_ORDER.value) {
+                          navigation.navigate(OrderGraph.DeliveryMapScreen, { orderId: item._id })
+                        } else {
+                          navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: item._id })
+                        }
+                      }
+
+                      }
                     />
                   }
                 />

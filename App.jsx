@@ -71,37 +71,37 @@ function AppNavigator({ navigation }) {
     await ShipperSocketService.initialize();
 
     // Lắng nghe sự kiện từ socket
-    ShipperSocketService.on('order.assigned', data => {
-      console.log(
-        '📩 Nhận sự kiện order.assigned:',
-        JSON.stringify(data, null, 2),
-      );
+    // ShipperSocketService.on('order.assigned', data => {
+    //   console.log(
+    //     '📩 Nhận sự kiện order.assigned:',
+    //     JSON.stringify(data, null, 2),
+    //   );
 
-      Toast.show({
-        type: 'info',
-        text1: '📦 Đơn hàng mới!',
-        text2: `Mã đơn: ${data.orderId}`,
-        position: 'top',
-        visibilityTime: 3000,
-      });
+    //   Toast.show({
+    //     type: 'info',
+    //     text1: '📦 Đơn hàng mới!',
+    //     text2: `Mã đơn: ${data.orderId}`,
+    //     position: 'top',
+    //     visibilityTime: 3000,
+    //   });
 
-      console.log(`📌 Thử join vào room với orderId: ${data.orderId}`);
-      ShipperSocketService.socket.emit('order.join', data.orderId);
-    });
+    //   console.log(`📌 Thử join vào room với orderId: ${data.orderId}`);
+    //   ShipperSocketService.socket.emit('order.join', data.orderId);
+    // });
 
-    ShipperSocketService.on('order.updateStatus', data => {
-      console.log(
-        '🔄 Trạng thái đơn hàng cập nhật:',
-        JSON.stringify(data, null, 2),
-      );
-      Toast.show({
-        type: 'info',
-        text1: '📦 Đơn hàng mới!',
-        text2: `Mã đơn: ${data.orderId}`,
-        position: 'top',
-        visibilityTime: 3000,
-      });
-    });
+    // ShipperSocketService.on('order.updateStatus', data => {
+    //   console.log(
+    //     '🔄 Trạng thái đơn hàng cập nhật:',
+    //     JSON.stringify(data, null, 2),
+    //   );
+    //   Toast.show({
+    //     type: 'info',
+    //     text1: '📦 Đơn hàng mới!',
+    //     text2: `Mã đơn: ${data.orderId}`,
+    //     position: 'top',
+    //     visibilityTime: 3000,
+    //   });
+    // });
   };
 
   return (
