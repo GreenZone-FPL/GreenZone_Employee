@@ -1,116 +1,143 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  Image,
   Dimensions,
-  TouchableOpacity,
+  Image,
   StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { LightStatusBar } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
 import { Icon } from 'react-native-paper';
-import { AuthGraph } from '../../layouts/graphs';
+import { getProfile } from '../../axios/modules';
+import { Column, LightStatusBar, NormalLoading, NormalText, Row } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
-import { AppAsyncStorage } from '../../utils';
 import { AuthActionTypes } from '../../reducers/authReducer';
+import { AppAsyncStorage } from '../../utils';
 
 const { width } = Dimensions.get('window');
 
 const ProfileScreen = ({ navigation }) => {
   const { authDispatch } = useAppContext()
+  const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState(null);
 
 
-  const goScreenName = name => {
-    navigation.navigate(name);
+  const fetchProfile = async () => {
+
+    try {
+      setLoading(true);
+      const reponse = await getProfile();
+      console.log('profile', JSON.stringify(reponse, null, 3));
+      setProfile(reponse)
+
+
+    } catch (error) {
+      console.log('error', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchProfile()
+
+  }, [])
+
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <LightStatusBar />
+        <Text style={styles.headerTitle}>Cá nhân</Text>
+        <NormalLoading visible={loading} />
+      </View>
+    )
+  }
+
+
 
   return (
     <View style={styles.container}>
       <LightStatusBar />
-      <Header />
-      <Body goScreenName={goScreenName} authDispatch={authDispatch} />
+      <Text style={styles.headerTitle}>Cá nhân</Text>
+      <Header profile={profile} />
+
+      <Column style={{ gap: 16 }}>
+        <Text style={styles.bodyTitle}>Tùy chọn</Text>
+        <ItemRow
+          title="Cập nhật tài khoản"
+          icon="account-outline"
+          onPress={() => {
+            navigation.navigate('UpdateProfileScreen', { profile });
+          }}
+          checkIcon={true}
+        />
+        <ItemRow title="Hỗ trợ" icon="headphones" checkIcon={true} />
+        <ItemRow title="Câu hỏi thường gặp" icon="application-edit-outline" checkIcon={true} />
+        <ItemRow title="Điều khoản và điều kiện" icon="comment-edit-outline" checkIcon={true} />
+        <ItemRow title="Chính sách quyền riêng tư" icon="eye-outline" checkIcon={true} />
+        <ItemRow
+          title="Đăng xuất"
+          icon="logout"
+          checkIcon={false}
+          onPress={async () => {
+            await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+            await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
+            authDispatch({ type: AuthActionTypes.LOGOUT });
+          }}
+        />
+      </Column>
+
     </View>
   );
 };
 
-const Header = () => {
+const Header = ({ profile }) => {
+  if (!profile) return null;
+
   return (
-    <View style={styles.headerContainer}>
-      <Text style={styles.headerTitle}>Cá nhân</Text>
-      <View style={styles.headerContent}>
-        <View style={styles.avatarContainer}>
-          <Image
-            style={styles.avatar}
-            source={{
-              uri: 'https://plus.unsplash.com/premium_photo-1683121366070-5ceb7e007a97?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D',
-            }}
-          />
-          <View style={styles.cameraIcon}>
-            <Icon
-              source={'camera'}
-              size={GLOBAL_KEYS.ICON_SIZE_SMALL}
-              color={colors.white}
-            />
-          </View>
-        </View>
-        <View style={styles.userInfo}>
-          <RowContent title={'Phong Nguyen'} icon="account-outline" />
-          <RowContent title={'0936887373'} icon="phone-outline" />
-          <RowContent
-            title={'nguyenghongphong@gmail.com'}
-            icon="email-outline"
+
+    <Row style={{ padding: 16, gap: 16, backgroundColor: colors.white }}>
+      <View style={styles.avatarContainer}>
+        <Image
+          style={styles.avatar}
+          source={require('../../assets/images/meo2.jpg')}
+        />
+        <View style={styles.cameraIcon}>
+          <Icon
+            source={'camera'}
+            size={GLOBAL_KEYS.ICON_SIZE_SMALL}
+            color={colors.white}
           />
         </View>
       </View>
-    </View>
+      <Column>
+        <RowContent title={profile.firstName} icon="account-outline" />
+        <RowContent title={profile.phoneNumber} icon="phone-outline" />
+        <RowContent
+          title={profile.email}
+          icon="email-outline"
+        />
+      </Column>
+    </Row>
+
   );
 };
 
-const Body = ({ goScreenName, authDispatch }) => {
-  return (
-    <View style={styles.bodyContainer}>
-      <Text style={styles.bodyTitle}>Options</Text>
-      <ItemRow
-        title="Edit Profile"
-        icon="account-outline"
-        onPress={() => goScreenName('EditProfile')}
-        checkIcon={true}
-      />
-      <ItemRow title="Support" icon="headphones" checkIcon={true} />
-      <ItemRow title="FAQs" icon="application-edit-outline" checkIcon={true} />
-      <ItemRow
-        title="Terms and Conditions"
-        icon="comment-edit-outline"
-        checkIcon={true}
-      />
-      <ItemRow title="Privacy Policy" icon="eye-outline" checkIcon={true} />
-      <ItemRow
-        title="Log Out"
-        icon="logout"
-        checkIcon={false}
-        onPress={async () => {
 
-          await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken)
-          await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken)
-          authDispatch({ type: AuthActionTypes.LOGOUT });
-        }}
-      />
-    </View>
-  );
-};
 
 const ItemRow = ({ icon, title, onPress, checkIcon }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.itemRow}>
-      <View style={styles.itemRowContent}>
+      <Row style={{ flex: 1 }}>
         <Icon
           source={icon}
           size={GLOBAL_KEYS.ICON_SIZE_SMALL}
           color={colors.primary}
         />
-        <Text style={styles.itemRowText}>{title}</Text>
-      </View>
+        <NormalText text={title} />
+      </Row>
       {checkIcon && (
         <Icon
           source="arrow-right"
@@ -124,14 +151,15 @@ const ItemRow = ({ icon, title, onPress, checkIcon }) => {
 
 const RowContent = ({ title, icon }) => {
   return (
-    <View style={styles.rowContent}>
+    <Row style={styles.rowContent}>
       <Icon
         source={icon}
         size={GLOBAL_KEYS.ICON_SIZE_SMALL}
         color={colors.primary}
       />
-      <Text style={styles.rowContentText}>{title}</Text>
-    </View>
+      <NormalText text={title} />
+
+    </Row>
   );
 };
 
@@ -140,24 +168,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.fbBg,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
-  headerContainer: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
+
   headerTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
     textAlign: 'center',
     backgroundColor: colors.white,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    elevation: 1.5,
   },
-  headerContent: {
-    flexDirection: 'row',
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-    alignItems: 'center',
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-  },
+
   avatarContainer: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -179,13 +198,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
-  userInfo: {
-    flexDirection: 'column',
-    gap: GLOBAL_KEYS.GAP_SMALL,
-  },
-  bodyContainer: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
+
   bodyTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
@@ -198,23 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    elevation: 2.5,
-  },
-  itemRowContent: {
-    flexDirection: 'row',
-    width: '80%',
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
-  itemRowText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-  },
-  rowContent: {
-    flexDirection: 'row',
-    gap: GLOBAL_KEYS.GAP_SMALL,
-    alignItems: 'center',
-  },
-  rowContentText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    elevation: 1,
   },
 });
 

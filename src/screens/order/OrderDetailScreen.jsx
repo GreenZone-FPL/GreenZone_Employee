@@ -80,7 +80,7 @@ const OrderDetailScreen = props => {
       <NormalHeader title="Chi tiết đơn hàng" onLeftPress={() => navigation.goBack()} enableLeftIcon />
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.containerContent}>
-        <Row style={{ padding: GLOBAL_KEYS.PADDING_DEFAULT, marginBottom: 8, justifyContent: 'space-between', flex: 1, backgroundColor: colors.white }}>
+        <Row style={{ padding: GLOBAL_KEYS.PADDING_DEFAULT, marginBottom: 5, justifyContent: 'space-between', flex: 1, backgroundColor: colors.white }}>
           <Title title="Trạng thái đơn hàng" color={colors.green500} />
           <Text style={[styles.status, { color: status === 'cancelled' ? colors.black : colors.green500 }]}>
             {OrderStatus.getLabelByValue(status)}
@@ -385,9 +385,9 @@ const OrderId = ({ _id }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.fbBg,
     flex: 1,
-    gap: 16
+    gap: 5
   },
   containerContent: {
     backgroundColor: colors.fbBg,

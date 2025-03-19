@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: colors.white,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    paddingTop: 24,
+    paddingVertical: 24,
   },
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
