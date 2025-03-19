@@ -21,6 +21,8 @@ const DeliveryMapScreen = ({ navigation, route }) => {
     const [loading, setLoading] = useState(true);
     const { orderId } = route.params;
     const { setOrderDualStatuses } = useAppContext();
+
+    
     const fetchOrderDetail = async () => {
         try {
             const response = await getOrderDetail(orderId);
@@ -80,7 +82,7 @@ const DeliveryMapScreen = ({ navigation, route }) => {
 
             <View style={{ flex: 1, backgroundColor: colors.white }}>
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                    <View style={{ width: '100%', height: '60%' }}>
+                    <View style={{ width: '100%', height: '70%' }}>
                         <Image
                             source={require('../../assets/images/map.png')}
                             style={{ width: '100%', height: '100%' }}
@@ -141,45 +143,43 @@ const DeliveryMapScreen = ({ navigation, route }) => {
 
 };
 
-const CustomerInfo = ({ navigation, orderDetail }) => (
-    <Column style={{ padding: 16, flex: 1 }}>
-        <Row style={{ marginVertical: 8, gap: 16, justifyContent: 'space-between' }}>
-            <Row>
-                <Icon source='account' size={24} color={colors.primary} />
+const CustomerInfo = ({ navigation, orderDetail }) => {
+    const shipper = orderDetail?.shipper;
+    const shippingAddress = orderDetail?.shippingAddress;
 
-                <NormalText text='Nguyễn Văn A' style={{ fontWeight: '500' }} />
+    return (
+        <Column style={{ padding: 16, flex: 1 }}>
+            <Row style={{ marginVertical: 8, gap: 16, justifyContent: 'space-between' }}>
+                <Row>
+                    <Icon source='account' size={24} color={colors.primary} />
+                    <NormalText text={`${shippingAddress?.consigneeName} || ${shippingAddress?.consigneePhone}`} style={{ fontWeight: '500' }} />
+                </Row>
 
+                <Row style={{ gap: 16 }}>
+                    <TouchableOpacity style={styles.phoneButton}>
+                        <Icon source='phone' size={24} color={colors.primary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate(AuthGraph.ChatWithUser)}>
+                        <Icon source='message-badge-outline' size={22} color={colors.primary} />
+                    </TouchableOpacity>
+                </Row>
             </Row>
 
-
-            <Row style={{ gap: 16 }}>
-                <TouchableOpacity style={styles.phoneButton}>
-                    <Icon source='phone' size={24} color={colors.primary} />
-                </TouchableOpacity>
-                <TouchableOpacity
-
-                    onPress={() => navigation.navigate(AuthGraph.ChatWithUser)}
-                >
-                    <Icon source='message-badge-outline' size={22} color={colors.primary} />
-                </TouchableOpacity>
+            <Row style={{ marginVertical: 8 }}>
+                <Icon source='map-marker' size={22} color={colors.primary} />
+                <NormalText 
+                    text={`${shippingAddress?.specificAddress}, ${shippingAddress?.ward}, ${shippingAddress?.district}, ${shippingAddress?.province}`}
+                    style={{ color: colors.gray700 }} 
+                />
             </Row>
-        </Row>
 
-        <Row style={{ marginVertical: 8 }}>
-            <Icon source='map-marker' size={22} color={colors.primary} />
-            <NormalText text='123 Đường ABC, Quận 1, TP.HCM' style={{ color: colors.gray700 }} />
+            {orderDetail?.status === OrderStatus.FAILED_DELIVERY.value && (
+                <NormalText text={OrderStatus.getLabelByValue(orderDetail?.status)} style={{ color: colors.red900, fontWeight: '500' }} />
+            )}
+        </Column>
+    );
+};
 
-        </Row>
-
-        {orderDetail?.status === OrderStatus.FAILED_DELIVERY.value && (
-
-            <NormalText text={OrderStatus.getLabelByValue(orderDetail?.status)} style={{ color: colors.red900, fontWeight: '500' }} />
-
-        )}
-
-
-    </Column>
-);
 
 export default DeliveryMapScreen;
 

@@ -1,16 +1,18 @@
 import { Call, Send2 } from 'iconsax-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { getOrderDetail, updateOrderStatus } from '../../axios';
 import { ActionDialog, Column, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, PrimaryButton, Row } from '../../components';
 import { DeliveryMethod, GLOBAL_KEYS, OrderStatus, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
-import { ShoppingGraph } from '../../layouts/graphs';
+import LottieView from 'lottie-react-native';
+import { OrderGraph, ShoppingGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils';
 
 const OrderDetailScreen = props => {
   const { navigation, route } = props;
+  const animationRef = useRef(null);
   const { orderId } = route.params;
   const [orderDetail, setOrderDetail] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,7 +44,7 @@ const OrderDetailScreen = props => {
         await fetchOrderDetail();
         setOrderDualStatuses({ status: newStatus, oldStatus })
         Toaster.show('Cập nhật đơn hàng thành công')
-        if(callback){
+        if (callback) {
           callback()
         }
       } catch (error) {
@@ -58,6 +60,17 @@ const OrderDetailScreen = props => {
     fetchOrderDetail();
   }, [orderId, updateOrderMessage]);
 
+
+  useEffect(() => {
+    const loopAnimation = () => {
+      animationRef.current?.play(0, 60);
+      setTimeout(loopAnimation, 1000);
+    };
+
+    loopAnimation();
+
+    return () => clearTimeout();
+  }, []);
 
   if (loading) {
     return (
@@ -90,6 +103,28 @@ const OrderDetailScreen = props => {
             {OrderStatus.getLabelByValue(status)}
           </Text>
         </Row>
+
+
+        {
+          status === OrderStatus.SHIPPING_ORDER.value &&
+
+          <View style={{ width: '100%', height: 350, marginBottom: 8 }}>
+            <Image
+              source={require('../../assets/images/map.png')}
+              style={{ width: '100%', height: '100%' }}
+            />
+            <View style={styles.lottieContainer}>
+              <LottieView
+                ref={animationRef}
+                source={require('../../assets/animations/shipbear.json')}
+                autoPlay={false}
+                loop={false}
+                style={styles.lottieView}
+              />
+            </View>
+          </View>
+        }
+
 
         {["shippingOrder", "failedDelivery", "readyForPickup", "completed"].includes(status) && (
           <ShipperInfo shipper={shipper} />
@@ -127,9 +162,7 @@ const OrderDetailScreen = props => {
 
           <PrimaryButton
             style={{ flex: 1, margin: 16 }}
-            onPress={() => onApprove("Giao lại đơn hàng", OrderStatus.SHIPPING_ORDER.value, () => {
-              navigation.navigate('DeliveryMapScreen', {orderId: _id})
-            })}
+            onPress={() => onApprove("Giao lại đơn hàng", OrderStatus.SHIPPING_ORDER.value)}
             title='Giao lại đơn hàng'
           />
         )}
@@ -139,13 +172,13 @@ const OrderDetailScreen = props => {
           <Row style={{ gap: 16, backgroundColor: colors.white, padding: 16 }}>
             <PrimaryButton
               style={{ flex: 1 }}
-              onPress={() => onApprove("Hoàn tất đơn hàng", OrderStatus.COMPLETED.value)}
+              onPress={() => onApprove("Hoàn tất đơn hàng", OrderStatus.COMPLETED.value, () => navigation.navigate(OrderGraph.OrderDoneScreen))}
               title='Hoàn thành'
             />
 
             <PrimaryButton
               style={{ flex: 1, backgroundColor: colors.orange700 }}
-              onPress={() => onApprove("Giao hàng thất bại", OrderStatus.FAILED_DELIVERY.value)}
+              onPress={() => onApprove("Giao hàng thất bại", OrderStatus.FAILED_DELIVERY.value, () => navigation.goBack())}
               title='Giao hàng thất bại'
             />
 
@@ -243,22 +276,31 @@ const MerchantInfo = ({ store }) => {
   );
 };
 
-const RecipientInfo = ({ deliveryMethod, owner, shippingAddress }) => {
+const RecipientInfo = ({ deliveryMethod, owner, shippingAddress = {} }) => {
+  // Cung cấp giá trị mặc định cho shippingAddress
+  const {
+    consigneeName = "Chưa có tên",
+    consigneePhone = "Chưa có số điện thoại",
+    specificAddress = "Chưa có địa chỉ",
+    ward = "Chưa có phường",
+    district = "Chưa có quận",
+    province = "Chưa có tỉnh"
+  } = shippingAddress;
+
   // Chọn nguồn dữ liệu phù hợp
   const recipientName =
     deliveryMethod === 'pickup'
-      ? `${owner.lastName} ${owner.firstName}`
-      : shippingAddress.consigneeName;
+      ? `${owner?.lastName || "Chưa có họ"} ${owner?.firstName || "Chưa có tên"}`
+      : consigneeName;
 
   const recipientPhone =
     deliveryMethod === 'pickup'
-      ? owner.phoneNumber
-      : shippingAddress.consigneePhone;
+      ? owner?.phoneNumber || "Chưa có số điện thoại"
+      : consigneePhone;
 
   return (
     <Column style={[styles.areaContainer, { paddingHorizontal: 16 }]}>
       <Row style={{ justifyContent: 'space-between' }}>
-
         <Title title="Người nhận" icon="map-marker" />
 
         <Row style={{ flexDirection: 'row', gap: 16 }}>
@@ -272,17 +314,15 @@ const RecipientInfo = ({ deliveryMethod, owner, shippingAddress }) => {
       </Row>
 
       <NormalText
-        text={[recipientName, '||', recipientPhone].join(' ')}
+        text={[recipientName, '|', recipientPhone].join(' ')}
         style={{ color: colors.black }}
       />
 
       {deliveryMethod === DeliveryMethod.DELIVERY.value && (
         <Text style={styles.normalText}>
-          {`${shippingAddress.specificAddress}, ${shippingAddress.ward}, ${shippingAddress.district}, ${shippingAddress.province}`}
+          {`${specificAddress}, ${ward}, ${district}, ${province}`}
         </Text>
       )}
-
-
     </Column>
   );
 };
@@ -399,6 +439,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.fbBg,
     flex: 1,
     gap: 12,
+  },
+  lottieContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  lottieView: {
+    width: 200,
+    height: 200,
   },
   row: {
     flexDirection: 'row',

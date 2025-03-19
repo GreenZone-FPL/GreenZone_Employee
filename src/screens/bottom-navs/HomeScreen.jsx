@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { getOrdersByStatus } from '../../axios';
-import { Column, CustomTabView, LightStatusBar, NormalText, Row, StoreAddress, TitleText } from '../../components';
+import { Column, CustomTabView, LightStatusBar, NormalLoading, NormalText, Row, StoreAddress, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { AppAsyncStorage, TextFormatter } from '../../utils';
 import { OrderGraph } from '../../layouts/graphs';
@@ -31,7 +31,7 @@ const HomeScreen = ({ navigation }) => {
       const phoneNumber = await AppAsyncStorage.readData('phoneNumber');
       const response = await getOrdersByStatus(statuses[index]);
 
-      const filteredOrders = response.filter(o => o.shipper.phoneNumber === phoneNumber);
+      const filteredOrders = response.filter(o => o.shipper.phoneNumber === phoneNumber && o.deliveryMethod === 'delivery');
       setOrders(filteredOrders);
     } catch (error) {
       console.error('Error', error);
@@ -56,7 +56,7 @@ const HomeScreen = ({ navigation }) => {
 
       console.log(`📌 Trạng thái đơn hàng thay đổi: ${oldStatus} ➝ ${status}`);
 
-      if (statuses[index] === status || statuses[index] === oldStatus) {
+      if (statuses[index] !== status || statuses[index] !== oldStatus) {
         console.log(`🔄 Reload danh sách đơn hàng cho tab: ${statuses[index]}`);
         fetchOrders();
       }
@@ -87,7 +87,7 @@ const HomeScreen = ({ navigation }) => {
           <Column key={i} style={styles.tabView}>
             <StoreAddress title="GREEN ZONE">
               {loading ? (
-                <ActivityIndicator size="large" color={colors.green700} />
+                <NormalLoading visible={loading} />
               ) : (
                 <FlatList
                   showsVerticalScrollIndicator={false}
@@ -97,15 +97,7 @@ const HomeScreen = ({ navigation }) => {
                   renderItem={({ item }) =>
                     <OrderItem
                       item={item}
-                      handleOrderPress={() => {
-                        if (statuses[index] === OrderStatus.SHIPPING_ORDER.value) {
-                          navigation.navigate(OrderGraph.DeliveryMapScreen, { orderId: item._id })
-                        } else {
-                          navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: item._id })
-                        }
-                      }
-
-                      }
+                      handleOrderPress={() =>navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: item._id })}
                     />
                   }
                 />
@@ -122,7 +114,14 @@ const HomeScreen = ({ navigation }) => {
 
 const OrderItem = ({ item, handleOrderPress }) => {
   const { _id, totalPrice, shippingAddress, fulfillmentDateTime } = item;
-  const { consigneeName, consigneePhone, specificAddress, ward, district, province } = shippingAddress;
+  const {
+    consigneeName = "Chưa có tên",
+    consigneePhone = "Chưa có số điện thoại",
+    specificAddress = "Chưa có địa chỉ",
+    ward = "Chưa có phường",
+    district = "Chưa có quận",
+    province = "Chưa có tỉnh"
+  } = shippingAddress;
   const formattedAddress = `${specificAddress}, ${ward}, ${district}, ${province}`;
 
   const getOrderItemsText = () => {
