@@ -2,13 +2,24 @@ import { Call, Send2 } from 'iconsax-react-native';
 import React, { useEffect, useState, useRef } from 'react';
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { getOrderDetail, updateOrderStatus } from '../../axios';
-import { ActionDialog, Column, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, PrimaryButton, Row } from '../../components';
-import { DeliveryMethod, GLOBAL_KEYS, OrderStatus, colors } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+import { getOrderDetail, updateOrderStatus } from '../../../axios';
+import { ActionDialog, Column, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, PrimaryButton, Row } from '../../../components';
+import { DeliveryMethod, GLOBAL_KEYS, OrderStatus, colors } from '../../../constants';
+import { useAppContext } from '../../../context/appContext';
 import LottieView from 'lottie-react-native';
-import { OrderGraph, ShoppingGraph } from '../../layouts/graphs';
-import { Toaster } from '../../utils';
+import { OrderGraph, ShoppingGraph } from '../../../layouts/graphs';
+import { Toaster } from '../../../utils';
+import Geolocation from '@react-native-community/geolocation';
+import MapboxGL from '@rnmapbox/maps';
+import polyline from 'polyline';
+import { Linking } from 'react-native';
+
+const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
+const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';
+
+MapboxGL.setAccessToken(GOONG_API_KEY);
+
+
 
 const OrderDetailScreen = props => {
   const { navigation, route } = props;
@@ -20,18 +31,105 @@ const OrderDetailScreen = props => {
   const [dialogMessage, setDialogMessage] = useState("");
   const [approveAction, setApproveAction] = useState(null);
   const { updateOrderMessage, setOrderDualStatuses } = useAppContext();
+  const cameraRef = useRef(null);
+  const [userLocation, setUserLocation] = useState([null, null]);
+  const [customerLocation, setCustomerLocation] = useState([null, null]);
+  const [routeCoordinates, setRouteCoordinates] = useState([]);
+
+  const convertedCoordinates = routeCoordinates.map(([lat, lng]) => [lng, lat]);
+
+  console.log(convertedCoordinates);
+  // vị trí người dùng 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      Geolocation.getCurrentPosition(
+        position => {
+          const { longitude, latitude } = position.coords;
+          setUserLocation([longitude, latitude]);
+          if (cameraRef.current) {
+            cameraRef.current.setCamera({
+              centerCoordinate: [longitude, latitude],
+              zoomLevel: 14,
+              animationDuration: 1000,
+            });
+          } console.log('Vị trí người dùng', position)
+        },
+        error => console.log(error),
+        { timeout: 5000 },
+      );
+
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+
 
   const fetchOrderDetail = async () => {
     try {
       const response = await getOrderDetail(orderId);
       setOrderDetail(response);
-      console.log('response', JSON.stringify(response, null, 3))
+      const latitude = response.latitude;
+      const longitude = response.longitude;
+      setCustomerLocation([longitude, latitude]);
+      console.log(`Vị trí giao hàng: Latitude: ${latitude}, Longitude: ${longitude}`);
+      //   console.log('>>>>>>response', JSON.stringify(response, null, 2))
     } catch (error) {
       console.error('error', error);
     } finally {
       setLoading(false);
     }
   };
+
+  // Lấy tuyến đường từ API Goong.io
+  const fetchRoute = async () => {
+    if (userLocation[0] === null || customerLocation[0] === null) return;
+
+    // Tạo URL để lấy tuyến đường
+    const url = `https://rsapi.goong.io/Direction?origin=${userLocation[1]},${userLocation[0]}&destination=${customerLocation[1]},${customerLocation[0]}&vehicle=car&api_key=${GOONG_API_KEY}`;
+
+    try {
+      // Gửi yêu cầu đến API Goong
+      const response = await fetch(url);
+      const data = await response.json();
+      console.log('API Response:', JSON.stringify(data, null, 2));
+
+      // Kiểm tra dữ liệu trả về có hợp lệ không
+      if (data.routes && data.routes.length > 0) {
+        const route = data.routes[0].overview_polyline.points;
+        if (route) {
+          // Giải mã polyline và cập nhật tuyến đường
+          const decodedRoute = polyline.decode(route);
+          if (decodedRoute.length > 0) {
+            console.log('Tuyến đường đã giải mã:', JSON.stringify(decodedRoute, null, 2));
+            setRouteCoordinates(decodedRoute);
+          } else {
+            console.error('Dữ liệu tuyến đường sau khi giải mã rỗng.');
+          }
+        } else {
+          console.error("Không có trường 'overview_polyline' trong tuyến đường.");
+        }
+      } else {
+        console.error("Không có tuyến đường hợp lệ trong phản hồi từ API.");
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy tuyến đường:', error);
+    }
+  };
+
+
+
+
+  // Gọi API khi có sự thay đổi về vị trí người dùng và khách hàng
+  useEffect(() => {
+    if (userLocation[0] !== null && customerLocation[0] !== null) {
+      fetchRoute(); // Gọi hàm để lấy tuyến đường mới
+    }
+  }, [userLocation, customerLocation]);
+
+
+
+
 
   const onApprove = (message, newStatus, callback) => {
     setActionDialogVisible(true);
@@ -84,6 +182,45 @@ const OrderDetailScreen = props => {
       </View>
     );
   }
+  const getDistance = (lat1, lon1, lat2, lon2) => {
+    const rad = (x) => (x * Math.PI) / 180;
+    const R = 6371;
+    const dLat = rad(lat2 - lat1);
+    const dLon = rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(rad(lat1)) * Math.cos(rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c * 1000;
+    return distance;
+  };
+
+  const checkDistanceAndApprove = (statusMessage, newStatus, successAction) => {
+    if (userLocation[0] && customerLocation[0]) {
+      const distance = getDistance(userLocation[0], userLocation[1], customerLocation[0], customerLocation[1]);
+      if (distance <= 1000) {
+        // Cập nhật trạng thái đơn hàng
+        updateOrderStatus(orderId, newStatus)  // Cập nhật trạng thái đơn hàng
+          .then(() => {
+            setDialogMessage(statusMessage);
+            setApproveAction(() => {
+              successAction();
+            });
+            setActionDialogVisible(true);
+          })
+          .catch((error) => {
+            setDialogMessage("Lỗi cập nhật trạng thái đơn hàng");
+            setApproveAction(() => null);
+            setActionDialogVisible(true);
+          });
+      } else {
+        setDialogMessage('Bạn phải ở gần vị trí khách hàng để hoàn thành giao hàng.');
+        setApproveAction(() => null);
+        setActionDialogVisible(true);
+      }
+    }
+  };
 
 
   const {
@@ -96,7 +233,10 @@ const OrderDetailScreen = props => {
       <LightStatusBar />
       <NormalHeader title="Chi tiết đơn hàng" onLeftPress={() => navigation.goBack()} enableLeftIcon />
 
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.containerContent}>
+
+
+    
+       <ScrollView showsVerticalScrollIndicator={false} style={styles.containerContent}>
         <Row style={{ padding: GLOBAL_KEYS.PADDING_DEFAULT, marginBottom: 5, justifyContent: 'space-between', flex: 1, backgroundColor: colors.white }}>
           <Title title="Trạng thái đơn hàng" color={colors.green500} />
           <Text style={[styles.status, { color: status === 'cancelled' ? colors.black : colors.green500 }]}>
@@ -104,35 +244,72 @@ const OrderDetailScreen = props => {
           </Text>
         </Row>
 
-
         {
           status === OrderStatus.SHIPPING_ORDER.value &&
 
-          <View style={{ width: '100%', height: 350, marginBottom: 8 }}>
-            <Image
-              source={require('../../assets/images/map.png')}
-              style={{ width: '100%', height: '100%' }}
-            />
-            <View style={styles.lottieContainer}>
-              <LottieView
-                ref={animationRef}
-                source={require('../../assets/animations/shipbear.json')}
-                autoPlay={false}
-                loop={false}
-                style={styles.lottieView}
+        
+
+            <MapboxGL.MapView style={{height: 450}} styleURL={`https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_MAPTILES_KEY}`}>
+              <MapboxGL.Camera
+                zoomLevel={10}
+                centerCoordinate={userLocation[0] !== null ? userLocation : [106.700987, 10.776889]}
               />
-            </View>
-          </View>
+
+              {/* Vị trí người dùng */}
+              {userLocation[0] !== null && (
+                <MapboxGL.PointAnnotation coordinate={userLocation} id="userLocation">
+                  <View style={styles.userMarker} />
+                </MapboxGL.PointAnnotation>
+              )}
+
+              {/* Vị trí khách hàng */}
+              {customerLocation[0] !== null && (
+                <MapboxGL.PointAnnotation coordinate={customerLocation} id="customerLocation">
+                  <View />
+                </MapboxGL.PointAnnotation>
+              )}
+
+              {/* Vẽ tuyến đường nếu có */}
+              {/*  {routeCoordinates.length > 0 && ( */}
+              <MapboxGL.ShapeSource
+                id="lineSource"
+                shape={{
+                  type: 'FeatureCollection',
+                  features: [
+                    {
+                      type: 'Feature',
+                      geometry: {
+                        type: 'LineString',
+                        coordinates: convertedCoordinates,
+                      },
+                    },
+                  ],
+                }}
+              >
+                <MapboxGL.LineLayer
+                  id="lineLayer"
+                  style={{
+                    lineColor: colors.blue600,
+                    lineWidth: 5,
+                  }}
+                />
+              </MapboxGL.ShapeSource>
+              {/*   )} */}
+            </MapboxGL.MapView>
+
+
+
+  
         }
 
 
         {["shippingOrder", "failedDelivery", "readyForPickup", "completed"].includes(status) && (
-          <ShipperInfo shipper={shipper} />
+          <ShipperInfo shipper={shipper} userLocation={userLocation} customerLocation={customerLocation} />
         )}
 
         <MerchantInfo store={store} />
 
-        <RecipientInfo deliveryMethod={deliveryMethod} owner={owner} shippingAddress={shippingAddress} />
+        <RecipientInfo deliveryMethod={deliveryMethod} owner={owner} shippingAddress={shippingAddress} detail={orderDetail} />
 
         <ProductsInfo orderItems={orderItems} />
 
@@ -172,20 +349,28 @@ const OrderDetailScreen = props => {
           <Row style={{ gap: 16, backgroundColor: colors.white, padding: 16 }}>
             <PrimaryButton
               style={{ flex: 1 }}
-              onPress={() => onApprove("Hoàn tất đơn hàng", OrderStatus.COMPLETED.value, () => navigation.navigate(OrderGraph.OrderDoneScreen))}
+              onPress={() => checkDistanceAndApprove(
+                'Đơn hàng hoàn thành',
+                OrderStatus.COMPLETED.value,
+                () => navigation.navigate(OrderGraph.OrderDoneScreen)
+              )}
               title='Hoàn thành'
+              disabled={!userLocation || !customerLocation}
             />
-
             <PrimaryButton
               style={{ flex: 1, backgroundColor: colors.orange700 }}
-              onPress={() => onApprove("Giao hàng thất bại", OrderStatus.FAILED_DELIVERY.value, () => navigation.goBack())}
+              onPress={() => checkDistanceAndApprove(
+                'Giao hàng thất bại',
+                OrderStatus.FAILED_DELIVERY.value,
+                () => navigation.goBack()
+              )}
               title='Giao hàng thất bại'
             />
-
           </Row>
         )}
 
-      </ScrollView>
+
+      </ScrollView> 
 
       <ActionDialog
         visible={actionDialogVisible}
@@ -202,16 +387,31 @@ const OrderDetailScreen = props => {
 
 
 
-const ShipperInfo = ({ messageClick, shipper }) => {
+const ShipperInfo = ({ messageClick, userLocation, shipper, customerLocation }) => {
+  const openGoogleMaps = () => {
+    if (userLocation[0] !== null && customerLocation[0] !== null) {
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${userLocation[1]},${userLocation[0]}&destination=${customerLocation[1]},${customerLocation[0]}&travelmode=driving`;
+      Linking.openURL(url);
+    } else {
+      Toaster.show("Không thể lấy vị trí để chỉ đường");
+    }
+  };
 
   return (
     <Row style={{ gap: 16, padding: 16, backgroundColor: colors.white, marginBottom: 5 }}>
       <Image
         style={{ width: 40, height: 40 }}
-        source={require('../../assets/images/helmet.png')}
+        source={require('../../../assets/images/helmet.png')}
       />
       <Column style={{ flex: 1 }}>
-        <NormalText text="Nhân viên giao hàng" style={{ fontWeight: '500' }} />
+        <Row style={{ justifyContent: 'space-between', flex: 1, backgroundColor: colors.white }}>
+          <NormalText text="Nhân viên giao hàng" style={{ fontWeight: '500' }} />
+          <TouchableOpacity onPress={openGoogleMaps}>
+            <NormalText text="Chỉ đường" style={{ fontWeight: '500', color: colors.primary }} />
+          </TouchableOpacity>
+
+        </Row>
+
         <Text
           style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.yellow700, fontWeight: '500' }}>
           {shipper?.firstName ? `${shipper.firstName} ${shipper.lastName} ` : 'Đang chuẩn bị ...'}
@@ -276,27 +476,7 @@ const MerchantInfo = ({ store }) => {
   );
 };
 
-const RecipientInfo = ({ deliveryMethod, owner, shippingAddress = {} }) => {
-  // Cung cấp giá trị mặc định cho shippingAddress
-  const {
-    consigneeName = "Chưa có tên",
-    consigneePhone = "Chưa có số điện thoại",
-    specificAddress = "Chưa có địa chỉ",
-    ward = "Chưa có phường",
-    district = "Chưa có quận",
-    province = "Chưa có tỉnh"
-  } = shippingAddress;
-
-  // Chọn nguồn dữ liệu phù hợp
-  const recipientName =
-    deliveryMethod === 'pickup'
-      ? `${owner?.lastName || "Chưa có họ"} ${owner?.firstName || "Chưa có tên"}`
-      : consigneeName;
-
-  const recipientPhone =
-    deliveryMethod === 'pickup'
-      ? owner?.phoneNumber || "Chưa có số điện thoại"
-      : consigneePhone;
+const RecipientInfo = ({ deliveryMethod, owner, shippingAddress, detail }) => {
 
   return (
     <Column style={[styles.areaContainer, { paddingHorizontal: 16 }]}>
@@ -314,13 +494,13 @@ const RecipientInfo = ({ deliveryMethod, owner, shippingAddress = {} }) => {
       </Row>
 
       <NormalText
-        text={[recipientName, '|', recipientPhone].join(' ')}
+        text={[detail.consigneeName, '|', detail.consigneePhone].join(' ')}
         style={{ color: colors.black }}
       />
 
       {deliveryMethod === DeliveryMethod.DELIVERY.value && (
         <Text style={styles.normalText}>
-          {`${specificAddress}, ${ward}, ${district}, ${province}`}
+          {detail.shippingAddress}
         </Text>
       )}
     </Column>
@@ -368,9 +548,9 @@ const PaymentDetails = ({
   })();
 
   const paymentIcon = {
-    cod: require('../../assets/images/logo_vnd.png'),
-    payOs: require('../../assets/images/logo_payos.png'),
-    zalopay: require('../../assets/images/logo_zalopay.png'),
+    cod: require('../../../assets/images/logo_vnd.png'),
+    payOs: require('../../../assets/images/logo_payos.png'),
+    zalopay: require('../../../assets/images/logo_zalopay.png'),
   }[paymentMethod];
 
   return (
@@ -491,6 +671,14 @@ const styles = StyleSheet.create({
     borderColor: colors.gray200,
     borderWidth: 2,
     margin: 16,
+  },
+  userMarker: {
+    width: 15,
+    height: 15,
+    borderRadius: 10,
+    backgroundColor: 'green',
+    borderWidth: 2,
+    borderColor: 'white',
   },
   status: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.green500, fontWeight: '500' },
 });

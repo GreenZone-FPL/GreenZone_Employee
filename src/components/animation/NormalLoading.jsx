@@ -23,7 +23,8 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.overlay
+    backgroundColor: colors.overlay,
+    flex: 1
 
   },
   lottie: {

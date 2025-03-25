@@ -1,27 +1,29 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
+import { AppContextProvider, useAppContext } from './src/context/appContext';
 import { AuthGraph, MainGraph, OrderGraph } from './src/layouts/graphs';
 import ShipperSocketService from './src/service/shipperSocketSevice';
 import { AppAsyncStorage } from './src/utils';
-import { AppContextProvider } from './src/context/appContext';
-import { PaperProvider } from 'react-native-paper';
-import { useAppContext } from './src/context/appContext';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import Toast from 'react-native-toast-message';
 
 import MainNavigation from './src/layouts/MainNavigation';
+import LoginScreen from './src/screens/auth/LoginScreen';
 import SplashScreen from './src/screens/auth/SplashScreen';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
-import LoginScreen from './src/screens/auth/LoginScreen';
-import DeliveryMapScreen from './src/screens/order/DeliveryMapScreen';
-import ChatWithUser from './src/screens/order/ChatWithUser';
-import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import CallWithUser from './src/screens/order/CallWithUser';
+import ChatWithUser from './src/screens/order/ChatWithUser';
+import DeliveryMapScreen from './src/screens/order/DeliveryMapScreen';
+// import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
+import OrderDetailScreen from './src/screens/order/orderdetail/OrderDetailScreen';
+
 import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
-
+// LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+// LogBox.ignoreAllLogs();//Ignore all log notifications
 
 const BaseStack = createNativeStackNavigator();
 
@@ -65,43 +67,10 @@ function AppNavigator({ navigation }) {
     })
   }, [authState]);
 
-  // Khởi tạo socket khi đăng nhập thành công
   const initializeSocket = async () => {
-   
+
     await ShipperSocketService.initialize();
 
-    // Lắng nghe sự kiện từ socket
-    // ShipperSocketService.on('order.assigned', data => {
-    //   console.log(
-    //     '📩 Nhận sự kiện order.assigned:',
-    //     JSON.stringify(data, null, 2),
-    //   );
-
-    //   Toast.show({
-    //     type: 'info',
-    //     text1: '📦 Đơn hàng mới!',
-    //     text2: `Mã đơn: ${data.orderId}`,
-    //     position: 'top',
-    //     visibilityTime: 3000,
-    //   });
-
-    //   console.log(`📌 Thử join vào room với orderId: ${data.orderId}`);
-    //   ShipperSocketService.socket.emit('order.join', data.orderId);
-    // });
-
-    // ShipperSocketService.on('order.updateStatus', data => {
-    //   console.log(
-    //     '🔄 Trạng thái đơn hàng cập nhật:',
-    //     JSON.stringify(data, null, 2),
-    //   );
-    //   Toast.show({
-    //     type: 'info',
-    //     text1: '📦 Đơn hàng mới!',
-    //     text2: `Mã đơn: ${data.orderId}`,
-    //     position: 'top',
-    //     visibilityTime: 3000,
-    //   });
-    // });
   };
 
   return (

@@ -1,4 +1,4 @@
-import { AppAsyncStorage } from "../utils";
+
 
 export const AuthActionTypes = {
   LOGIN: 'LOGIN',
@@ -34,14 +34,3 @@ export const authReducer = (state, action) => {
 }
 
 
-export const saveAuthDispatch = (state, dispatch) => {
-  return async (action) => {
-    const newState = authReducer(state, action);
-    dispatch(action);
-    try {
-      await AppAsyncStorage.storeData('authState', newState);
-    } catch (error) {
-      console.log('Error storing authState:', error);
-    }
-  };
-};

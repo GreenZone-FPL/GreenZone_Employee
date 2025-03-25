@@ -101,7 +101,9 @@ class ShipperSocketService {
   "note": "",
   "totalPrice": 111200,
   "paymentMethod": "cod",
-  "shippingAddress": "67bf1b2556cc7b945d83f52f",
+  "consigneeName": "Nguyễn Văn A",
+  "consigneePhone": "0987654321",
+  "shippingAddress": "Địa chỉ fake, 123 Nguyễn Xí, Bình Thạnh, HCM",
   "store": "67b68d7698c1fc822e49fabd",
   "voucher": "67be982856cc7b945d83be16",
   "orderItems": [
@@ -123,7 +125,9 @@ class ShipperSocketService {
       "price": 29000,
       "toppingItems": []
     }
-  ]
+  ],
+   "latitude": "10.7769",
+   "longitude": "106.7009"
 }
  */
 export default new ShipperSocketService();

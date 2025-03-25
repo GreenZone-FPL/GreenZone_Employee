@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -57,7 +58,7 @@ const ProfileScreen = ({ navigation }) => {
 
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <LightStatusBar />
       <Text style={styles.headerTitle}>Cá nhân</Text>
       <Header profile={profile} />
@@ -88,7 +89,7 @@ const ProfileScreen = ({ navigation }) => {
         />
       </Column>
 
-    </View>
+    </ScrollView>
   );
 };
 
@@ -166,7 +167,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.fbBg,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    flex: 1
+    flex: 1,
+    marginBottom: 100
   },
 
   headerTitle: {

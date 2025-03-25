@@ -115,14 +115,14 @@ const HomeScreen = ({ navigation }) => {
 const OrderItem = ({ item, handleOrderPress }) => {
   const { _id, totalPrice, shippingAddress, fulfillmentDateTime } = item;
   const {
-    consigneeName = "Chưa có tên",
-    consigneePhone = "Chưa có số điện thoại",
-    specificAddress = "Chưa có địa chỉ",
-    ward = "Chưa có phường",
+    consigneeName = item.consigneeName,
+    consigneePhone = item.consigneePhone,
+    specificAddress = item.shippingAddress,
+    ward = "Chưa có ĐườngĐường",
     district = "Chưa có quận",
     province = "Chưa có tỉnh"
   } = shippingAddress;
-  const formattedAddress = `${specificAddress}, ${ward}, ${district}, ${province}`;
+  const formattedAddress = `${specificAddress}`;
 
   const getOrderItemsText = () => {
     const items = item?.orderItems || [];

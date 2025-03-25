@@ -51,7 +51,8 @@ export const FlatInput = ({
         onChangeText={setValue}
         mode="flat"
         placeholder={placeholder}
-        placeholderTextColor={colors.gray400}
+        placeholderTextColor={colors.primary}
+        theme={{ colors: { onSurfaceVariant: colors.primary } }}
         error={!!message}
         outlineColor={message ? colors.red800 : colors.primary}
         activeUnderlineColor={colors.primary}
@@ -142,6 +143,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    color: colors.black
   },
   errorText: {
     color: colors.red900,
