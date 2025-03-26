@@ -22,6 +22,8 @@ import OrderDetailScreen from './src/screens/order/orderdetail/OrderDetailScreen
 
 import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
+import BottomTab from './src/layouts/BottomTab';
+import MapScreen from './src/screens/order/orderdetail/MapScreen';
 // LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 // LogBox.ignoreAllLogs();//Ignore all log notifications
 
@@ -83,10 +85,19 @@ function AppNavigator({ navigation }) {
               component={SplashScreen2}
             />
           )}
-          <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} />
+          <BaseStack.Screen name={MainGraph.graphName} component={BottomTab} />
           <BaseStack.Screen name={AuthGraph.DeliveryMapScreen} component={DeliveryMapScreen} />
           <BaseStack.Screen name={AuthGraph.ChatWithUser} component={ChatWithUser} />
           <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
+          <BaseStack.Screen
+            name={'MapScreen'}
+            component={MapScreen}
+            options={{
+              animation: 'slide_from_bottom',
+              presentation: 'transparentModal',
+              headerShown: false,
+            }}
+          />
           <BaseStack.Screen name={AuthGraph.CallWithUser} component={CallWithUser} />
           <BaseStack.Screen name={OrderGraph.OrderDoneScreen} component={OrderDoneScreen} />
           <BaseStack.Screen name={'UpdateProfileScreen'} component={UpdateProfileScreen} />

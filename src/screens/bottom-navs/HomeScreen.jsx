@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { getOrdersByStatus } from '../../axios';
+import { getOrdersByStatus, getMerchant } from '../../axios';
 import { Column, CustomTabView, LightStatusBar, NormalLoading, NormalText, Row, StoreAddress, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { AppAsyncStorage, TextFormatter } from '../../utils';
@@ -16,11 +16,12 @@ import { OrderGraph } from '../../layouts/graphs';
 import { useAppContext } from '../../context/appContext';
 
 const statuses = ['readyForPickup', 'shippingOrder', 'completed', 'failedDelivery'];
-const tabTitles = ['Đơn Mới', 'Đang Giao', 'Hoàn Thành', 'Giao Thất Bại'];
+const tabTitles = ['Đơn mới', 'Đang giao', 'Hoàn thành', 'Giao thất bại'];
 
 const HomeScreen = ({ navigation }) => {
   const [index, setIndex] = useState(0);
   const [orders, setOrders] = useState([]);
+  const [merchant, setMerchant] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { orderDualStatuses } = useAppContext();
@@ -39,6 +40,26 @@ const HomeScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+
+  // Lấy dữ liệu id cửa hàng
+  useEffect(() => {
+    const loadMerchant = async () => {
+      try {
+        const storeId = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.storeId);
+        if (storeId) {
+          const response = await getMerchant(storeId);
+          console.log('response', response)
+          setMerchant(response);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMerchant();
+  }, []);
 
 
   // Luôn tải danh sách đơn hàng khi chuyển tab
@@ -63,16 +84,23 @@ const HomeScreen = ({ navigation }) => {
     }, [orderDualStatuses])
   );
 
-
-
-
-
-
-
   return (
     <View style={styles.container}>
       <LightStatusBar />
-      <Text style={styles.headerText}>Đơn hàng</Text>
+
+      {
+        merchant &&
+        <Column style={{ padding: 16, backgroundColor: colors.white }}>
+          <Text style={styles.headerText}>{merchant?.name}</Text>
+          <Text
+            style={
+              styles.titleText
+            }>{`${merchant.specificAddress}, ${merchant.ward}, ${merchant.district}, ${merchant.province}`}
+          </Text>
+        </Column>
+
+      }
+
 
       <CustomTabView
         tabIndex={index}
@@ -85,7 +113,7 @@ const HomeScreen = ({ navigation }) => {
       >
         {statuses.map((status, i) => (
           <Column key={i} style={styles.tabView}>
-            <StoreAddress title="GREEN ZONE">
+            <>
               {loading ? (
                 <NormalLoading visible={loading} />
               ) : (
@@ -97,13 +125,13 @@ const HomeScreen = ({ navigation }) => {
                   renderItem={({ item }) =>
                     <OrderItem
                       item={item}
-                      handleOrderPress={() =>navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: item._id })}
+                      handleOrderPress={() => navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: item._id })}
                     />
                   }
                 />
 
               )}
-            </StoreAddress>
+            </>
           </Column>
         ))}
       </CustomTabView>
@@ -113,7 +141,7 @@ const HomeScreen = ({ navigation }) => {
 
 
 const OrderItem = ({ item, handleOrderPress }) => {
-  const { _id, totalPrice, shippingAddress, fulfillmentDateTime } = item;
+  const { _id, totalPrice, shippingAddress, createdAt } = item;
   const {
     consigneeName = item.consigneeName,
     consigneePhone = item.consigneePhone,
@@ -149,10 +177,9 @@ const OrderItem = ({ item, handleOrderPress }) => {
         </Text>
 
 
-
         <NormalText text={`${consigneeName} || ${consigneePhone}`} style={styles.recipientText} />
         <NormalText text={formattedAddress} />
-        <NormalText text={new Date(fulfillmentDateTime).toLocaleString()} style={styles.dateText} />
+        <NormalText text={new Date(createdAt).toLocaleString()} style={styles.dateText} />
       </Column>
     </TouchableOpacity>
   );
@@ -160,12 +187,12 @@ const OrderItem = ({ item, handleOrderPress }) => {
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.white },
+  container: { flex: 1, backgroundColor: colors.fbBg, gap: 8 },
   headerText: {
     fontWeight: 'bold',
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    textAlign: 'center',
     marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+    backgroundColor: colors.white
   },
   tabView: {
     width: '100%',
@@ -180,6 +207,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+
   recipientText: { color: colors.black, fontWeight: '500' },
   orderIdText: { color: colors.pink500 },
   priceText: { color: colors.primary },

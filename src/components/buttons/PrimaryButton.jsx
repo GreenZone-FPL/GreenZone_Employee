@@ -7,11 +7,12 @@ export const PrimaryButton = props => {
   const {
     title = 'Default title',
     onPress = () => { },
-    style
+    style,
+    titleStyle,
   } = props;
   return (
     <Pressable style={[styles.button, style]} onPress={onPress}>
-      <Text style={styles.text}>{title}</Text>
+      <Text style={[styles.text, titleStyle]}>{title}</Text>
     </Pressable>
   );
 };

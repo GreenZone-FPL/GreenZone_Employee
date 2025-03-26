@@ -1,17 +1,15 @@
+import Geolocation from '@react-native-community/geolocation';
+import MapboxGL from '@rnmapbox/maps';
 import { Call, Send2 } from 'iconsax-react-native';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { getOrderDetail, updateOrderStatus } from '../../../axios';
-import { ActionDialog, Column, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, PrimaryButton, Row } from '../../../components';
+import { ActionDialog, StatusText, Column, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, PrimaryButton, Row } from '../../../components';
 import { DeliveryMethod, GLOBAL_KEYS, OrderStatus, colors } from '../../../constants';
 import { useAppContext } from '../../../context/appContext';
-import LottieView from 'lottie-react-native';
-import { OrderGraph, ShoppingGraph } from '../../../layouts/graphs';
+import { OrderGraph } from '../../../layouts/graphs';
 import { Toaster } from '../../../utils';
-import Geolocation from '@react-native-community/geolocation';
-import MapboxGL from '@rnmapbox/maps';
-import polyline from 'polyline';
 import { Linking } from 'react-native';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
@@ -80,55 +78,6 @@ const OrderDetailScreen = props => {
       setLoading(false);
     }
   };
-
-  // Lấy tuyến đường từ API Goong.io
-  const fetchRoute = async () => {
-    if (userLocation[0] === null || customerLocation[0] === null) return;
-
-    // Tạo URL để lấy tuyến đường
-    const url = `https://rsapi.goong.io/Direction?origin=${userLocation[1]},${userLocation[0]}&destination=${customerLocation[1]},${customerLocation[0]}&vehicle=car&api_key=${GOONG_API_KEY}`;
-
-    try {
-      // Gửi yêu cầu đến API Goong
-      const response = await fetch(url);
-      const data = await response.json();
-      console.log('API Response:', JSON.stringify(data, null, 2));
-
-      // Kiểm tra dữ liệu trả về có hợp lệ không
-      if (data.routes && data.routes.length > 0) {
-        const route = data.routes[0].overview_polyline.points;
-        if (route) {
-          // Giải mã polyline và cập nhật tuyến đường
-          const decodedRoute = polyline.decode(route);
-          if (decodedRoute.length > 0) {
-            console.log('Tuyến đường đã giải mã:', JSON.stringify(decodedRoute, null, 2));
-            setRouteCoordinates(decodedRoute);
-          } else {
-            console.error('Dữ liệu tuyến đường sau khi giải mã rỗng.');
-          }
-        } else {
-          console.error("Không có trường 'overview_polyline' trong tuyến đường.");
-        }
-      } else {
-        console.error("Không có tuyến đường hợp lệ trong phản hồi từ API.");
-      }
-    } catch (error) {
-      console.error('Lỗi khi lấy tuyến đường:', error);
-    }
-  };
-
-
-
-
-  // Gọi API khi có sự thay đổi về vị trí người dùng và khách hàng
-  useEffect(() => {
-    if (userLocation[0] !== null && customerLocation[0] !== null) {
-      fetchRoute(); // Gọi hàm để lấy tuyến đường mới
-    }
-  }, [userLocation, customerLocation]);
-
-
-
 
 
   const onApprove = (message, newStatus, callback) => {
@@ -231,89 +180,48 @@ const OrderDetailScreen = props => {
   return (
     <View style={styles.container}>
       <LightStatusBar />
-      <NormalHeader title="Chi tiết đơn hàng" onLeftPress={() => navigation.goBack()} enableLeftIcon />
+      <NormalHeader
+        enableRightIcon={status === OrderStatus.SHIPPING_ORDER.value}
+        onRightPress={() => {
+          navigation.navigate("MapScreen", {
+            userLocation: userLocation,
+            customerLocation: customerLocation,
+            routeCoordinates: routeCoordinates,
+            orderId: orderId,
+            status: status,
+          });
+
+        }}
+        rightIcon='google-maps'
+        title="Chi tiết đơn hàng" onLeftPress={() => navigation.goBack()} enableLeftIcon />
 
 
 
-    
-       <ScrollView showsVerticalScrollIndicator={false} style={styles.containerContent}>
-        <Row style={{ padding: GLOBAL_KEYS.PADDING_DEFAULT, marginBottom: 5, justifyContent: 'space-between', flex: 1, backgroundColor: colors.white }}>
-          <Title title="Trạng thái đơn hàng" color={colors.green500} />
-          <Text style={[styles.status, { color: status === 'cancelled' ? colors.black : colors.green500 }]}>
-            {OrderStatus.getLabelByValue(status)}
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.containerContent}>
+        <Row
+          style={{
+            paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+            paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+            marginBottom: GLOBAL_KEYS.GAP_SMALL,
+            justifyContent: 'space-between',
+            flex: 1,
+            backgroundColor: colors.white
+          }}>
+          <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.black, flex: 1, fontWeight: '500' }}>
+            {orderDetail?.deliveryMethod === 'pickup' ? 'Tự đến lấy hàng' : 'Giao hàng tận nơi'}
           </Text>
+
+          <StatusText status={orderDetail?.status} />
+
         </Row>
 
-        {
-          status === OrderStatus.SHIPPING_ORDER.value &&
-
-        
-
-            <MapboxGL.MapView style={{height: 450}} styleURL={`https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_MAPTILES_KEY}`}>
-              <MapboxGL.Camera
-                zoomLevel={10}
-                centerCoordinate={userLocation[0] !== null ? userLocation : [106.700987, 10.776889]}
-              />
-
-              {/* Vị trí người dùng */}
-              {userLocation[0] !== null && (
-                <MapboxGL.PointAnnotation coordinate={userLocation} id="userLocation">
-                  <View style={styles.userMarker} />
-                </MapboxGL.PointAnnotation>
-              )}
-
-              {/* Vị trí khách hàng */}
-              {customerLocation[0] !== null && (
-                <MapboxGL.PointAnnotation coordinate={customerLocation} id="customerLocation">
-                  <View />
-                </MapboxGL.PointAnnotation>
-              )}
-
-              {/* Vẽ tuyến đường nếu có */}
-              {/*  {routeCoordinates.length > 0 && ( */}
-              <MapboxGL.ShapeSource
-                id="lineSource"
-                shape={{
-                  type: 'FeatureCollection',
-                  features: [
-                    {
-                      type: 'Feature',
-                      geometry: {
-                        type: 'LineString',
-                        coordinates: convertedCoordinates,
-                      },
-                    },
-                  ],
-                }}
-              >
-                <MapboxGL.LineLayer
-                  id="lineLayer"
-                  style={{
-                    lineColor: colors.blue600,
-                    lineWidth: 5,
-                  }}
-                />
-              </MapboxGL.ShapeSource>
-              {/*   )} */}
-            </MapboxGL.MapView>
-
-
-
-  
-        }
-
-
-        {["shippingOrder", "failedDelivery", "readyForPickup", "completed"].includes(status) && (
-          <ShipperInfo shipper={shipper} userLocation={userLocation} customerLocation={customerLocation} />
-        )}
-
-        <MerchantInfo store={store} />
 
         <RecipientInfo deliveryMethod={deliveryMethod} owner={owner} shippingAddress={shippingAddress} detail={orderDetail} />
 
         <ProductsInfo orderItems={orderItems} />
 
         <PaymentDetails
+          detail={orderDetail}
           _id={_id}
           shippingFee={shippingFee}
           voucher={voucher}
@@ -348,29 +256,31 @@ const OrderDetailScreen = props => {
         {status === OrderStatus.SHIPPING_ORDER.value && (
           <Row style={{ gap: 16, backgroundColor: colors.white, padding: 16 }}>
             <PrimaryButton
+              titleStyle={{ color: colors.red900 }}
+              style={{ flex: 1, backgroundColor: colors.white, borderColor: colors.red900, borderWidth: 1 }}
+              onPress={() => checkDistanceAndApprove(
+                'Giao hàng thất bại',
+                OrderStatus.FAILED_DELIVERY.value,
+                () => navigation.goBack()
+              )}
+              title='Hủy đơn hàng'
+            />
+            <PrimaryButton
               style={{ flex: 1 }}
               onPress={() => checkDistanceAndApprove(
                 'Đơn hàng hoàn thành',
                 OrderStatus.COMPLETED.value,
                 () => navigation.navigate(OrderGraph.OrderDoneScreen)
               )}
-              title='Hoàn thành'
+              title='Hoàn thành đơn hàng'
               disabled={!userLocation || !customerLocation}
             />
-            <PrimaryButton
-              style={{ flex: 1, backgroundColor: colors.orange700 }}
-              onPress={() => checkDistanceAndApprove(
-                'Giao hàng thất bại',
-                OrderStatus.FAILED_DELIVERY.value,
-                () => navigation.goBack()
-              )}
-              title='Giao hàng thất bại'
-            />
+
           </Row>
         )}
 
 
-      </ScrollView> 
+      </ScrollView>
 
       <ActionDialog
         visible={actionDialogVisible}
@@ -387,39 +297,7 @@ const OrderDetailScreen = props => {
 
 
 
-const ShipperInfo = ({ messageClick, userLocation, shipper, customerLocation }) => {
-  const openGoogleMaps = () => {
-    if (userLocation[0] !== null && customerLocation[0] !== null) {
-      const url = `https://www.google.com/maps/dir/?api=1&origin=${userLocation[1]},${userLocation[0]}&destination=${customerLocation[1]},${customerLocation[0]}&travelmode=driving`;
-      Linking.openURL(url);
-    } else {
-      Toaster.show("Không thể lấy vị trí để chỉ đường");
-    }
-  };
 
-  return (
-    <Row style={{ gap: 16, padding: 16, backgroundColor: colors.white, marginBottom: 5 }}>
-      <Image
-        style={{ width: 40, height: 40 }}
-        source={require('../../../assets/images/helmet.png')}
-      />
-      <Column style={{ flex: 1 }}>
-        <Row style={{ justifyContent: 'space-between', flex: 1, backgroundColor: colors.white }}>
-          <NormalText text="Nhân viên giao hàng" style={{ fontWeight: '500' }} />
-          <TouchableOpacity onPress={openGoogleMaps}>
-            <NormalText text="Chỉ đường" style={{ fontWeight: '500', color: colors.primary }} />
-          </TouchableOpacity>
-
-        </Row>
-
-        <Text
-          style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.yellow700, fontWeight: '500' }}>
-          {shipper?.firstName ? `${shipper.firstName} ${shipper.lastName} ` : 'Đang chuẩn bị ...'}
-        </Text>
-      </Column>
-    </Row>
-  );
-};
 
 const ProductsInfo = ({ orderItems }) => {
   return (
@@ -459,24 +337,25 @@ const ProductsInfo = ({ orderItems }) => {
   );
 };
 
-const MerchantInfo = ({ store }) => {
-  return (
-    <View style={[styles.areaContainer, { paddingHorizontal: 16 }]}>
-      <Title title="Cửa hàng" icon="store" />
-      <Title title={store.name} titleStyle={{ color: colors.black }} />
-      <Text numberOfLines={2} style={styles.normalText}>
-        {[
-          store.specificAddress,
-          store.ward,
-          store.district,
-          store.province,
-        ].join(' ')}
-      </Text>
-    </View>
-  );
-};
+
 
 const RecipientInfo = ({ deliveryMethod, owner, shippingAddress, detail }) => {
+  const handleCall = () => {
+    if (!detail?.consigneePhone) return;
+
+    const phoneNumber = `tel:${detail.consigneePhone}`;
+
+    Linking.canOpenURL(phoneNumber)
+      .then((supported) => {
+        if (!supported) {
+          console.error("Thiết bị không hỗ trợ gọi điện!");
+        } else {
+          Linking.openURL(phoneNumber);
+        }
+      })
+      .catch((err) => console.error("Lỗi khi kiểm tra URL:", err));
+  };
+
 
   return (
     <Column style={[styles.areaContainer, { paddingHorizontal: 16 }]}>
@@ -484,7 +363,7 @@ const RecipientInfo = ({ deliveryMethod, owner, shippingAddress, detail }) => {
         <Title title="Người nhận" icon="map-marker" />
 
         <Row style={{ flexDirection: 'row', gap: 16 }}>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity style={styles.iconButton} onPress={handleCall}>
             <Call size="22" color={colors.green700} variant="Bold" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton}>
@@ -524,73 +403,195 @@ const Title = ({
 };
 
 const PaymentDetails = ({
+  detail,
   _id,
   shippingFee,
   voucher,
   paymentMethod,
-  fulfillmentDateTime,
   orderItems,
   totalPrice,
   status,
+  createdAt,
 }) => {
-  const subTotal = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  // Tính tổng tiền sản phẩm (chưa bao gồm phí giao hàng và giảm giá)
+  const subTotal = orderItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
+
+  console.log('detail', detail)
+  // Số tiền giảm giá từ voucher (nếu có)
   const discount = voucher
     ? voucher.discountType === 'percentage'
       ? (subTotal * voucher.discountValue) / 100
       : voucher.discountValue
     : 0;
 
-  const paymentStatus = (() => {
-    if (status === 'completed') return { text: 'Đã thanh toán', color: colors.primary };
-    if (paymentMethod === 'cod') return { text: 'Chưa thanh toán', color: colors.orange700 };
-    if (status === 'awaitingPayment') return { text: 'Chờ thanh toán', color: colors.pink500 };
-    return { text: 'Đã thanh toán', color: colors.primary };
-  })();
+  // Chọn icon phù hợp với phương thức thanh toán
+  // const getPaymentIcon = method => {
+  //   switch (method) {
+  //     case 'cod':
+  //       return (
+  //         <Image
+  //           style={{width: 24, height: 24}}
+  //           source={require('../../assets/images/logo_vnd.png')}
+  //         />
+  //       );
+  //     case 'payOs':
+  //       return (
+  //         <Image
+  //           style={{width: 24, height: 24}}
+  //           source={require('../../assets/images/logo_payos.png')}
+  //         />
+  //       );
+  //     case 'zalopay':
+  //       return (
+  //         <Image
+  //           style={{width: 24, height: 24}}
+  //           source={require('../../assets/images/logo_zalopay.png')}
+  //         />
+  //       );
+  //     default:
+  //       return null;
+  //   }
+  // };
 
-  const paymentIcon = {
-    cod: require('../../../assets/images/logo_vnd.png'),
-    payOs: require('../../../assets/images/logo_payos.png'),
-    zalopay: require('../../../assets/images/logo_zalopay.png'),
-  }[paymentMethod];
+  // Xác định trạng thái thanh toán
+  const getPaymentStatus = () => {
+    if (status === 'completed') {
+      return { text: 'Đã thanh toán', color: colors.primary };
+    }
+    if (paymentMethod === 'cod') {
+      return { text: 'Chưa thanh toán', color: colors.orange700 };
+    }
+    if (status === 'awaitingPayment') {
+      return { text: 'Chờ thanh toán', color: colors.pink500 };
+    }
+    if (status === 'cancelled') {
+      return { text: 'Chưa thanh toán', color: colors.orange700 };
+    }
+    return { text: 'Đã thanh toán', color: colors.primary };
+  };
+
+  const paymentStatus = getPaymentStatus();
 
   return (
-    <View style={{ marginBottom: 8, paddingHorizontal: 16, backgroundColor: colors.white }}>
-      <DualTextRow leftText="CHI TIẾT THANH TOÁN" leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }} />
+    <View style={{ marginBottom: 8, flex: 1, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: colors.white }}>
+      <DualTextRow
+        leftText="Chi tiết thanh toán"
+        leftTextStyle={{ color: colors.primary, fontWeight: 'bold', fontSize: 18, marginBottom: 8 }}
+      />
       <OrderId _id={_id} />
 
-      <DualTextRow leftText={`Tạm tính (${orderItems.length} sản phẩm)`} rightText={`${subTotal.toLocaleString()}đ`} />
-      <DualTextRow leftText="Phí giao hàng" rightText={`${shippingFee.toLocaleString()}đ`} />
-      <DualTextRow leftText="Giảm giá" rightText={`-${(discount || 0).toLocaleString()}đ`} rightTextStyle={{ color: colors.primary }} />
+      <Row
+        style={{
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <Text style={{ fontSize: 14, color: colors.black, marginRight: 8 }}>
+          Trạng thái đơn hàng
+        </Text>
+        <StatusText status={status} />
+      </Row>
+
       <DualTextRow
-        leftText="Tổng tiền"
-        rightText={`${totalPrice.toLocaleString()}đ`}
-        leftTextStyle={{ color: colors.primary, fontWeight: '700' }}
-        rightTextStyle={{ color: colors.primary, fontWeight: '700', fontSize: 16 }}
+        leftText={`Tạm tính (${orderItems.length} sản phẩm)`}
+        rightText={`${subTotal.toLocaleString()}đ`}
       />
+
+      <DualTextRow
+        leftText="Phí giao hàng"
+        rightText={`${shippingFee.toLocaleString()}đ`}
+      />
+
+      <DualTextRow
+        leftText="Giảm giá"
+        rightText={`-${(discount || 0).toLocaleString('vi-VN')}đ`}
+        rightTextStyle={{ color: colors.primary }}
+      />
+
       <DualTextRow
         leftText="Trạng thái thanh toán"
         rightText={paymentStatus.text}
-        leftTextStyle={{
-          paddingHorizontal: 4,
-          paddingVertical: 2,
-          borderWidth: 1,
-          borderRadius: 6,
-          borderColor: paymentStatus.color,
-          color: paymentStatus.color,
-        }}
         rightTextStyle={{ color: paymentStatus.color }}
       />
-      <DualTextRow leftText="Thời gian đặt hàng" rightText={new Date(fulfillmentDateTime).toLocaleString('vi-VN')} />
+
+      {detail?.createdAt && (
+        <DualTextRow
+          leftText="Thời gian chờ xác nhận"
+          rightText={new Date(detail?.createdAt).toLocaleString('vi-VN')}
+        />
+      )}
 
 
-      <Row style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8, justifyContent: 'space-between' }}>
-        <Text style={{ fontSize: 12, color: '#000', marginRight: 8 }}>Phương thức thanh toán:</Text>
-        <Row style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image style={{ width: 24, height: 24 }} source={paymentIcon} />
-          <Text style={{ fontSize: 12, color: '#000', marginLeft: 8 }}>{paymentMethod.toUpperCase()}</Text>
-        </Row>
+      {detail?.pendingConfirmationAt && (
+        <DualTextRow
+          leftText="Thời gian chờ xác nhận"
+          rightText={new Date(detail?.pendingConfirmationAt).toLocaleString('vi-VN')}
+        />
+      )}
+
+
+      {detail?.readyForPickupAt && (
+        <DualTextRow
+          leftText="Thời gian sẵn sàng lấy hàng"
+          rightText={new Date(detail?.readyForPickupAt).toLocaleString('vi-VN')}
+        />
+      )}
+
+
+      {detail?.shippingOrderAt && (
+        <DualTextRow
+          leftText="Thời gian giao hàng"
+          rightText={new Date(detail?.shippingOrderAt).toLocaleString('vi-VN')}
+        />
+      )}
+
+
+      {detail?.completedAt && (
+        <DualTextRow
+          leftText="Thời gian hoàn thành"
+          rightText={new Date(detail?.completedAt).toLocaleString('vi-VN')}
+        />
+      )}
+
+
+      {detail?.cancelledAt && (
+        <DualTextRow
+          leftText="Thời gian hủy đơn"
+          rightText={new Date(detail?.cancelledAt).toLocaleString('vi-VN')}
+        />
+      )}
+
+      <Row
+        style={{
+          alignItems: 'center',
+          marginVertical: 6,
+          justifyContent: 'space-between',
+        }}>
+        <Text style={{ fontSize: 14, color: colors.black, marginRight: 8 }}>
+          Phương thức thanh toán:
+        </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+
+          <Text style={{ fontSize: 14, color: colors.black, marginLeft: 8 }}>
+            {paymentMethod === 'online' ? 'Thanh toán online' : 'Tiền mặt'}
+          </Text>
+        </View>
       </Row>
+
+      <DualTextRow
+        leftText="Tổng tiền"
+        rightText={`${totalPrice.toLocaleString('vi-VN')}đ`}
+        rightTextStyle={{ color: colors.primary, fontWeight: '700', fontSize: 18 }}
+        leftTextStyle={{ color: colors.black, fontWeight: '500' }}
+      />
     </View>
+
   );
 };
 
