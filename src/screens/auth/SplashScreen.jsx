@@ -1,25 +1,54 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { useAppContext } from '../../context/appContext';
-import { AuthGraph } from '../../layouts/graphs';
+import React, {useEffect, useRef, useState} from 'react';
+import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
+// import { useAppContext } from '../../context/appContext';
+import {AuthGraph} from '../../layouts/graphs';
+import LottieView from 'lottie-react-native';
+import {Tree} from 'iconsax-react-native';
+import {colors} from '../../constants';
+import {useAppContext} from '../../context/appContext';
 
-const SplashScreen = ({ navigation }) => {
-  const { authState } = useAppContext();
+const {width, height} = Dimensions.get('window');
+const SplashScreen = ({navigation}) => {
+  const animationRef = useRef(null);
+  const {authState} = useAppContext();
   useEffect(() => {
     const timer = setTimeout(() => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: AuthGraph.LoginScreen }],
-        })
-
+      navigation.reset({
+        index: 0,
+        routes: [{name: AuthGraph.LoginScreen}],
+      });
     }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
+  useEffect(() => {
+    const loopAnimation = () => {
+      animationRef.current?.play(0, 60);
+      setTimeout(loopAnimation, 1000);
+    };
 
+    loopAnimation();
+
+    return () => clearTimeout();
+  }, []);
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>SplashScreen</Text>
+      <View
+        style={{
+          position: 'relative',
+          justifyContent: 'center',
+          backgroundColor: 'orange',
+        }}>
+        <LottieView
+          ref={animationRef}
+          source={require('../../assets/animations/shipbear.json')}
+          autoPlay={true}
+          loop={true}
+          style={styles.lottieView}
+        />
+
+        <Text style={styles.text}>GreenZone Express</Text>
+      </View>
     </View>
   );
 };
@@ -36,6 +65,15 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'black',
+    color: colors.primary,
+    position: 'absolute',
+    bottom: 10,
+    fontFamily: 'FrederickatheGreat-Regular',
+    textAlign: 'center',
+    alignSelf: 'center',
+  },
+  lottieView: {
+    width: 350,
+    height: 350,
   },
 });
