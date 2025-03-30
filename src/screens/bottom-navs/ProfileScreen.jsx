@@ -124,7 +124,7 @@ const Header = ({ profile, merchant }) => {
         <View style={styles.avatarContainer}>
           <Image
             style={styles.avatar}
-            source={{ uri: profile.avatar || '' }}
+            source={{ uri: profile?.avatar || '' }}
           />
           <View style={styles.cameraIcon}>
             <Icon
@@ -135,8 +135,8 @@ const Header = ({ profile, merchant }) => {
           </View>
         </View>
         <Column style={{ flex: 1, backgroundColor: colors.white }}>
-          <RowContent title={`${profile.firstName} ${profile.lastName}`} icon="account-outline" />
-          <RowContent title={profile.phoneNumber} icon="phone-outline" />
+          <RowContent title={`${profile?.firstName} ${profile?.lastName}`} icon="account-outline" />
+          <RowContent title={profile?.phoneNumber} icon="phone-outline" />
 
 
         </Column>
