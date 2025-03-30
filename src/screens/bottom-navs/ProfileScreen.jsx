@@ -2,18 +2,20 @@ import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { getProfile } from '../../axios/modules';
-import { Column, LightStatusBar, NormalLoading, NormalText, Row } from '../../components';
+import { getProfile, getMerchant } from '../../axios';
+import { Column, LightStatusBar, NormalLoading, NormalText, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { AuthActionTypes } from '../../reducers/authReducer';
 import { AppAsyncStorage } from '../../utils';
+
 
 const { width } = Dimensions.get('window');
 
@@ -21,6 +23,7 @@ const ProfileScreen = ({ navigation }) => {
   const { authDispatch } = useAppContext()
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
+  const [merchant, setMerchant] = useState(null);
 
   const fetchProfile = async () => {
 
@@ -43,6 +46,26 @@ const ProfileScreen = ({ navigation }) => {
 
   }, [])
 
+  useEffect(() => {
+    const loadMerchant = async () => {
+      try {
+        const storeId = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.storeId);
+        if (storeId) {
+          const response = await getMerchant(storeId);
+          console.log('response', response)
+          setMerchant(response);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMerchant();
+  }, []);
+
+
 
   if (loading) {
     return (
@@ -57,12 +80,12 @@ const ProfileScreen = ({ navigation }) => {
 
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <LightStatusBar />
       <Text style={styles.headerTitle}>Cá nhân</Text>
-      <Header profile={profile} />
+      <Header profile={profile} merchant={merchant} />
 
-      <Column style={{ gap: 16 }}>
+      <Column style={{ gap: 16, paddingVertical: 8 }}>
         <Text style={styles.bodyTitle}>Tùy chọn</Text>
         <ItemRow
           title="Cập nhật tài khoản"
@@ -73,9 +96,9 @@ const ProfileScreen = ({ navigation }) => {
           checkIcon={true}
         />
         <ItemRow title="Hỗ trợ" icon="headphones" checkIcon={true} />
-        <ItemRow title="Câu hỏi thường gặp" icon="application-edit-outline" checkIcon={true} />
-        <ItemRow title="Điều khoản và điều kiện" icon="comment-edit-outline" checkIcon={true} />
-        <ItemRow title="Chính sách quyền riêng tư" icon="eye-outline" checkIcon={true} />
+        {/* <ItemRow title="Câu hỏi thường gặp" icon="application-edit-outline" checkIcon={true} /> */}
+        {/* <ItemRow title="Điều khoản và điều kiện" icon="comment-edit-outline" checkIcon={true} /> */}
+        {/* <ItemRow title="Chính sách quyền riêng tư" icon="eye-outline" checkIcon={true} /> */}
         <ItemRow
           title="Đăng xuất"
           icon="logout"
@@ -88,38 +111,48 @@ const ProfileScreen = ({ navigation }) => {
         />
       </Column>
 
-    </View>
+    </ScrollView>
   );
 };
 
-const Header = ({ profile }) => {
-  if (!profile) return null;
+const Header = ({ profile, merchant }) => {
+  if (!profile && !merchant) return null;
 
   return (
-
-    <Row style={{ padding: 16, gap: 16, backgroundColor: colors.white }}>
-      <View style={styles.avatarContainer}>
-        <Image
-          style={styles.avatar}
-          source={require('../../assets/images/meo2.jpg')}
-        />
-        <View style={styles.cameraIcon}>
-          <Icon
-            source={'camera'}
-            size={GLOBAL_KEYS.ICON_SIZE_SMALL}
-            color={colors.white}
+    <Column>
+      <Row style={{ padding: 16, gap: 16, backgroundColor: colors.white }}>
+        <View style={styles.avatarContainer}>
+          <Image
+            style={styles.avatar}
+            source={{ uri: profile?.avatar || '' }}
           />
+          <View style={styles.cameraIcon}>
+            <Icon
+              source={'camera'}
+              size={GLOBAL_KEYS.ICON_SIZE_SMALL}
+              color={colors.white}
+            />
+          </View>
         </View>
-      </View>
-      <Column>
-        <RowContent title={`${profile.firstName} ${profile.lastName}`} icon="account-outline" />
-        <RowContent title={profile.phoneNumber} icon="phone-outline" />
+        <Column style={{ flex: 1, backgroundColor: colors.white }}>
+          <RowContent title={`${profile?.firstName} ${profile?.lastName}`} icon="account-outline" />
+          <RowContent title={profile?.phoneNumber} icon="phone-outline" />
+
+
+        </Column>
+      </Row>
+      <Column style={{ backgroundColor: colors.white, padding: 16, gap: 16}}>
+        <TitleText text='Cửa hàng' />
+        <RowContent title={merchant?.name} icon="store" />
         <RowContent
-          title={profile.email}
-          icon="email-outline"
-        />
+          title={`${merchant?.specificAddress}, ${merchant?.ward}, ${merchant?.district}, ${merchant?.province}`}
+          icon="map-marker" />
+
+        <RowContent title={merchant?.phoneNumber} icon="phone" />
       </Column>
-    </Row>
+
+    </Column>
+
 
   );
 };
@@ -137,20 +170,14 @@ const ItemRow = ({ icon, title, onPress, checkIcon }) => {
         />
         <NormalText text={title} />
       </Row>
-      {checkIcon && (
-        <Icon
-          source="arrow-right"
-          size={GLOBAL_KEYS.ICON_SIZE_SMALL}
-          color={colors.primary}
-        />
-      )}
+
     </TouchableOpacity>
   );
 };
 
 const RowContent = ({ title, icon }) => {
   return (
-    <Row style={styles.rowContent}>
+    <Row style={{}}>
       <Icon
         source={icon}
         size={GLOBAL_KEYS.ICON_SIZE_SMALL}
@@ -166,7 +193,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.fbBg,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    flex: 1
+    flex: 1,
   },
 
   headerTitle: {

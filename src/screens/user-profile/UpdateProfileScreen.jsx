@@ -63,7 +63,7 @@ const UpdateProfileScreen = ({ navigation, route }) => {
           <View style={styles.avatar}>
             <Image
               style={styles.avatarImage}
-              source={require('../../assets/images/meo2.jpg')}
+              source={{uri: profile?.avatar || ''}}
             />
             <View style={styles.cameraIconContainer}>
               <Icon

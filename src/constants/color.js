@@ -1,5 +1,3 @@
-import { blue } from "react-native-reanimated/lib/typescript/Colors";
-
 export const colors = Object.freeze({
   primary: '#299345',
   green750: '#28A745',
@@ -10,7 +8,7 @@ export const colors = Object.freeze({
   green100: '#EFFDEE',
   teal900: '#018786',
   teal700: '#06988B',
-  black: '#232323',
+  black: '#000000',
   gray900: '#434343',
   gray850: '#494949',
   gray700: '#666666',
@@ -18,11 +16,10 @@ export const colors = Object.freeze({
   gray300: '#C9C3C3',
   gray200: '#EAE9E9',
   brown700: '#744D4A',
-  red200:'#EFD8D9',
   red900: '#DC3545',
   red800: '#FF343B',
   milk: '#FDE0BE',
-  milk200: '#FDF7E5',
+  milk200: '#FEFBEA',
   orange700: '#FF6924',
   yellow700: '#FFA418',
   yellow600: '#FEB602',
@@ -31,11 +28,12 @@ export const colors = Object.freeze({
   pink200: '#FFC7E3',
   blue600: '#1773EA',
   blue500: '#3DABDC',
-  blue300:'#C2D5EB',
   white: '#FFFFFF',
   white100: '#FDFCFC',
   transparent: 'transparent',
   overlay: 'rgba(0, 0, 0, 0.5)',
   grayBg: '#F5F5F5',
-  fbBg: '#F2F4F7'
+  fbBg: '#F2F4F7',
+  lightRed: '#FDF3F2',  // Đỏ nhạt
+  lightBlue: '#F1F9FC', // Xanh nhạt
 });

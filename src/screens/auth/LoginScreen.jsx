@@ -31,9 +31,9 @@ const LoginScreen = ({ navigation }) => {
     try {
       setLoading(true);
 
-      const respone = await login2({ phoneNumber, password });
+      const response = await login2({ phoneNumber, password });
 
-      if (respone) {
+      if (response) {
         authDispatch({ type: AuthActionTypes.LOGIN })
       }
       console.log('✅Khởi tạo socket...');

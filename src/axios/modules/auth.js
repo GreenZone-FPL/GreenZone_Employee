@@ -20,21 +20,17 @@ export const login2 = async ({ phoneNumber, password }) => {
     const { data } = response;
     console.log('>>>>>>>>>>>>>>>>', JSON.stringify(data, null, 2));
 
-    const merchant = data?.user
-    const accessToken = data?.token?.accessToken?.token;
-    const refreshToken = data?.token?.refreshToken?.token;
-    const storeId = merchant?.workingStore;
 
+    const merchant = data?.user;
 
-
-    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.accessToken, accessToken);
-    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.refreshToken, refreshToken);
-    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.merchant, merchant);
-    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.storeId, storeId);
-    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.phoneNumber, phoneNumber);
-
-
-    return response.data;
+    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.accessToken, data?.token?.accessToken?.token);
+    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.refreshToken, data?.token?.refreshToken?.token);
+    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.merchant, JSON.stringify(merchant));
+    await AppAsyncStorage.storeData(
+      AppAsyncStorage.STORAGE_KEYS.storeId,
+      merchant?.workingStore,
+    );
+    return data;
   } catch (error) {
     console.log('Error', error);
     throw error;
@@ -43,11 +39,11 @@ export const login2 = async ({ phoneNumber, password }) => {
 
 export const getProfile = async () => {
   try {
-      const response = await axiosInstance.get("/auth/profile");
+    const response = await axiosInstance.get("/auth/profile");
 
-      return response.data
+    return response.data
   } catch (error) {
-      console.log("error:", error); // debug
-      throw error;
+    console.log("error:", error); // debug
+    throw error;
   }
 };
