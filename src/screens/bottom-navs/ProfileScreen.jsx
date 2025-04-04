@@ -52,7 +52,6 @@ const ProfileScreen = ({ navigation }) => {
         const storeId = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.storeId);
         if (storeId) {
           const response = await getMerchant(storeId);
-          console.log('response', response)
           setMerchant(response);
         }
       } catch (error) {
@@ -88,7 +87,7 @@ const ProfileScreen = ({ navigation }) => {
       <Column style={{ gap: 16, paddingVertical: 8 }}>
         <Text style={styles.bodyTitle}>Tùy chọn</Text>
         <ItemRow
-          title="Cập nhật tài khoản"
+          title="Thông tin tài khoản"
           icon="account-outline"
           onPress={() => {
             navigation.navigate('UpdateProfileScreen', { profile });

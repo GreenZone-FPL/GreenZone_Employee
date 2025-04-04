@@ -25,13 +25,14 @@ const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
 
   const { orderDualStatuses } = useAppContext();
-  console.log('orderDualStatuses', orderDualStatuses)
+
+
   const fetchOrders = async () => {
     setLoading(true);
     try {
       const phoneNumber = await AppAsyncStorage.readData('phoneNumber');
+      console.log('phoneNumber', phoneNumber)
       const response = await getOrdersByStatus(statuses[index]);
-
       const filteredOrders = response.filter(o => o.shipper.phoneNumber === phoneNumber && o.deliveryMethod === 'delivery');
       setOrders(filteredOrders);
     } catch (error) {
@@ -48,7 +49,6 @@ const HomeScreen = ({ navigation }) => {
         const storeId = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.storeId);
         if (storeId) {
           const response = await getMerchant(storeId);
-          console.log('response', response)
           setMerchant(response);
         }
       } catch (error) {
@@ -65,24 +65,15 @@ const HomeScreen = ({ navigation }) => {
   // Luôn tải danh sách đơn hàng khi chuyển tab
   useEffect(() => {
     fetchOrders();
+  }, [index, orderDualStatuses]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchOrders();
+    });
+  
+    return unsubscribe;
   }, [index]);
-
-
-  // Tải lại danh sách nếu trạng thái đơn hàng thay đổi trùng với tab hiện tại
-  useFocusEffect(
-    useCallback(() => {
-      if (!orderDualStatuses) return;
-
-      const { oldStatus, status } = orderDualStatuses;
-
-      console.log(`📌 Trạng thái đơn hàng thay đổi: ${oldStatus} ➝ ${status}`);
-
-      if (statuses[index] !== status || statuses[index] !== oldStatus) {
-        console.log(`🔄 Reload danh sách đơn hàng cho tab: ${statuses[index]}`);
-        fetchOrders();
-      }
-    }, [orderDualStatuses])
-  );
 
   return (
     <View style={styles.container}>
@@ -146,9 +137,6 @@ const OrderItem = ({ item, handleOrderPress }) => {
     consigneeName = item.consigneeName,
     consigneePhone = item.consigneePhone,
     specificAddress = item.shippingAddress,
-    ward = "Chưa có ĐườngĐường",
-    district = "Chưa có quận",
-    province = "Chưa có tỉnh"
   } = shippingAddress;
   const formattedAddress = `${specificAddress}`;
 
@@ -168,7 +156,7 @@ const OrderItem = ({ item, handleOrderPress }) => {
     <TouchableOpacity style={styles.orderItem} onPress={handleOrderPress}>
       <Column style={{ flex: 2 }}>
         <Row style={{ justifyContent: 'space-between' }}>
-          <NormalText text={`#${_id}`} style={styles.orderIdText} />
+        <NormalText text={`ID: #...${_id.slice(-8)}`} style={styles.orderIdText} />
           <TitleText text={TextFormatter.formatCurrency(totalPrice)} style={styles.priceText} />
         </Row>
 
@@ -209,7 +197,7 @@ const styles = StyleSheet.create({
   },
 
   recipientText: { color: colors.black, fontWeight: '500' },
-  orderIdText: { color: colors.pink500 },
+  orderIdText: { color: colors.pink500, fontWeight: '500' },
   priceText: { color: colors.primary },
   dateText: { color: colors.gray700 },
   orderName: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, fontWeight: '500', color: colors.primary },

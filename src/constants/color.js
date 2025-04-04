@@ -8,7 +8,7 @@ export const colors = Object.freeze({
   green100: '#EFFDEE',
   teal900: '#018786',
   teal700: '#06988B',
-  black: '#000000',
+  black: '#232323',
   gray900: '#434343',
   gray850: '#494949',
   gray700: '#666666',
@@ -24,6 +24,7 @@ export const colors = Object.freeze({
   yellow700: '#FFA418',
   yellow600: '#FEB602',
   yellow500: '#FFC106',
+  yellow300: '#f2cc57',
   pink500: '#F04C7F',
   pink200: '#FFC7E3',
   blue600: '#1773EA',
@@ -34,6 +35,9 @@ export const colors = Object.freeze({
   overlay: 'rgba(0, 0, 0, 0.5)',
   grayBg: '#F5F5F5',
   fbBg: '#F2F4F7',
-  lightRed: '#FDF3F2',  // Đỏ nhạt
+  lightRed: '#FDF3F2', // Đỏ nhạt
   lightBlue: '#F1F9FC', // Xanh nhạt
+  invalid: '#D32F2F',
+  disabledBg: '#E3E3E5',
+  disabledText: '#ACACAE'
 });

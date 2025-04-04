@@ -54,6 +54,9 @@ export * from './headers/HeaderOrder';
 export * from './inputs/CustomSearchBar';
 export * from './inputs/FlatInput';
 export * from './inputs/OutlineInput';
+export * from './inputs/LabelInput';
+export * from './inputs/NormalInput';
+
 
 // items
 export * from './items/HorizontalProductItem';

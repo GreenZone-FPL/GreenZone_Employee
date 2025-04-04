@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dimensions, Image, StyleSheet, Text } from 'react-native';
 import { login2 } from '../../axios';
-import { Ani_ModalLoading, Column, FlatInput, LightStatusBar, PrimaryButton } from '../../components';
+import { Column, LightStatusBar, NormalInput, NormalLoading, PrimaryButton } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { AppGraph } from '../../layouts/graphs';
@@ -12,34 +12,39 @@ import { Toaster } from '../../utils';
 const { width, height } = Dimensions.get('window');
 
 const LoginScreen = ({ navigation }) => {
-  const [phoneNumber, setPhoneNumber] = useState('0911111111');
+  const [phoneNumber, setPhoneNumber] = useState('0822222222');
   const [password, setPassword] = useState('123456');
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
+  const [passwordMessage, setPasswordMessage] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [phoneNumberError, setPhoneNumberError] = useState(false);
+
   const { authState, authDispatch } = useAppContext()
 
-  
+
   const handleLogin = async () => {
     if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
-      setPhoneNumberError(true);
-      setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số)');
+      setPhoneNumberMessage('Số điện thoại không hợp lệ');
+      return;
+    }
+
+    if (password.length == 0) {
+      setPasswordMessage('Trường này không được để trống');
+      return;
+    }
+    if (password.length !== 6) {
+      setPasswordMessage('Mật khẩu phải có 6 ký tự');
       return;
     }
 
     try {
       setLoading(true);
-
       const response = await login2({ phoneNumber, password });
-
       if (response) {
         authDispatch({ type: AuthActionTypes.LOGIN })
       }
       console.log('✅Khởi tạo socket...');
-
       await shipperSocketSevice.initialize();
-
       navigation.navigate(AppGraph.MAIN);
 
     } catch (error) {
@@ -50,6 +55,7 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
+ 
 
   return (
     <Column style={styles.container}>
@@ -58,37 +64,43 @@ const LoginScreen = ({ navigation }) => {
         style={styles.image}
         source={require('../../assets/images/logo2.png')}
       />
-
-      {/* {
-        authState.isLoggedIn == false && AppAsyncStorage.isTokenValid() &&
-        <Ani_ModalLoading loading={true} message='Tự đăng nhập' />
-      } */}
+      <NormalLoading visible={loading}/>
 
       <Text style={styles.headerText}>GreenZone Delivery</Text>
 
       <Column style={styles.formContainer}>
 
-        <FlatInput
+        <NormalInput
+          required
           label="Nhập số điện thoại"
           style={{ width: '100%' }}
           placeholder="Nhập số điện thoại của bạn"
-          setValue={setPhoneNumber}
+          setValue={(value) => {
+            setPhoneNumber(value)
+            setPhoneNumberMessage('')
+            
+          }}
           value={phoneNumber}
-          message={phoneNumberMessage}
+          invalidMessage={phoneNumberMessage}
         />
-        <FlatInput
+        <NormalInput
+          required
           label="Mật khẩu"
           placeholder="Nhập mật khẩu"
           value={password}
-          setValue={setPassword}
+          setValue={(value) => {
+            setPassword(value)
+            setPasswordMessage('')
+          }}
           secureTextEntry={true}
           isPasswordVisible={isPasswordVisible}
           setIsPasswordVisible={setIsPasswordVisible}
+          invalidMessage={passwordMessage}
         />
 
-        <PrimaryButton title="Đăng Nhập" onPress={handleLogin} />
+        <PrimaryButton onPress={handleLogin} title='Đăng nhập'/>
       </Column>
-      <Ani_ModalLoading loading={loading} message="Đang xử lý..." />
+
     </Column>
   );
 };
@@ -100,7 +112,7 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.fbBg,
+    backgroundColor: colors.white,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 8
@@ -118,5 +130,5 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: colors.primary,
     fontWeight: '700'
-  }
+  },
 });

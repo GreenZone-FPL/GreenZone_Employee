@@ -1,18 +1,19 @@
 import React from 'react';
-import { Pressable, Text, StyleSheet } from 'react-native';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import PropTypes from 'prop-types'
+import {Pressable, Text, StyleSheet} from 'react-native';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import PropTypes from 'prop-types';
 
 export const PrimaryButton = props => {
   const {
     title = 'Default title',
-    onPress = () => { },
+    onPress = () => {},
     style,
     titleStyle,
+    disabled = false
   } = props;
   return (
-    <Pressable style={[styles.button, style]} onPress={onPress}>
-      <Text style={[styles.text, titleStyle]}>{title}</Text>
+    <Pressable style={[styles.button, style]} onPress={onPress} disabled={disabled}>
+      <Text style={[styles.text, titleStyle, {color: disabled ? colors.disabledText : colors.white}]}>{title}</Text>
     </Pressable>
   );
 };
@@ -20,9 +21,10 @@ export const PrimaryButton = props => {
 PrimaryButton.propTypes = {
   title: PropTypes.string,
   onPress: PropTypes.func,
-  style: PropTypes.object
-}
-
+  style: PropTypes.object,
+  titleStyle: PropTypes.object,
+  disabled: PropTypes.bool,
+};
 
 const styles = StyleSheet.create({
   button: {
@@ -34,9 +36,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.white,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
   },
 });
-
-
