@@ -1,27 +1,24 @@
-import PropTypes from 'prop-types'
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import { GLOBAL_KEYS, colors } from '../../constants'
-
+import PropTypes from 'prop-types';
+import React from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import {GLOBAL_KEYS, colors} from '../../constants';
 
 const NormalTextPropTypes = {
   text: PropTypes.string,
-  style: PropTypes.object
-}
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+};
 
-
-export const NormalText = ({
-  text = 'Normal text',
-  style
-}) => {
+export const NormalText = ({text = 'Normal text', style}) => {
   return (
     <View>
-      <Text style={[styles.text, style]}>{text}</Text>
+      <Text style={[styles.text, ...(Array.isArray(style) ? style : [style])]}>
+        {text}
+      </Text>
     </View>
-  )
-}
+  );
+};
 
-NormalText.propTypes = NormalTextPropTypes
+NormalText.propTypes = NormalTextPropTypes;
 
 const styles = StyleSheet.create({
   text: {
@@ -29,4 +26,3 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
 });
-

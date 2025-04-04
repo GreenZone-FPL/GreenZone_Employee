@@ -1,61 +1,68 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import {
   Dimensions,
   Image,
   KeyboardAvoidingView,
+  Modal,
+  Pressable,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View
 } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 import { Icon } from 'react-native-paper';
+import DateTimePicker, { useDefaultStyles } from 'react-native-ui-datepicker';
 import {
-  CustomFlatInput,
-  FlatInput,
+  DialogBasic,
   NormalHeader,
+  NormalInput,
   NormalLoading,
-  PrimaryButton
+  NormalText,
+  OverlayStatusBar,
+  PrimaryButton,
 } from '../../components';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { AppContext } from '../../context/appContext';
+import LabelInput from '../../components/inputs/LabelInput';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useUpdateProfileContainer } from '../../containers';
 
 const { width } = Dimensions.get('window');
 
 const UpdateProfileScreen = ({ navigation, route }) => {
-  const [lastName, setLastName] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [email, setEmail] = useState('');
-  const [dob, setDob] = useState('');
-  const [gender, setGender] = useState('');
-
-  const { isLoggedIn } = useContext(AppContext);
-  const [loading, setLoading] = useState(false);
-
   const { profile } = route.params;
+  const defaultStyles = useDefaultStyles();
 
-  useEffect(() => {
-    console.log('profile = ', profile);
-
-    // Gán dữ liệu vào state
-    setLastName(profile.lastName || '');
-    setFirstName(profile.firstName || '');
-    setEmail(profile.email || '');
-    setDob(profile.dateOfBirth ? profile.dateOfBirth.split('T')[0] : '');
-    setGender(
-      profile.gender === 'male'
-        ? 'Nam'
-        : profile.gender === 'female'
-          ? 'Nữ'
-          : '',
-    );
-  }, [isLoggedIn]);
+  const {
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    dob,
+    setDob,
+    gender,
+    setGender,
+    avatar,
+    loading,
+    setIsFocus,
+    open,
+    setOpen,
+    selectedImages,
+    isImagePickerVisible,
+    setImagePickerVisible,
+    lastNameMessage,
+    setLastNameMessage,
+    openCamera,
+    openImageLibrary,
+    handleUpdateProfile,
+    genderOptions
+  } = useUpdateProfileContainer(profile)
 
   return (
     <KeyboardAvoidingView style={styles.container}>
       <NormalLoading visible={loading} />
-
       <ScrollView>
         <NormalHeader
-          title={'Cập nhật thông tin'}
+          title="Cập nhật thông tin"
           enableLeftIcon
           onLeftPress={() => navigation.goBack()}
         />
@@ -63,34 +70,127 @@ const UpdateProfileScreen = ({ navigation, route }) => {
           <View style={styles.avatar}>
             <Image
               style={styles.avatarImage}
-              source={{uri: profile?.avatar || ''}}
+              source={{
+                uri:
+                  selectedImages[0] ||
+                  avatar ||
+                  'https://t3.ftcdn.net/jpg/07/24/59/76/360_F_724597608_pmo5BsVumFcFyHJKlASG2Y2KpkkfiYUU.jpg',
+              }}
             />
-            <View style={styles.cameraIconContainer}>
-              <Icon
-                source="camera"
-                color={colors.primary}
-                size={GLOBAL_KEYS.ICON_SIZE_SMALL}
-              />
-            </View>
+            <TouchableOpacity
+              style={styles.cameraIconContainer}
+              onPress={() => setImagePickerVisible(true)}>
+              <Icon size={16} color={colors.primary} source={'camera'} />
+            </TouchableOpacity>
           </View>
         </View>
+
         <View style={styles.formContainer}>
-          <FlatInput label={'Họ'} value={lastName} setValue={setLastName} />
-          <FlatInput label={'Tên'} value={firstName} setValue={setFirstName} />
-          <FlatInput
-            label={'Email'}
-            value={email}
-            setValue={setEmail}
-            keyboardType="email-address"
+          <NormalInput
+            label="Họ"
+            value={firstName}
+            setValue={setFirstName}
           />
-          <CustomFlatInput label={'Ngày sinh'} value={dob} setValue={setDob} />
-          <CustomFlatInput
-            label={'Giới tính'}
+          <NormalInput
+            label="Tên"
+            value={lastName}
+            setValue={(value) => {
+              setLastName(value)
+              if (lastNameMessage) {
+                setLastNameMessage('')
+              }
+
+            }}
+            invalidMessage={lastNameMessage}
+            required
+          />
+
+
+
+          <LabelInput label="Ngày sinh" style={{ fontSize: 14 }} />
+          <Pressable
+            style={styles.dropdown}
+            onPress={() => setOpen(true)}
+          >
+            <NormalText text={dob.toLocaleDateString('vi-VN')} style={{ fontSize: 14 }} />
+          </Pressable>
+
+
+
+
+
+
+
+          <LabelInput label='Giới tính' style={{ fontSize: 14 }} />
+          <Dropdown
+            data={genderOptions}
+            labelField="label"
+            valueField="value"
             value={gender}
-            setValue={setGender}
-            rightIcon="arrow-down-drop-circle-outline"
+            placeholder="Chọn giới tính"
+            placeholderStyle={styles.placeholderText}
+            style={styles.dropdown}
+            selectedTextStyle={styles.placeholderText}
+            selectedTextProps={styles.placeholderText}
+            itemTextStyle={styles.placeholderText}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={item => {
+              setGender(item.value);
+              setIsFocus(false);
+            }}
           />
-          <PrimaryButton title={'Cập nhật tài khoản'} />
+
+          <PrimaryButton
+            style={{ backgroundColor: (loading || !!lastNameMessage) ? colors.disabledBg : colors.primary }}
+            disabled={loading || !!lastNameMessage}
+            title="Cập nhật tài khoản"
+            onPress={() => {}}
+          />
+
+          <DialogBasic isVisible={open} onHide={() => setOpen(false)} title={'Lịch'}>
+
+            <DateTimePicker
+              mode="single"
+              locale="vi"
+              date={dob}
+              onChange={({ date }) => {
+                setDob(date)
+                setOpen(false)
+              }}
+              maxDate={new Date()}
+
+              styles={defaultStyles}
+            />
+          </DialogBasic>
+
+
+          <Modal
+            visible={isImagePickerVisible}
+            animationType="slide"
+            transparent={true}>
+            <Pressable style={styles.imagePickerOverlay} onPress={() => setImagePickerVisible(false)}>
+              <OverlayStatusBar />
+              <View style={styles.imagePickerContainer} >
+                <TouchableOpacity style={styles.option} onPress={openCamera}>
+                  <NormalText text="Chụp ảnh mới" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.option}
+                  onPress={openImageLibrary}>
+                  <NormalText text="Chọn ảnh từ thư viện" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.option}
+                  onPress={() => setImagePickerVisible(false)}>
+                  <NormalText text="Hủy bỏ" />
+                </TouchableOpacity>
+              </View>
+            </Pressable>
+          </Modal>
+
+
+
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -100,19 +200,8 @@ const UpdateProfileScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.fbBg,
+    backgroundColor: colors.white,
     gap: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.fbBg,
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: colors.textPrimary,
   },
   avatarContainer: {
     alignItems: 'center',
@@ -143,14 +232,41 @@ const styles = StyleSheet.create({
     width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     borderRadius: GLOBAL_KEYS.ICON_SIZE_DEFAULT / 2,
+    padding: 4,
   },
+ 
   formContainer: {
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    gap: GLOBAL_KEYS.GAP_SMALL,
   },
-  lottie: {
-    width: 100,
-    height: 100,
+  dropdown: {
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    fontSize: 14
+  },
+
+  placeholderText: {
+    color: colors.black,
+    fontSize: 14,
+  },
+  imagePickerOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: colors.overlay,
+  },
+  imagePickerContainer: {
+    backgroundColor: colors.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+  },
+  option: {
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray200,
   },
 });
 

@@ -30,6 +30,10 @@ export const login2 = async ({ phoneNumber, password }) => {
       AppAsyncStorage.STORAGE_KEYS.storeId,
       merchant?.workingStore,
     );
+    await AppAsyncStorage.storeData(
+      AppAsyncStorage.STORAGE_KEYS.phoneNumber,
+      phoneNumber,
+    );
     return data;
   } catch (error) {
     console.log('Error', error);

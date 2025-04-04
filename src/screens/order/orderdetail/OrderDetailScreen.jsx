@@ -419,7 +419,7 @@ const PaymentDetails = ({
     0,
   );
 
-  console.log('detail', detail)
+  console.log('detail', JSON.stringify(detail, null, 3))
   // Số tiền giảm giá từ voucher (nếu có)
   const discount = voucher
     ? voucher.discountType === 'percentage'
@@ -427,35 +427,7 @@ const PaymentDetails = ({
       : voucher.discountValue
     : 0;
 
-  // Chọn icon phù hợp với phương thức thanh toán
-  // const getPaymentIcon = method => {
-  //   switch (method) {
-  //     case 'cod':
-  //       return (
-  //         <Image
-  //           style={{width: 24, height: 24}}
-  //           source={require('../../assets/images/logo_vnd.png')}
-  //         />
-  //       );
-  //     case 'payOs':
-  //       return (
-  //         <Image
-  //           style={{width: 24, height: 24}}
-  //           source={require('../../assets/images/logo_payos.png')}
-  //         />
-  //       );
-  //     case 'zalopay':
-  //       return (
-  //         <Image
-  //           style={{width: 24, height: 24}}
-  //           source={require('../../assets/images/logo_zalopay.png')}
-  //         />
-  //       );
-  //     default:
-  //       return null;
-  //   }
-  // };
-
+ 
   // Xác định trạng thái thanh toán
   const getPaymentStatus = () => {
     if (status === 'completed') {

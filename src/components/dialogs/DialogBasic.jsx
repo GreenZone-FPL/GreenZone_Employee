@@ -3,6 +3,7 @@ import React from 'react';
 import {
   KeyboardAvoidingView,
   Modal,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -24,30 +25,33 @@ const DialogBasicPropTypes = {
     PropTypes.object,
     PropTypes.array,
   ]),
+  titleStyle: PropTypes.object,
 };
 
 
-export const DialogBasic = ({ isVisible, onHide, title, children, style }) => {
+export const DialogBasic = ({ isVisible, onHide, title, children, style, titleStyle}) => {
 
   return (
     <Modal
       visible={isVisible}
       animationType="fade"
       transparent={true}
-      onRequestClose={onHide}>
-      <Column style={styles.overlay}>
-        <Column style={[styles.modalContainer, style]}>
+     >
+      <Pressable style={styles.overlay} onPress={onHide}>
+        <Pressable style={[styles.modalContainer, style]} onPress={() => {}}>
+
           <OverlayStatusBar />
+
           <ScrollView>
             <KeyboardAvoidingView>
               <Row style={styles.header}>
                 <View style={styles.placeholderIcon} />
-                <Text style={styles.titleText}>{title}</Text>
+                <Text style={[styles.titleText, titleStyle]}>{title}</Text>
                 <TouchableOpacity onPress={onHide}>
                   <Icon
                     source="close"
                     size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                    color={colors.primary}
+                    color={colors.black}
                   />
                 </TouchableOpacity>
               </Row>
@@ -56,8 +60,10 @@ export const DialogBasic = ({ isVisible, onHide, title, children, style }) => {
               </Column>
             </KeyboardAvoidingView>
           </ScrollView>
-        </Column>
-      </Column>
+
+
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 };
@@ -69,6 +75,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     backgroundColor: colors.overlay,
+
   },
   modalContainer: {
     backgroundColor: colors.white,
@@ -84,7 +91,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.black,
     textAlign: 'center',
     flex: 1,
   },
@@ -94,7 +101,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     borderBottomWidth: 2,
-    borderBottomColor: colors.gray200,
+    borderBottomColor: colors.fbBg,
     backgroundColor: colors.white,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,

@@ -1,9 +1,9 @@
-import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React from 'react';
 import { Icon } from 'react-native-paper';
+import { colors } from '../constants';
 import HomeScreen from '../screens/bottom-navs/HomeScreen';
 import ProfileScreen from '../screens/bottom-navs/ProfileScreen';
-import { colors, GLOBAL_KEYS } from '../constants';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,7 +20,7 @@ const BottomTab = () => {
                     height: 60,
                 },
                 tabBarLabelStyle: {
-                    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+                    fontSize: 12,
                     fontWeight: '500',
                 },
                 tabBarIcon: ({ color }) => {
