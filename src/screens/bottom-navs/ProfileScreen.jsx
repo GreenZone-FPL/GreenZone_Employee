@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Linking
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { getProfile, getMerchant } from '../../axios';
@@ -15,6 +16,7 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { AuthActionTypes } from '../../reducers/authReducer';
 import { AppAsyncStorage } from '../../utils';
+import Toast from 'react-native-toast-message';
 
 const { width } = Dimensions.get('window');
 
@@ -63,6 +65,21 @@ const ProfileScreen = ({ navigation }) => {
     loadMerchant();
   }, []);
 
+  const handleSupportPress = () => {
+    if (merchant && merchant.phoneNumber) {
+      const phoneNumber = merchant.phoneNumber;
+      Linking.openURL(`tel:${phoneNumber}`);
+    } else {
+
+      Toast.show({
+        type: 'error',
+        position: 'top',
+        text1: 'Số điện thoại hỗ trợ không có sẵn!',
+        visibilityTime: 2000,
+      });
+    }
+  };
+
 
   if (loading) {
     return (
@@ -73,6 +90,8 @@ const ProfileScreen = ({ navigation }) => {
       </View>
     )
   }
+
+
 
 
   return (
@@ -91,7 +110,12 @@ const ProfileScreen = ({ navigation }) => {
           }}
           checkIcon={true}
         />
-        <ItemRow title="Hỗ trợ" icon="headphones" checkIcon={true} />
+        <ItemRow
+          title="Hỗ trợ"
+          icon="headphones"
+          checkIcon={true}
+          onPress={handleSupportPress}
+        />
 
         <ItemRow
           title="Đăng xuất"
