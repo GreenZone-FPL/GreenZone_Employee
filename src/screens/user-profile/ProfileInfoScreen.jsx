@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   avatar: {
-    backgroundColor: colors.gray700,
+    backgroundColor: colors.white,
     width: width / 3,
     height: width / 3,
     borderRadius: width / 6,
@@ -97,8 +97,6 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     resizeMode: 'contain',
     borderRadius: 80,
-    borderWidth: 2,
-    borderColor: colors.green500
   },
 
   formContainer: {

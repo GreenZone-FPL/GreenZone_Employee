@@ -1,28 +1,10 @@
-import { StyleSheet, Text, View, FlatList } from 'react-native'
+import React from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { HorizontalProductItem } from '../../../components';
-import { colors } from '../../../constants';
-import React from 'react'
-import { Icon } from 'react-native-paper';
+import { colors, GLOBAL_KEYS } from '../../../constants';
+import { Title } from './Title';
 
-
-const Title = ({
-    title,
-    icon,
-    titleStyle,
-    iconColor = colors.primary,
-    iconSize = GLOBAL_KEYS.ICON_SIZE_DEFAULT,
-}) => {
-    return (
-        <View style={styles.titleContainer}>
-            {icon && <Icon source={icon} color={iconColor} size={iconSize} />}
-
-            <Text style={[styles.greenText, titleStyle]}>{title}</Text>
-        </View>
-    );
-};
-
-
-const ProductsInfo = ({ orderItems }) => {
+export const ProductsInfo = ({ orderItems }) => {
     return (
         <View style={[styles.areaContainer, { borderBottomWidth: 0 }]}>
             <View style={{ marginHorizontal: 16 }}>
@@ -60,7 +42,7 @@ const ProductsInfo = ({ orderItems }) => {
     );
 };
 
-export default ProductsInfo
+
 
 const styles = StyleSheet.create({
     titleContainer: {
@@ -73,5 +55,14 @@ const styles = StyleSheet.create({
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.primary,
         fontWeight: '600',
+    },
+    areaContainer: {
+        backgroundColor: colors.white,
+        paddingVertical: 12,
+        marginBottom: 5,
+    },
+    flatListContentContainer: {
+        gap: 5,
+        backgroundColor: colors.fbBg,
     },
 })

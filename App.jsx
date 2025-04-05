@@ -16,12 +16,12 @@ import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import CallWithUser from './src/screens/order/CallWithUser';
 import ChatWithUser from './src/screens/order/ChatWithUser';
 import DeliveryMapScreen from './src/screens/order/DeliveryMapScreen';
-import OrderDetailScreen from './src/screens/order/orderdetail/OrderDetailScreen';
+import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 
 import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
 import ProfileInfoScreen from './src/screens/user-profile/ProfileInfoScreen';
 import BottomTab from './src/layouts/BottomTab';
-import MapScreen from './src/screens/order/orderdetail/MapScreen';
+import MapScreen from './src/screens/order/MapScreen';
 // LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 // LogBox.ignoreAllLogs();//Ignore all log notifications
 

@@ -17,7 +17,7 @@ import {Column} from '../containers/Column'
 import {Row} from '../containers/Row'
 
 const DialogBasicPropTypes = {
-  isVisible: PropTypes.bool.isRequired,
+  visible: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   title: PropTypes.string,
   children: PropTypes.node,
@@ -29,11 +29,11 @@ const DialogBasicPropTypes = {
 };
 
 
-export const DialogBasic = ({ isVisible, onHide, title, children, style, titleStyle}) => {
+export const DialogBasic = ({ visible, onHide, title, children, style, titleStyle}) => {
 
   return (
     <Modal
-      visible={isVisible}
+      visible={visible}
       animationType="fade"
       transparent={true}
      >
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   titleText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '600',
     color: colors.black,
     textAlign: 'center',

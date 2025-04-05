@@ -23,9 +23,10 @@ export const login2 = async ({ phoneNumber, password }) => {
 
     const merchant = data?.user;
 
+
     await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.accessToken, data?.token?.accessToken?.token);
     await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.refreshToken, data?.token?.refreshToken?.token);
-    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.merchant, JSON.stringify(merchant));
+    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.merchant, merchant);
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.storeId,
       merchant?.workingStore,

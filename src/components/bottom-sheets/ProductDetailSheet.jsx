@@ -169,7 +169,7 @@ const ProductImage = ({ hideModal}) => {
           onPress={hideModal}
         />
         <DialogBasic
-          isVisible={isDialogVisible}
+          visible={isDialogVisible}
           onHide={() => setIsDialogVisible(false)}
           style={styles.height}
         >

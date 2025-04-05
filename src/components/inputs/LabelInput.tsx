@@ -9,7 +9,7 @@ interface LabelInputProps {
   style?: TextStyle;
 }
 
-const LabelInput: React.FC<LabelInputProps> = ({label, required = false, style}) => {
+export const LabelInput: React.FC<LabelInputProps> = ({label, required = false, style}) => {
   return (
     <Text style={[styles.label, style]}>
       {label}
@@ -29,4 +29,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LabelInput;
+

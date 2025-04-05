@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet, TextInputProps, ViewStyle } from 'react-native';
 import { colors } from '../../constants/color'
-import LabelInput from './LabelInput';
+import { LabelInput } from './LabelInput';
 import { Column } from '../containers/Column';
 
 interface NormalInputProps extends TextInputProps {

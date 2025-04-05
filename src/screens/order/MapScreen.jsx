@@ -4,11 +4,11 @@ import polyline from 'polyline';
 import React, { useEffect, useRef, useState } from 'react';
 import { Linking, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { getOrderDetail } from '../../../axios';
-import { Column, LightStatusBar, NormalHeader, NormalLoading, OverlayStatusBar, TitleText } from '../../../components';
-import { colors, GLOBAL_KEYS } from '../../../constants';
-import { useAppContext } from '../../../context/appContext';
-import { Toaster } from '../../../utils';
+import { getOrderDetail } from '../../axios';
+import { Column, LightStatusBar, NormalHeader, NormalLoading, OverlayStatusBar, TitleText } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { Toaster } from '../../utils';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';

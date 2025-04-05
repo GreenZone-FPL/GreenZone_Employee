@@ -1,23 +1,23 @@
-import { useFocusEffect } from '@react-navigation/native';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
+  Dimensions,
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
-import { getOrdersByStatus, getMerchant } from '../../axios';
-import { Column, CustomTabView, LightStatusBar, NormalLoading, NormalText, Row, StoreAddress, TitleText } from '../../components';
-import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
-import { AppAsyncStorage, TextFormatter } from '../../utils';
-import { OrderGraph } from '../../layouts/graphs';
+import { getMerchant, getOrdersByStatus } from '../../axios';
+import { Column, CustomTabView, LightStatusBar, NormalLoading, NormalText, Row, TitleText } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
+import { OrderGraph } from '../../layouts/graphs';
+import { AppAsyncStorage, TextFormatter } from '../../utils';
 
 const statuses = ['readyForPickup', 'shippingOrder', 'completed', 'failedDelivery'];
 const tabTitles = ['Đơn mới', 'Đang giao', 'Hoàn thành', 'Giao thất bại'];
-
+const { width } = Dimensions.get('window');
 const HomeScreen = ({ navigation }) => {
   const [index, setIndex] = useState(0);
   const [orders, setOrders] = useState([]);
@@ -49,6 +49,7 @@ const HomeScreen = ({ navigation }) => {
         const storeId = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.storeId);
         if (storeId) {
           const response = await getMerchant(storeId);
+          console.log('response', JSON.stringify(response, null, 2))
           setMerchant(response);
         }
       } catch (error) {
@@ -71,7 +72,7 @@ const HomeScreen = ({ navigation }) => {
     const unsubscribe = navigation.addListener('focus', () => {
       fetchOrders();
     });
-  
+
     return unsubscribe;
   }, [index]);
 
@@ -82,7 +83,17 @@ const HomeScreen = ({ navigation }) => {
       {
         merchant &&
         <Column style={{ padding: 16, backgroundColor: colors.white }}>
-          <Text style={styles.headerText}>{merchant?.name}</Text>
+          <Row>
+
+            <View style={styles.avatar}>
+              <Image
+                style={styles.avatar}
+                source={{ uri: merchant.images[0] || ''}}
+              />
+            </View>
+            <Text style={styles.headerText}>{merchant?.name}</Text>
+          </Row>
+
           <Text
             style={
               styles.titleText
@@ -156,7 +167,7 @@ const OrderItem = ({ item, handleOrderPress }) => {
     <TouchableOpacity style={styles.orderItem} onPress={handleOrderPress}>
       <Column style={{ flex: 2 }}>
         <Row style={{ justifyContent: 'space-between' }}>
-        <NormalText text={`ID: #...${_id.slice(-8)}`} style={styles.orderIdText} />
+          <NormalText text={`#...${_id.slice(-8)}`} style={styles.orderIdText} />
           <TitleText text={TextFormatter.formatCurrency(totalPrice)} style={styles.priceText} />
         </Row>
 
@@ -165,7 +176,7 @@ const OrderItem = ({ item, handleOrderPress }) => {
         </Text>
 
 
-        <NormalText text={`${consigneeName} || ${consigneePhone}`} style={styles.recipientText} />
+        <NormalText text={`${consigneeName} - ${consigneePhone}`} style={styles.recipientText} />
         <NormalText text={formattedAddress} />
         <NormalText text={new Date(createdAt).toLocaleString()} style={styles.dateText} />
       </Column>
@@ -180,12 +191,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
+    flex: 1
   },
   tabView: {
     width: '100%',
     backgroundColor: colors.fbBg,
     gap: 8
+  },
+  avatar: {
+    backgroundColor: colors.white,
+    width: width / 3,
+    height: width / 3,
+    borderRadius: width / 6,
+    alignSelf: 'center',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 999,
+    resizeMode: 'contain',
+    borderRadius: 80,
   },
   orderItem: {
     backgroundColor: colors.white,

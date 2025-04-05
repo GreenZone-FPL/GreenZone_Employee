@@ -29,11 +29,9 @@ export * from './containers/Column';
 export * from './containers/Row';
 
 // dialogs
-export * from './dialogs/DialogShippingMethod';
-export * from './dialogs/DialogFeedback';
-export * from './dialogs/DialogBasic';
-export * from './dialogs/DialogReviewOder';
+
 export * from './dialogs/ActionDialog';
+export * from './dialogs/DialogBasic';
 
 // flatlists
 export * from './flatlists/ProductsListHorizontal';

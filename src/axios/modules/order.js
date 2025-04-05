@@ -1,3 +1,4 @@
+import { OrderStatus } from '../../constants';
 import axiosInstance from '../axiosInstance';
 export const getOrders = async status => {
   try {
@@ -34,28 +35,36 @@ export const getOrderDetail = async orderId => {
   }
 };
 
+
+
 export const updateOrderStatus = async (
   orderId,
   status,
   deliveryMethod,
   shipperId,
+  cancelReason = 'Không có lý do' 
 ) => {
   try {
-    const body = {status};
+    const body = { status };
 
     // Nếu là đơn "delivery" và chuyển sang "readyForPickup", thì cần shipper
     if (deliveryMethod === 'delivery' && status === 'readyForPickup') {
       body.shipper = shipperId;
     }
 
+    // Nếu hủy đơn, thêm lý do hủy vào body
+    if (status === OrderStatus.CANCELLED.value || status === OrderStatus.FAILED_DELIVERY.value) {
+      body.cancelReason = cancelReason;
+    }
+
     const response = await axiosInstance.patch(
       `/v1/order/${orderId}/status`,
-      body,
+      body
     );
 
     return response.data;
   } catch (error) {
-    console.log('Lỗi API:', error.response?.data || error.message);
+    console.log('Error', error);
     throw error;
   }
 };

@@ -16,7 +16,6 @@ import { useAppContext } from '../../context/appContext';
 import { AuthActionTypes } from '../../reducers/authReducer';
 import { AppAsyncStorage } from '../../utils';
 
-
 const { width } = Dimensions.get('window');
 
 const ProfileScreen = ({ navigation }) => {
@@ -65,7 +64,6 @@ const ProfileScreen = ({ navigation }) => {
   }, []);
 
 
-
   if (loading) {
     return (
       <View style={styles.container}>
@@ -75,7 +73,6 @@ const ProfileScreen = ({ navigation }) => {
       </View>
     )
   }
-
 
 
   return (
@@ -131,15 +128,15 @@ const Header = ({ profile, merchant }) => {
             />
           </View>
         </View>
+
         <Column style={{ flex: 1, backgroundColor: colors.white }}>
           <RowContent title={`${profile?.firstName} ${profile?.lastName}`} icon="account-outline" />
           <RowContent title={profile?.phoneNumber} icon="phone-outline" />
-
-
         </Column>
+
       </Row>
       <Column style={{ backgroundColor: colors.white, padding: 16, gap: 16 }}>
-        <TitleText text='Cửa hàng' />
+        <TitleText text='Cửa hàng làm việc' />
         <RowContent title={merchant?.name} icon="store" />
         <RowContent
           title={`${merchant?.specificAddress}, ${merchant?.ward}, ${merchant?.district}, ${merchant?.province}`}
@@ -150,13 +147,11 @@ const Header = ({ profile, merchant }) => {
 
     </Column>
 
-
   );
 };
 
 
-
-const ItemRow = ({ icon, title, onPress, checkIcon }) => {
+const ItemRow = ({ icon, title, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.itemRow}>
       <Row style={{ flex: 1 }}>
@@ -206,12 +201,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: width,
     resizeMode: 'cover',
-    borderWidth: 1,
-    borderColor: colors.primary,
     height: width / 5,
     width: width / 5,
     padding: 2,
-    elevation: 2.5,
   },
   avatar: {
     width: '100%',
