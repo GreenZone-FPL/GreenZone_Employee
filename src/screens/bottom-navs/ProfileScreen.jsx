@@ -111,7 +111,7 @@ const ProfileScreen = ({ navigation }) => {
           checkIcon={true}
         />
         <ItemRow
-          title="Hỗ trợ"
+          title="Liên hệ cửa hàng"
           icon="headphones"
           checkIcon={true}
           onPress={handleSupportPress}

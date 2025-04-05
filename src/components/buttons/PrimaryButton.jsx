@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.white,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: 'bold',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontWeight: '500',
   },
 });
