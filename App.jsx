@@ -10,18 +10,16 @@ import { AuthGraph, MainGraph, OrderGraph } from './src/layouts/graphs';
 import ShipperSocketService from './src/service/shipperSocketSevice';
 import { AppAsyncStorage } from './src/utils';
 
-import MainNavigation from './src/layouts/MainNavigation';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SplashScreen from './src/screens/auth/SplashScreen';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import CallWithUser from './src/screens/order/CallWithUser';
 import ChatWithUser from './src/screens/order/ChatWithUser';
 import DeliveryMapScreen from './src/screens/order/DeliveryMapScreen';
-// import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import OrderDetailScreen from './src/screens/order/orderdetail/OrderDetailScreen';
 
 import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
-import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
+import ProfileInfoScreen from './src/screens/user-profile/ProfileInfoScreen';
 import BottomTab from './src/layouts/BottomTab';
 import MapScreen from './src/screens/order/orderdetail/MapScreen';
 // LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
@@ -100,7 +98,7 @@ function AppNavigator({ navigation }) {
           />
           <BaseStack.Screen name={AuthGraph.CallWithUser} component={CallWithUser} />
           <BaseStack.Screen name={OrderGraph.OrderDoneScreen} component={OrderDoneScreen} />
-          <BaseStack.Screen name={'UpdateProfileScreen'} component={UpdateProfileScreen} />
+          <BaseStack.Screen name={'ProfileInfoScreen'} component={ProfileInfoScreen} />
         </>
       ) : (
         <>

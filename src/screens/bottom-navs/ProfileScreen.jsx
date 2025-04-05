@@ -90,14 +90,12 @@ const ProfileScreen = ({ navigation }) => {
           title="Thông tin tài khoản"
           icon="account-outline"
           onPress={() => {
-            navigation.navigate('UpdateProfileScreen', { profile });
+            navigation.navigate('ProfileInfoScreen', { profile });
           }}
           checkIcon={true}
         />
         <ItemRow title="Hỗ trợ" icon="headphones" checkIcon={true} />
-        {/* <ItemRow title="Câu hỏi thường gặp" icon="application-edit-outline" checkIcon={true} /> */}
-        {/* <ItemRow title="Điều khoản và điều kiện" icon="comment-edit-outline" checkIcon={true} /> */}
-        {/* <ItemRow title="Chính sách quyền riêng tư" icon="eye-outline" checkIcon={true} /> */}
+
         <ItemRow
           title="Đăng xuất"
           icon="logout"
@@ -140,7 +138,7 @@ const Header = ({ profile, merchant }) => {
 
         </Column>
       </Row>
-      <Column style={{ backgroundColor: colors.white, padding: 16, gap: 16}}>
+      <Column style={{ backgroundColor: colors.white, padding: 16, gap: 16 }}>
         <TitleText text='Cửa hàng' />
         <RowContent title={merchant?.name} icon="store" />
         <RowContent

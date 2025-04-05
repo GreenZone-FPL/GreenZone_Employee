@@ -1,7 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import MapboxGL from '@rnmapbox/maps';
-import {Call, Send2} from 'iconsax-react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import { Call, Send2 } from 'iconsax-react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -12,8 +12,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {getOrderDetail, updateOrderStatus} from '../../../axios';
+import { Icon } from 'react-native-paper';
+import { getOrderDetail, updateOrderStatus } from '../../../axios';
 import {
   ActionDialog,
   StatusText,
@@ -33,10 +33,10 @@ import {
   OrderStatus,
   colors,
 } from '../../../constants';
-import {useAppContext} from '../../../context/appContext';
-import {OrderGraph} from '../../../layouts/graphs';
-import {Toaster} from '../../../utils';
-import {Linking} from 'react-native';
+import { useAppContext } from '../../../context/appContext';
+import { OrderGraph } from '../../../layouts/graphs';
+import { Toaster } from '../../../utils';
+import { Linking } from 'react-native';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';
@@ -44,15 +44,15 @@ const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';
 MapboxGL.setAccessToken(GOONG_API_KEY);
 
 const OrderDetailScreen = props => {
-  const {navigation, route} = props;
+  const { navigation, route } = props;
   const animationRef = useRef(null);
-  const {orderId} = route.params;
+  const { orderId } = route.params;
   const [orderDetail, setOrderDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionDialogVisible, setActionDialogVisible] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const [approveAction, setApproveAction] = useState(null);
-  const {updateOrderMessage, setOrderDualStatuses} = useAppContext();
+  const { updateOrderMessage, setOrderDualStatuses } = useAppContext();
   const cameraRef = useRef(null);
   const [userLocation, setUserLocation] = useState([null, null]);
   const [customerLocation, setCustomerLocation] = useState([null, null]);
@@ -66,7 +66,7 @@ const OrderDetailScreen = props => {
     const timeoutId = setTimeout(() => {
       Geolocation.getCurrentPosition(
         position => {
-          const {longitude, latitude} = position.coords;
+          const { longitude, latitude } = position.coords;
           setUserLocation([longitude, latitude]);
           if (cameraRef.current) {
             cameraRef.current.setCamera({
@@ -78,7 +78,7 @@ const OrderDetailScreen = props => {
           console.log('Vị trí người dùng', position);
         },
         error => console.log(error),
-        {timeout: 5000},
+        { timeout: 5000 },
       );
     }, 1000);
 
@@ -112,7 +112,7 @@ const OrderDetailScreen = props => {
 
         await updateOrderStatus(_id, newStatus);
         await fetchOrderDetail();
-        setOrderDualStatuses({status: newStatus, oldStatus});
+        setOrderDualStatuses({ status: newStatus, oldStatus });
         Toaster.show('Cập nhật đơn hàng thành công');
         if (callback) {
           callback();
@@ -161,9 +161,9 @@ const OrderDetailScreen = props => {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(rad(lat1)) *
-        Math.cos(rad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c * 1000;
     return distance;
@@ -177,7 +177,7 @@ const OrderDetailScreen = props => {
         customerLocation[0],
         customerLocation[1],
       );
-      if (distance <= 1000) {
+      if (distance <= 100000) {
         // Cập nhật trạng thái đơn hàng
         updateOrderStatus(orderId, newStatus) // Cập nhật trạng thái đơn hàng
           .then(() => {
@@ -288,7 +288,7 @@ const OrderDetailScreen = props => {
 
         {status === OrderStatus.READY_FOR_PICKUP.value && (
           <PrimaryButton
-            style={{flex: 1, margin: 16}}
+            style={{ flex: 1, margin: 16 }}
             onPress={() =>
               onApprove('Bắt đầu giao hàng', OrderStatus.SHIPPING_ORDER.value)
             }
@@ -296,20 +296,38 @@ const OrderDetailScreen = props => {
           />
         )}
 
-        {status === OrderStatus.FAILED_DELIVERY.value && (
+        {/* {status === OrderStatus.FAILED_DELIVERY.value && (
           <PrimaryButton
-            style={{flex: 1, margin: 16}}
+            style={{ flex: 1, margin: 16 }}
             onPress={() =>
               onApprove('Giao lại đơn hàng', OrderStatus.SHIPPING_ORDER.value)
             }
             title="Giao lại đơn hàng"
           />
-        )}
+        )} */}
 
         {status === OrderStatus.SHIPPING_ORDER.value && (
-          <Row style={{gap: 16, backgroundColor: colors.white, padding: 16}}>
+          <Row style={{ gap: 16, backgroundColor: colors.white, padding: 16 }}>
+
+            {/* <Pressable
+              onPress={() =>
+                checkDistanceAndApprove(
+                  'Giao hàng thất bại',
+                  OrderStatus.FAILED_DELIVERY.value,
+                  () => navigation.goBack(),
+                )
+              }
+              style={{
+                flex: 1,
+                backgroundColor: colors.white,
+                borderColor: colors.red900,
+                borderWidth: 1,
+              }}>
+
+              <NormalText text='Hủy đơn hàng' style={{ color: colors.primary }} />
+            </Pressable> */}
             <PrimaryButton
-              titleStyle={{color: colors.primary}}
+              titleStyle={{ color: colors.red900 }}
               style={{
                 flex: 1,
                 backgroundColor: colors.white,
@@ -326,7 +344,7 @@ const OrderDetailScreen = props => {
               title="Hủy đơn hàng"
             />
             <PrimaryButton
-              style={{flex: 1}}
+              style={{ flex: 1 }}
               onPress={() =>
                 checkDistanceAndApprove(
                   'Đơn hàng hoàn thành',
@@ -354,17 +372,17 @@ const OrderDetailScreen = props => {
   );
 };
 
-const ProductsInfo = ({orderItems}) => {
+const ProductsInfo = ({ orderItems }) => {
   return (
-    <View style={[styles.areaContainer, {borderBottomWidth: 0}]}>
-      <View style={{marginHorizontal: 16}}>
+    <View style={[styles.areaContainer, { borderBottomWidth: 0 }]}>
+      <View style={{ marginHorizontal: 16 }}>
         <Title title={'Danh sách sản phẩm'} icon="clipboard-list" />
       </View>
 
       <FlatList
         data={orderItems}
         keyExtractor={item => item.product._id}
-        renderItem={({item}) => {
+        renderItem={({ item }) => {
           const formattedItem = {
             productName: item.product.name,
             image: item.product.image,
@@ -388,7 +406,7 @@ const ProductsInfo = ({orderItems}) => {
   );
 };
 
-const RecipientInfo = ({deliveryMethod, owner, shippingAddress, detail}) => {
+const RecipientInfo = ({ deliveryMethod, owner, shippingAddress, detail }) => {
   const handleCall = () => {
     if (!detail?.consigneePhone) return;
 
@@ -406,11 +424,11 @@ const RecipientInfo = ({deliveryMethod, owner, shippingAddress, detail}) => {
   };
 
   return (
-    <Column style={[styles.areaContainer, {paddingHorizontal: 16}]}>
-      <Row style={{justifyContent: 'space-between'}}>
+    <Column style={[styles.areaContainer, { paddingHorizontal: 16 }]}>
+      <Row style={{ justifyContent: 'space-between' }}>
         <Title title="Người nhận" icon="map-marker" />
 
-        <Row style={{flexDirection: 'row', gap: 16}}>
+        <Row style={{ flexDirection: 'row', gap: 16 }}>
           <TouchableOpacity style={styles.iconButton} onPress={handleCall}>
             <Call size="22" color={colors.green700} variant="Bold" />
           </TouchableOpacity>
@@ -422,7 +440,7 @@ const RecipientInfo = ({deliveryMethod, owner, shippingAddress, detail}) => {
 
       <NormalText
         text={[detail.consigneeName, '|', detail.consigneePhone].join(' ')}
-        style={{color: colors.black}}
+        style={{ color: colors.black }}
       />
 
       {deliveryMethod === DeliveryMethod.DELIVERY.value && (
@@ -476,18 +494,18 @@ const PaymentDetails = ({
   // Xác định trạng thái thanh toán
   const getPaymentStatus = () => {
     if (status === 'completed') {
-      return {text: 'Đã thanh toán', color: colors.primary};
+      return { text: 'Đã thanh toán', color: colors.primary };
     }
     if (paymentMethod === 'cod') {
-      return {text: 'Chưa thanh toán', color: colors.orange700};
+      return { text: 'Chưa thanh toán', color: colors.orange700 };
     }
     if (status === 'awaitingPayment') {
-      return {text: 'Chờ thanh toán', color: colors.pink500};
+      return { text: 'Chờ thanh toán', color: colors.pink500 };
     }
     if (status === 'cancelled') {
-      return {text: 'Chưa thanh toán', color: colors.orange700};
+      return { text: 'Chưa thanh toán', color: colors.orange700 };
     }
-    return {text: 'Đã thanh toán', color: colors.primary};
+    return { text: 'Đã thanh toán', color: colors.primary };
   };
 
   const paymentStatus = getPaymentStatus();
@@ -498,12 +516,12 @@ const PaymentDetails = ({
     return orderItems.reduce((total, item) => {
       const productAndToppingTotal =
         item.price +
-          item.toppingItems?.reduce((sum, topping) => {
-            if (topping?.price && topping?.quantity) {
-              return sum + topping.price * topping.quantity;
-            }
-            return sum;
-          }, 0) || 0;
+        item.toppingItems?.reduce((sum, topping) => {
+          if (topping?.price && topping?.quantity) {
+            return sum + topping.price * topping.quantity;
+          }
+          return sum;
+        }, 0) || 0;
 
       const totalItemPrice = productAndToppingTotal * item.quantity;
       return total + totalItemPrice;
@@ -535,7 +553,7 @@ const PaymentDetails = ({
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-        <Text style={{fontSize: 14, color: colors.black, marginRight: 8}}>
+        <Text style={{ fontSize: 14, color: colors.black, marginRight: 8 }}>
           Trạng thái đơn hàng
         </Text>
         <StatusText status={status} />
@@ -560,13 +578,13 @@ const PaymentDetails = ({
             : `Giảm Giá`
         }
         rightText={`-${(discount || 0).toLocaleString('vi-VN')}đ`}
-        rightTextStyle={{color: colors.primary}}
+        rightTextStyle={{ color: colors.primary }}
       />
 
       <DualTextRow
         leftText="Trạng thái thanh toán"
         rightText={paymentStatus.text}
-        rightTextStyle={{color: paymentStatus.color}}
+        rightTextStyle={{ color: paymentStatus.color }}
       />
 
       {detail?.createdAt && (
@@ -619,7 +637,7 @@ const PaymentDetails = ({
           marginVertical: 6,
           justifyContent: 'space-between',
         }}>
-        <Text style={{fontSize: 14, color: colors.black, marginRight: 8}}>
+        <Text style={{ fontSize: 14, color: colors.black, marginRight: 8 }}>
           Phương thức thanh toán:
         </Text>
         <View
@@ -627,7 +645,7 @@ const PaymentDetails = ({
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <Text style={{fontSize: 14, color: colors.black, marginLeft: 8}}>
+          <Text style={{ fontSize: 14, color: colors.black, marginLeft: 8 }}>
             {paymentMethod === 'online' ? 'Thanh toán online' : 'Tiền mặt'}
           </Text>
         </View>
@@ -641,18 +659,18 @@ const PaymentDetails = ({
           fontWeight: '700',
           fontSize: 18,
         }}
-        leftTextStyle={{color: colors.black, fontWeight: '500'}}
+        leftTextStyle={{ color: colors.black, fontWeight: '500' }}
       />
     </View>
   );
 };
 
-const OrderId = ({_id}) => {
+const OrderId = ({ _id }) => {
   return (
-    <View style={[styles.row, {marginBottom: 6}]}>
+    <View style={[styles.row, { marginBottom: 6 }]}>
       <Text style={styles.normalText}>Mã đơn hàng</Text>
-      <Pressable style={styles.row} onPress={() => {}}>
-        <Text style={[styles.normalText, {fontWeight: 'bold', marginRight: 8}]}>
+      <Pressable style={styles.row} onPress={() => { }}>
+        <Text style={[styles.normalText, { fontWeight: 'bold', marginRight: 8 }]}>
           {_id}
         </Text>
         <Icon source="content-copy" color={colors.teal900} size={18} />

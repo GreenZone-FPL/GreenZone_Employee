@@ -13,7 +13,7 @@ export const PrimaryButton = props => {
   } = props;
   return (
     <Pressable style={[styles.button, style]} onPress={onPress} disabled={disabled}>
-      <Text style={[styles.text, titleStyle, {color: disabled ? colors.disabledText : colors.white}]}>{title}</Text>
+      <Text style={[styles.text, titleStyle]}>{title}</Text>
     </Pressable>
   );
 };
