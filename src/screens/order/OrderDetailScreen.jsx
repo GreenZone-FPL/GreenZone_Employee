@@ -165,8 +165,8 @@ const OrderDetailScreen = props => {
         customerLocation[1],
       );
 
-      // if (distance <= 100000) {
-      if (distance > 1) {
+      if (distance <= 100000) {
+      // if (distance > 1) {
         if (newStatus === OrderStatus.FAILED_DELIVERY.value || newStatus === OrderStatus.CANCELLED.value) {
           setCancelDialogVisible(true)
         } else {

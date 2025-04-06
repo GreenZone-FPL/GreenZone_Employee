@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { Icon } from 'react-native-paper';
 import { colors } from '../constants';
-import HomeScreen from '../screens/bottom-navs/HomeScreen';
+import OrderHistoryScreen from '../screens/bottom-navs/OrderHistoryScreen';
 import ProfileScreen from '../screens/bottom-navs/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
@@ -10,7 +10,7 @@ const Tab = createBottomTabNavigator();
 const BottomTab = () => {
     return (
         <Tab.Navigator
-            initialRouteName="HomeScreen"
+            initialRouteName="OrderHistoryScreen"
             screenOptions={({ route }) => ({
                 headerShown: false,
                 tabBarActiveTintColor: colors.primary,
@@ -26,7 +26,7 @@ const BottomTab = () => {
                 tabBarIcon: ({ color }) => {
                     const iconSize = 30;
                     let iconName = '';
-                    if (route.name === 'HomeScreen') {
+                    if (route.name === 'OrderHistoryScreen') {
                         iconName = 'clipboard-list';
                     } else if (route.name === 'ProfileScreen') {
                         iconName = 'account-circle';
@@ -35,8 +35,8 @@ const BottomTab = () => {
                 },
             })}>
             <Tab.Screen
-                name="HomeScreen"
-                component={HomeScreen}
+                name="OrderHistoryScreen"
+                component={OrderHistoryScreen}
                 options={{ tabBarLabel: 'Đơn hàng' }}
             />
             <Tab.Screen

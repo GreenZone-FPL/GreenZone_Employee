@@ -18,8 +18,8 @@ import { AppAsyncStorage, TextFormatter } from '../../utils';
 const statuses = ['readyForPickup', 'shippingOrder', 'completed', 'failedDelivery'];
 const tabTitles = ['Đơn mới', 'Đang giao', 'Hoàn thành', 'Giao thất bại'];
 const { width } = Dimensions.get('window');
-const HomeScreen = ({ navigation }) => {
-  const [index, setIndex] = useState(0);
+const OrderHistoryScreen = ({ navigation }) => {
+  const [index, setIndex] = useState(1);
   const [orders, setOrders] = useState([]);
   const [merchant, setMerchant] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -88,7 +88,7 @@ const HomeScreen = ({ navigation }) => {
             <View style={styles.avatar}>
               <Image
                 style={styles.avatar}
-                source={{ uri: merchant.images[0] || ''}}
+                source={{ uri: merchant.images[0] || '' }}
               />
             </View>
             <Text style={styles.headerText}>{merchant?.name}</Text>
@@ -115,31 +115,42 @@ const HomeScreen = ({ navigation }) => {
       >
         {statuses.map((status, i) => (
           <Column key={i} style={styles.tabView}>
-            <>
-              {loading ? (
-                <NormalLoading visible={loading} />
-              ) : (
-                <FlatList
-                  showsVerticalScrollIndicator={false}
-                  data={orders.filter(order => order.status === status)}
-                  keyExtractor={item => item._id}
-                  contentContainerStyle={{ gap: 5, backgroundColor: colors.fbBg }}
-                  renderItem={({ item }) =>
-                    <OrderItem
-                      item={item}
-                      handleOrderPress={() => navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: item._id })}
-                    />
-                  }
-                />
 
-              )}
-            </>
+            {loading ? (
+              <NormalLoading visible={loading} />
+            ) : orders.filter(order => order.status === status).length > 0 ? (
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                data={orders.filter(order => order.status === status)}
+                keyExtractor={item => item._id}
+                renderItem={({ item }) =>
+                  <OrderItem
+                    item={item}
+                    handleOrderPress={() => navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: item._id })}
+                  />
+                }
+              />) :
+              <EmptyView />
+            }
+
+
           </Column>
         ))}
       </CustomTabView>
     </View>
   );
 };
+
+const EmptyView = () => (
+  <View style={styles.emptyContainer}>
+    <Image
+      style={styles.emptyImage}
+      resizeMode="cover"
+      source={require('../../assets/images/logo.png')}
+    />
+
+  </View>
+);
 
 
 const OrderItem = ({ item, handleOrderPress }) => {
@@ -213,6 +224,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     borderRadius: 80,
   },
+  emptyContainer: { justifyContent: 'center', alignItems: 'center', backgroundColor: colors.white },
+  emptyImage: { width: width / 2, height: width / 2 },
   orderItem: {
     backgroundColor: colors.white,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
@@ -229,4 +242,4 @@ const styles = StyleSheet.create({
   orderName: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, fontWeight: '500', color: colors.primary },
 });
 
-export default HomeScreen
+export default OrderHistoryScreen

@@ -22,8 +22,9 @@ import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
 import ProfileInfoScreen from './src/screens/user-profile/ProfileInfoScreen';
 import BottomTab from './src/layouts/BottomTab';
 import MapScreen from './src/screens/order/MapScreen';
-// LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
-// LogBox.ignoreAllLogs();//Ignore all log notifications
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 const BaseStack = createNativeStackNavigator();
 

@@ -10,7 +10,7 @@ import {
   NormalHeader,
   NormalText
 } from '../../components';
-import LabelInput from '../../components/inputs/LabelInput';
+import { LabelInput } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 
 const { width } = Dimensions.get('window');

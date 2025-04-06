@@ -4,7 +4,7 @@ import { AppGraph } from "./appGraph";
 export const BottomGraph = Object.freeze({
   graphName: AppGraph.BOTTOM,
 
-  HomeScreen: 'HomeScreen',
+  OrderHistoryScreen: 'OrderHistoryScreen',
   StatisticsScreen: 'StatisticsScreen',
   ProfileScreen: 'ProfileScreen',
 })

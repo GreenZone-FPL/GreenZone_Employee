@@ -1,7 +1,7 @@
 import React from 'react';
 import { createMotionTabs } from 'react-native-motion-tabs';
 import { colors } from '../constants';
-import HomeScreen from '../screens/bottom-navs/HomeScreen';
+import OrderHistoryScreen from '../screens/bottom-navs/OrderHistoryScreen';
 import ProfileScreen from '../screens/bottom-navs/ProfileScreen';
 
 
@@ -9,7 +9,7 @@ const Tabs = createMotionTabs({
   tabs: [
     {
       name: 'Đơn hàng',
-      component: HomeScreen, 
+      component: OrderHistoryScreen, 
       icon: 'document-text',
       iconType: 'Ionicons', 
     },
