@@ -6,6 +6,7 @@ import { colors, GLOBAL_KEYS } from '../../../constants';
 import { Title } from './Title';
 
 export const RecipientInfo = ({ detail }) => {
+    const [loading, setLoading] = useState(false);
     const handleCall = () => {
         if (!detail?.consigneePhone) return;
 
@@ -28,10 +29,10 @@ export const RecipientInfo = ({ detail }) => {
                 <Title title="Người nhận" icon="map-marker" />
 
                 <Row style={{ flexDirection: 'row', gap: 16 }}>
-                    <TouchableOpacity onPress={handleCall}>
+                    <TouchableOpacity onPress={handleCall} disabled={loading}>
                         <Call size="22" color={colors.green700} variant="Bold" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleSend}>
+                    <TouchableOpacity onPress={handleSend} disabled={loading}>
                         <Send2 size="22" color={colors.green700} variant="Bold" />
                     </TouchableOpacity>
                 </Row>

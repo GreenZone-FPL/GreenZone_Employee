@@ -20,6 +20,7 @@ const width = Dimensions.get('window').width;
 export const VoucherDetailSheet = ({navigation, route}) => {
   const {item} = route.params;
   const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const copyToClipboard = () => {
     Clipboard.setString(item.discountCode);
@@ -70,13 +71,14 @@ export const VoucherDetailSheet = ({navigation, route}) => {
               <Image source={{uri: item.qrCode}} style={styles.qrCodeImage} />
               <Text style={styles.discountCode}>{item.discountCode}</Text>
 
-              <TouchableOpacity onPress={copyToClipboard}>
+              <TouchableOpacity onPress={copyToClipboard} disabled={loading}>
                 <Text style={styles.copyText}>Sao chép</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.orderButton}
-                onPress={() => navigation.navigate(ScreenEnum.OrderScreen)}>
+                onPress={() => navigation.navigate(ScreenEnum.OrderScreen)}
+                disabled={loading}>
                 <Text style={styles.orderButtonText}>Bắt đầu đặt hàng</Text>
               </TouchableOpacity>
 
@@ -97,7 +99,7 @@ export const VoucherDetailSheet = ({navigation, route}) => {
 
               <Text style={styles.termsText}>
                 Xem thêm các điều khoản sử dụng dịch vụ tại:
-                <TouchableOpacity onPress={handleTermsText}>
+                <TouchableOpacity onPress={handleTermsText} disabled={loading}>
                   <Text style={styles.termsLink}>{item.homepage}</Text>
                 </TouchableOpacity>
               </Text>

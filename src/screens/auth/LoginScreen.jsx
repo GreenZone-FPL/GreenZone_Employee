@@ -98,7 +98,7 @@ const LoginScreen = ({ navigation }) => {
           invalidMessage={passwordMessage}
         />
 
-        <PrimaryButton onPress={handleLogin} title='Đăng nhập'/>
+        <PrimaryButton onPress={handleLogin} title='Đăng nhập' disabled={loading}/>
       </Column>
 
     </Column>
