@@ -19,29 +19,11 @@ export const RecipientInfo = ({ detail }) => {
     const [isToastVisable, setIsToastVisable] = useState(false);
     const [toastExtendedData, setToastExtendedData] = useState({});
     const toastInvisableTimeoutRef = useRef(null);
-   
-
-    useEffect(() => {
-      getUserInfo().then(async (info) => {
-        if (info) {
-          setUserPhoneNumber(info.phoneNumber);
-          await onUserLoginZego(info.phoneNumber, info.lastName, props);
-          setIsZegoReady(true); // Đợi init xong mới hiển thị nút gọi
-        } else {
-          console.log('Đăng nhập lại');
-        }
-      });
-    }, []);
-    
-    // console.log('📦 detail Info:', JSON.stringify(detail, null, 2));
-
 
     const getUserInfo = async () => {
         try {
             const phoneNumber = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.phoneNumber);
             const lastName = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.lastName);
-            console.log('phoneNumber', phoneNumber, 'lastName', lastName)
-            // phoneNumber 0822222222 lastName Phan Văn Trị
             if (!phoneNumber) return undefined;
             return { phoneNumber, lastName };
         } catch (e) {
@@ -62,24 +44,10 @@ export const RecipientInfo = ({ detail }) => {
             if (orientation === 'PORTRAIT') orientationValue = 0;
             else if (orientation === 'LANDSCAPE-LEFT') orientationValue = 1;
             else if (orientation === 'LANDSCAPE-RIGHT') orientationValue = 3;
-            console.log('📱 Orientation:', orientation, orientationValue);
+   
             ZegoUIKit.setAppOrientation(orientationValue);
         });
-
-       
     }, []);
-
-    useEffect(() => {
-        getUserInfo().then(async (info) => {
-          if (info) {
-            setUserPhoneNumber(info.phoneNumber);
-            await onUserLoginZego(info.phoneNumber, info.lastName, props);
-            
-          } else {
-            console.log('Đăng nhập lại');
-          }
-        });
-      }, []);
 
     const handleCallInvitationPress = (errorCode, errorMessage, errorInvitees) => {
         console.log('📞 invitees used in call:', [consigneePhone]);
@@ -87,7 +55,7 @@ export const RecipientInfo = ({ detail }) => {
             clearTimeout(toastInvisableTimeoutRef.current);
             setIsToastVisable(false);
         } else {
-            console.log('🚨 Zego call error:', { errorCode, errorMessage, errorInvitees });
+
             setIsToastVisable(true);
             setToastExtendedData({
                 type: ZegoToastType.error,
@@ -139,7 +107,7 @@ export const RecipientInfo = ({ detail }) => {
             </Row>
 
             <NormalText
-                text={[detail.consigneeName,  detail.consigneePhone].join(' - ')}
+                text={[detail.consigneeName, detail.consigneePhone].join(' - ')}
                 style={{ color: colors.black, fontWeight: '500' }}
             />
 
