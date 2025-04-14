@@ -116,7 +116,7 @@ export const RecipientInfo = ({ detail }) => {
                         invitees={[
                             {
                                 userID: consigneePhone,
-                                userName: 'user_' + consigneePhone
+                                userName: 'user_' + consigneeName
                             }
                         ]}
                         isVideoCall={false}
@@ -139,8 +139,8 @@ export const RecipientInfo = ({ detail }) => {
             </Row>
 
             <NormalText
-                text={[detail.consigneeName, '|', detail.consigneePhone].join(' ')}
-                style={{ color: colors.black }}
+                text={[detail.consigneeName,  detail.consigneePhone].join(' - ')}
+                style={{ color: colors.black, fontWeight: '500' }}
             />
 
             <NormalText text={detail.shippingAddress} style={styles.normalText} />

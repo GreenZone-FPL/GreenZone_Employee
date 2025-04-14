@@ -202,8 +202,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-    backgroundColor: colors.white,
-    flex: 1
+    // backgroundColor: colors.white,
+    flex: 1,
+    color: colors.black
   },
   tabView: {
     width: '100%',
@@ -233,6 +234,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  titleText: {
+    color: colors.black
   },
 
   recipientText: { color: colors.black, fontWeight: '500' },

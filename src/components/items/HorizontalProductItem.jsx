@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '500',
+    color: colors.black
   },
   productPrice: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
