@@ -218,6 +218,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: colors.white,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    color: colors.black
   },
 
   avatarContainer: {
