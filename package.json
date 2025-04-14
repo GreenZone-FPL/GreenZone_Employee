@@ -14,7 +14,7 @@
   "dependencies": {
     "@ant-design/icons-react-native": "^2.3.2",
     "@gorhom/bottom-sheet": "^5.0.6",
-    "@react-native-async-storage/async-storage": "^2.1.0",
+    "@react-native-async-storage/async-storage": "^1.19.1",
     "@react-native-clipboard/clipboard": "^1.16.0",
     "@react-native-community/geolocation": "^3.4.0",
     "@react-native-community/viewpager": "^5.0.11",
@@ -26,6 +26,8 @@
     "@rneui/base": "^0.0.0-edge.2",
     "@rneui/themed": "^0.0.0-edge.2",
     "@rnmapbox/maps": "^10.1.37",
+    "@zegocloud/zego-uikit-prebuilt-call-rn": "^6.3.2",
+    "@zegocloud/zego-uikit-rn": "^2.17.1",
     "axios": "^1.7.8",
     "geolocation": "^0.2.0",
     "iconsax-react-native": "^0.0.8",
@@ -56,6 +58,7 @@
     "react-native-material-kit": "^0.6.0-beta.1",
     "react-native-motion-tabs": "^1.0.12",
     "react-native-notifications": "^5.1.0",
+    "react-native-orientation-locker": "^1.7.0",
     "react-native-otp-entry": "^1.8.2",
     "react-native-pager-view": "^6.7.0",
     "react-native-paper": "^5.12.5",
@@ -76,7 +79,9 @@
     "react-native-webview": "^13.12.5",
     "react-navigation": "^5.0.0",
     "socket.io-client": "^4.8.1",
-    "zego-express-engine-reactnative": "^3.17.2"
+    "zego-express-engine-reactnative": "^3.17.2",
+    "zego-zim-react-native": "^2.20.0",
+    "zego-zpns-react-native": "^2.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

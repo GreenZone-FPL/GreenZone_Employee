@@ -79,7 +79,7 @@ const OrderHistoryScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <LightStatusBar />
-
+      <NormalLoading visible={loading} />
       {
         merchant &&
         <Column style={{ padding: 16, backgroundColor: colors.white }}>
@@ -116,9 +116,9 @@ const OrderHistoryScreen = ({ navigation }) => {
         {statuses.map((status, i) => (
           <Column key={i} style={styles.tabView}>
 
-            {loading ? (
-              <NormalLoading visible={loading} />
-            ) : orders.filter(order => order.status === status).length > 0 ? (
+
+          
+            {orders.filter(order => order.status === status).length > 0 ? (
               <FlatList
                 showsVerticalScrollIndicator={false}
                 data={orders.filter(order => order.status === status)}
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     borderRadius: 80,
   },
   emptyContainer: { justifyContent: 'center', alignItems: 'center', backgroundColor: colors.white },
-  emptyImage: { width: width / 2, height: width / 2 },
+  emptyImage: { width: width / 2, height: width / 2, alignSelf: 'center' },
   orderItem: {
     backgroundColor: colors.white,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,

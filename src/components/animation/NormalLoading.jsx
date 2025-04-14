@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.overlay,
-    flex: 1
+    flex: 1,
+    zIndex: 1
 
   },
   lottie: {
