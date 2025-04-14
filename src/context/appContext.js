@@ -15,7 +15,7 @@ export const AppContextProvider = ({ children }) => {
   const [updateOrderMessage, setUpdateOrderMessage] = useState({ visible: false, order: null });
   const [orderDualStatuses, setOrderDualStatuses] = useState(null);
   const [activeOrders, setActiveOrders] = useState([]);
-
+  const [showCallUI, setShowCallUI] = useState(true);
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -37,8 +37,16 @@ export const AppContextProvider = ({ children }) => {
 
   return (
     <AppContext.Provider value={{
-      authState, authDispatch, updateOrderMessage, setUpdateOrderMessage, activeOrders, setActiveOrders,
-      orderDualStatuses, setOrderDualStatuses
+      authState,
+      authDispatch,
+      updateOrderMessage,
+      setUpdateOrderMessage,
+      activeOrders,
+      setActiveOrders,
+      orderDualStatuses,
+      setOrderDualStatuses,
+      showCallUI,
+      setShowCallUI
     }}>
       {children}
     </AppContext.Provider>

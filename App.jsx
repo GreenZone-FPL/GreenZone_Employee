@@ -22,6 +22,14 @@ import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
 import ProfileInfoScreen from './src/screens/user-profile/ProfileInfoScreen';
 import BottomTab from './src/layouts/BottomTab';
 import MapScreen from './src/screens/order/MapScreen';
+
+import {
+  ZegoUIKitPrebuiltCallWaitingScreen,
+  ZegoUIKitPrebuiltCallInCallScreen,
+} from '@zegocloud/zego-uikit-prebuilt-call-rn';
+import ZegoCallUI from './src/zego/ZegoCallUI';
+
+
 import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs();//Ignore all log notifications
@@ -36,11 +44,7 @@ function App() {
         <GestureHandlerRootView style={{ flex: 1 }}>
 
           <SafeAreaProvider>
-            <NavigationContainer>
-              <BaseStack.Navigator screenOptions={{ headerShown: false }}>
-                <BaseStack.Screen name="AppNavigator" component={AppNavigator} />
-              </BaseStack.Navigator>
-            </NavigationContainer>
+            <AppNavigator />
             <Toast />
           </SafeAreaProvider>
         </GestureHandlerRootView>
@@ -52,9 +56,30 @@ function App() {
   );
 }
 
+function AppNavigator() {
+  const { showCallUI } = useAppContext();
+  return (
+    <NavigationContainer >
 
-function AppNavigator({ navigation }) {
-  const { authState } = useAppContext();
+      <RootNavigator />
+      {showCallUI && <ZegoCallUI />}
+
+    </NavigationContainer>
+  )
+}
+
+function RootNavigator() {
+  return (
+    <BaseStack.Navigator screenOptions={{ headerShown: false }}>
+      <BaseStack.Screen name="MainNavigator" component={MainNavigator} />
+      <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
+    </BaseStack.Navigator>
+  );
+}
+
+
+function MainNavigator() {
+  const { authState, showCallUI } = useAppContext();
   useEffect(() => {
     async function checkLoginStatus() {
 
@@ -85,6 +110,27 @@ function AppNavigator({ navigation }) {
             />
           )}
           <BaseStack.Screen name={MainGraph.graphName} component={BottomTab} />
+          
+          {
+            showCallUI &&
+            <>
+
+              <BaseStack.Screen
+                options={{ headerShown: false }}
+                // DO NOT change the name 
+                name="ZegoUIKitPrebuiltCallWaitingScreen"
+                component={ZegoUIKitPrebuiltCallWaitingScreen}
+              />
+              <BaseStack.Screen
+                options={{ headerShown: false }}
+                // DO NOT change the name
+                name="ZegoUIKitPrebuiltCallInCallScreen"
+                component={ZegoUIKitPrebuiltCallInCallScreen}
+              />
+            </>
+          }
+
+   
           <BaseStack.Screen name={AuthGraph.DeliveryMapScreen} component={DeliveryMapScreen} />
           <BaseStack.Screen name={AuthGraph.ChatWithUser} component={ChatWithUser} />
           <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
