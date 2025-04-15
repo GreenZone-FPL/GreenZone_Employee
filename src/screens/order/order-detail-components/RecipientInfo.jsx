@@ -53,7 +53,7 @@ export const RecipientInfo = ({ detail }) => {
     return (
         <Column style={styles.areaContainer}>
             <Row style={{ justifyContent: 'space-between' }}>
-                <Title title="Người nhận" icon="map-marker" />
+                <Title title="Người nhận"  />
                 <Row>
 
                     <CustomCallButton consigneeName={consigneeName} consigneePhone={consigneePhone} navigation={navigation} />
