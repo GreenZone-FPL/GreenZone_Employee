@@ -73,6 +73,7 @@ export const CancelDialog: React.FC<CancelDialogProps> = ({ visible, onHide, ord
         onPress={onConfirm}
         title={'Đồng ý'}
         style={styles.button}
+        disabled={loading}
       />
     </DialogBasic>
   );

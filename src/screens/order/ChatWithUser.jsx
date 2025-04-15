@@ -21,7 +21,7 @@ const ChatWithUser = (navigation) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [isImagePickerVisible, setImagePickerVisible] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     socket.on("receive message", (data) => {
       addMessage(data.userName, data.message, data.image);
@@ -107,7 +107,7 @@ const ChatWithUser = (navigation) => {
         <Column style={{ padding: 16 }}>
           <Text style={styles.header}>Join Chat Room</Text>
           <FlatInput label="Enter your name" placeholder="Nguyen Van A" value={userName} setValue={setUserName} message={errorMessage} />
-          <PrimaryButton title="Join" onPress={joinChat} />
+          <PrimaryButton title="Join" onPress={joinChat} disabled={loading}/>
         </Column>
       ) : (
         <Column style={styles.chatRoom}>
@@ -132,7 +132,7 @@ const ChatWithUser = (navigation) => {
                 onSubmitEditing={() => sendMessage()}
                 returnKeyType="send"
               />
-              <TouchableOpacity onPress={() => setImagePickerVisible(true)}>
+              <TouchableOpacity onPress={() => setImagePickerVisible(true)} disabled={loading}>
                 <Icon
                   source="image"
                   color={colors.gray850}
@@ -158,17 +158,17 @@ const ChatWithUser = (navigation) => {
             <Column style={styles.imagePickerOverlay}>
               <Column style={styles.imagePickerContainer}>
 
-                <TouchableOpacity style={styles.option} onPress={openCamera}>
+                <TouchableOpacity style={styles.option} onPress={openCamera} disabled={loading}>
                   <NormalText text="Chụp ảnh mới" />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.option} onPress={pickImage}>
+                <TouchableOpacity style={styles.option} onPress={pickImage} disabled={loading}>
                   <NormalText text="Chọn ảnh từ thư viện" />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={styles.option}
-                  onPress={() => setImagePickerVisible(false)}>
+                  onPress={() => setImagePickerVisible(false)} disabled={loading}>
                   <NormalText text="Hủy bỏ" />
                 </TouchableOpacity>
 

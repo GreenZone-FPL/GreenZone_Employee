@@ -150,7 +150,7 @@ const MapScreen = props => {
       <Column style={styles.containerContent}>
         <NormalHeader title="Bản đồ" onRightPress={() => navigation.goBack()} rightIcon='close' enableRightIcon />
 
-        <TouchableOpacity onPress={openGoogleMaps} style={{
+        <TouchableOpacity onPress={openGoogleMaps} disabled={loading} style={{
           backgroundColor: colors.white, flexDirection: 'row', gap: 6, padding: 16, alignItems: 'center'
         }}>
           <TitleText text="Chỉ đường" style={{ fontWeight: '500', color: colors.primary }} />
