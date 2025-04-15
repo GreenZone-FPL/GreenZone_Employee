@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useReducer, useState } from 'react';
+import { AuthActionTypes, authInitialState, authReducer } from '../reducers/authReducer';
 import { AppAsyncStorage } from '../utils';
-import { authReducer, authInitialState, AuthActionTypes } from '../reducers/authReducer';
 
 export const AppContext = createContext();
 
@@ -15,13 +15,16 @@ export const AppContextProvider = ({ children }) => {
   const [updateOrderMessage, setUpdateOrderMessage] = useState({ visible: false, order: null });
   const [orderDualStatuses, setOrderDualStatuses] = useState(null);
   const [activeOrders, setActiveOrders] = useState([]);
-
+  const [showCallUI, setShowCallUI] = useState(true);
 
   useEffect(() => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
-      if (isValid) {
-        authDispatch({ type: AuthActionTypes.LOGIN })
+      const lastName = await AppAsyncStorage.readData(
+        AppAsyncStorage.STORAGE_KEYS.lastName,
+      );
+      if (isValid && lastName) {
+        authDispatch({ type: AuthActionTypes.LOGIN, payload: {lastName}})
       }
     };
     checkLoginStatus();
@@ -33,12 +36,20 @@ export const AppContextProvider = ({ children }) => {
     return () => { globalAuthDispatch = null; };
   }, [authState]);
 
-
+ 
 
   return (
     <AppContext.Provider value={{
-      authState, authDispatch, updateOrderMessage, setUpdateOrderMessage, activeOrders, setActiveOrders,
-      orderDualStatuses, setOrderDualStatuses
+      authState,
+      authDispatch,
+      updateOrderMessage,
+      setUpdateOrderMessage,
+      activeOrders,
+      setActiveOrders,
+      orderDualStatuses,
+      setOrderDualStatuses,
+      showCallUI,
+      setShowCallUI
     }}>
       {children}
     </AppContext.Provider>

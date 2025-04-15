@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "195292874206",
+    "project_id": "greenzone-451107",
+    "storage_bucket": "greenzone-451107.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195292874206:android:67e0588a1c103d1e48094f",
+        "android_client_info": {
+          "package_name": "com.awesomeproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcW-7SoxTjYG6hfCj9JF-yMOzaWdBAYWA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

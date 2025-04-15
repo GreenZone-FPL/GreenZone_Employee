@@ -45,7 +45,8 @@ const MapScreen = props => {
               zoomLevel: 14,
               animationDuration: 1000,
             });
-          } console.log('Vị trí người dùng', position)
+          } 
+          // console.log('Vị trí người dùng', position)
         },
         error => console.log(error),
         { timeout: 5000 },
@@ -64,7 +65,7 @@ const MapScreen = props => {
       const latitude = response.latitude;
       const longitude = response.longitude;
       setCustomerLocation([longitude, latitude]);
-      console.log(`Vị trí giao hàng: Latitude: ${latitude}, Longitude: ${longitude}`);
+      // console.log(`Vị trí giao hàng: Latitude: ${latitude}, Longitude: ${longitude}`);
       //   console.log('>>>>>>response', JSON.stringify(response, null, 2))
     } catch (error) {
       console.error('error', error);

@@ -1,19 +1,46 @@
-import { Call, Send2 } from 'iconsax-react-native';
-import React from 'react';
-import { Linking, StyleSheet, TouchableOpacity } from 'react-native';
-import { Column, NormalText, Row } from '../../../components';
+import { ZegoSendCallInvitationButton } from '@zegocloud/zego-uikit-prebuilt-call-rn';
+import ZegoUIKit from '@zegocloud/zego-uikit-rn';
+import React, { useEffect } from 'react';
+import { Linking, Pressable, StyleSheet } from 'react-native';
+import Orientation from 'react-native-orientation-locker';
+import { Icon } from 'react-native-paper';
+import { Column, NormalText, Row, CustomCallButton } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 import { Title } from './Title';
+import { useNavigation } from '@react-navigation/native';
 
 export const RecipientInfo = ({ detail }) => {
-    const [loading, setLoading] = useState(false);
-    const handleCall = () => {
-        if (!detail?.consigneePhone) return;
+    const navigation = useNavigation()
+    const { consigneeName, consigneePhone } = detail;
 
-        const phoneNumber = `tel:${detail.consigneePhone}`;
+    useEffect(() => {
+        const handleOrientationChange = (orientation) => {
+            let orientationValue = 0;
+            if (orientation === 'LANDSCAPE-LEFT') orientationValue = 1;
+            else if (orientation === 'LANDSCAPE-RIGHT') orientationValue = 3;
+            console.log('📱 Orientation:', orientation, orientationValue);
+            ZegoUIKit.setAppOrientation(orientationValue);
+        };
 
-        Linking.openURL(phoneNumber).catch((err) => console.error("Failed to open dialer:", err));
+        Orientation.addOrientationListener(handleOrientationChange);
+        return () => {
+            Orientation.removeOrientationListener(handleOrientationChange);
+        };
+    }, []);
+
+    const handleCallInvitationPress = (errorCode, errorMessage, errorInvitees) => {
+        if (errorCode !== 0) {
+            console.log('🚨 Zego call error:', {
+                errorCode,
+                errorMessage,
+                errorInvitees: errorInvitees ?? '❌ Tất cả người nhận không hợp lệ hoặc chưa đăng ký signaling'
+            });
+        } else {
+            console.log('📞 Cuộc gọi đã được gửi thành công');
+        }
     };
+
+
 
     const handleSend = () => {
         if (!detail?.consigneePhone) return;
@@ -24,23 +51,40 @@ export const RecipientInfo = ({ detail }) => {
     };
 
     return (
-        <Column style={[styles.areaContainer, { paddingHorizontal: 16 }]}>
+        <Column style={styles.areaContainer}>
             <Row style={{ justifyContent: 'space-between' }}>
                 <Title title="Người nhận" icon="map-marker" />
+                <Row>
 
-                <Row style={{ flexDirection: 'row', gap: 16 }}>
-                    <TouchableOpacity onPress={handleCall} disabled={loading}>
-                        <Call size="22" color={colors.green700} variant="Bold" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleSend} disabled={loading}>
-                        <Send2 size="22" color={colors.green700} variant="Bold" />
-                    </TouchableOpacity>
+                    <CustomCallButton consigneeName={consigneeName} consigneePhone={consigneePhone} navigation={navigation} />
+                    {/* <ZegoSendCallInvitationButton
+                        invitees={[
+                            {
+                                userID: consigneePhone,
+                                userName: consigneeName
+                            }
+                        ]}
+                        isVideoCall={false}
+                        resourceID={"zegouikit_call"}
+                        showWaitingPageWhenGroupCall={true}
+                        onPressed={handleCallInvitationPress}
+
+                    /> */}
+
+                    <Pressable style={styles.iconButton} onPress={handleSend}>
+                        <Icon
+                            source="message"
+                            color={colors.blue600}
+                            size={20}
+                        />
+                    </Pressable>
+
                 </Row>
             </Row>
 
             <NormalText
-                text={[detail.consigneeName, '|', detail.consigneePhone].join(' ')}
-                style={{ color: colors.black }}
+                text={[detail.consigneeName, detail.consigneePhone].join(' - ')}
+                style={{ color: colors.black, fontWeight: '500' }}
             />
 
             <NormalText text={detail.shippingAddress} style={styles.normalText} />
@@ -55,6 +99,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         paddingVertical: 12,
         marginBottom: 5,
+        paddingHorizontal: 16
     },
 
     normalText: {
@@ -62,5 +107,14 @@ const styles = StyleSheet.create({
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.black,
         marginRight: 4,
+    },
+    iconButton: {
+        padding: 11,
+        borderRadius: 24,
+        backgroundColor: colors.fbBg,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 8
+
     },
 })

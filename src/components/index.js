@@ -7,16 +7,14 @@ export * from './indicators/Indicator';
 //barcode
 export * from './barcode/barcodeUser';
 
-// bottom-sheets
-export * from './bottom-sheets/MerchantDetailSheet';
-export * from './bottom-sheets/ProductDetailSheet';
-export * from './bottom-sheets/VoucherDetailSheet';
+
 
 // buttons
 export * from './buttons/DeliveryButton';
 export * from './buttons/PrimaryButton';
 export * from './buttons/QuantityButton';
 export * from './buttons/QuantitySelector';
+export * from './buttons/CustomCallButton';
 
 // carousel
 export * from './carousel/CarouselBanner';
@@ -39,8 +37,7 @@ export * from './flatlists/ProductsListVertical';
 export * from './flatlists/SaleProductsListHorizontal';
 export * from './flatlists/NotificationList';
 
-// footer
-export * from './footer/CheckoutFooter';
+
 
 // headers
 export * from './headers/HeaderWithBadge';

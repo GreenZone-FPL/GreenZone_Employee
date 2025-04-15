@@ -18,7 +18,6 @@ axiosInstance.interceptors.request.use(
   async config => {
     try {
       const token = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken);
-      console.log('token', token)
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -35,7 +34,6 @@ axiosInstance.interceptors.response.use(
       console.log('401 log out');
 
       const token = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken);
-      console.log('token', token)
       if (token) {
 
         await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken)
