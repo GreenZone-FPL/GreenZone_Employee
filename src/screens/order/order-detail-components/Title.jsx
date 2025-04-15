@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     },
     greenText: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        color: colors.primary,
+        color: colors.lemon,
         fontWeight: '600',
     }
 })
