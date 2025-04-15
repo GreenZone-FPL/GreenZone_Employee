@@ -264,6 +264,7 @@ const OrderDetailScreen = props => {
               onApprove('Bắt đầu giao hàng', OrderStatus.SHIPPING_ORDER.value)
             }
             title="Bắt đầu giao hàng"
+            disabled={loading}
           />
         )}
 
@@ -281,6 +282,7 @@ const OrderDetailScreen = props => {
           <Row style={{ gap: 16, backgroundColor: colors.white, padding: 16 }}>
             <PrimaryButton
               titleStyle={{ color: colors.red900 }}
+              disabled={loading}
               style={{
                 flex: 1,
                 backgroundColor: colors.white,

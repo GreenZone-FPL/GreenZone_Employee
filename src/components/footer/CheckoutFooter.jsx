@@ -6,14 +6,15 @@ import { PrimaryButton } from '../buttons/PrimaryButton';
 import { QuantitySelector } from '../buttons/QuantitySelector';
 
 
-const CheckoutFooterPropTypes = {
+const PropTypes = {
     quantity: PropTypes.number.isRequired,
     handlePlus: PropTypes.func.isRequired,
     handleMinus: PropTypes.func.isRequired,
     totalPrice: PropTypes.number,
     buttonTitle: PropTypes.string,
     onButtonPress: PropTypes.func,
-    backgroundColor: PropTypes.string
+    backgroundColor: PropTypes.string,
+    disabled: PropTypes.func,
 };
 
 /**
@@ -42,7 +43,8 @@ export const CheckoutFooter = ({
     totalPrice,
     buttonTitle,
     onButtonPress,
-    backgroundColor = colors.green100
+    backgroundColor = colors.green100,
+    disabled
 }) => {
     return (
         <View style={[styles.footer, { backgroundColor: backgroundColor }]}>
@@ -59,7 +61,7 @@ export const CheckoutFooter = ({
                 />
             </View>
 
-            <PrimaryButton title={buttonTitle} onPress={onButtonPress} />
+            <PrimaryButton title={buttonTitle} onPress={onButtonPress} disabled={disabled}/>
         </View>
     );
 };

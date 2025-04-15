@@ -160,7 +160,7 @@ const OrderItem = ({ item, handleOrderPress }) => {
     specificAddress = item.shippingAddress,
   } = shippingAddress;
   const formattedAddress = `${specificAddress}`;
-
+  const [loading, setLoading] = useState(false);
   const getOrderItemsText = () => {
     const items = item?.orderItems || [];
     if (items.length > 2) {
@@ -174,7 +174,7 @@ const OrderItem = ({ item, handleOrderPress }) => {
 
 
   return (
-    <TouchableOpacity style={styles.orderItem} onPress={handleOrderPress}>
+    <TouchableOpacity style={styles.orderItem} onPress={handleOrderPress} disabled={loading}> 
       <Column style={{ flex: 2 }}>
         <Row style={{ justifyContent: 'space-between' }}>
           <NormalText text={`#...${_id.slice(-8)}`} style={styles.orderIdText} />
