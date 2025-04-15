@@ -28,11 +28,16 @@ export const RecipientInfo = ({ detail }) => {
 
     const handleCallInvitationPress = (errorCode, errorMessage, errorInvitees) => {
         if (errorCode !== 0) {
-            console.log('🚨 Zego call error:', { errorCode, errorMessage, errorInvitees });
+          console.log('🚨 Zego call error:', {
+            errorCode,
+            errorMessage,
+            errorInvitees: errorInvitees ?? '❌ Tất cả người nhận không hợp lệ hoặc chưa đăng ký signaling'
+          });
         } else {
-            console.log('📞 Call invitation sent successfully.');
+          console.log('📞 Cuộc gọi đã được gửi thành công');
         }
-    };
+      };
+      
 
 
     const handleSend = () => {
@@ -44,7 +49,7 @@ export const RecipientInfo = ({ detail }) => {
     };
 
     return (
-        <Column style={[styles.areaContainer, { paddingHorizontal: 16 }]}>
+        <Column style={styles.areaContainer}>
             <Row style={{ justifyContent: 'space-between' }}>
                 <Title title="Người nhận" icon="map-marker" />
                 <Row>
@@ -52,7 +57,7 @@ export const RecipientInfo = ({ detail }) => {
                         invitees={[
                             {
                                 userID: consigneePhone,
-                                userName: 'user_' + consigneeName
+                                userName: consigneeName
                             }
                         ]}
                         isVideoCall={false}
@@ -89,6 +94,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         paddingVertical: 12,
         marginBottom: 5,
+        paddingHorizontal: 16 
     },
 
     normalText: {
