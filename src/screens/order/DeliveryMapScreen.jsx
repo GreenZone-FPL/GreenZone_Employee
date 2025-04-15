@@ -1,13 +1,13 @@
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import { NormalHeader, PrimaryButton, ActionDialog, Row, Column, NormalText } from '../../components';
-import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
-import { Icon } from 'react-native-paper';
-import { AuthGraph, MainGraph, OrderGraph } from '../../layouts/graphs';
 import LottieView from 'lottie-react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Icon } from 'react-native-paper';
 import { getOrderDetail, updateOrderStatus } from '../../axios';
-import { Toaster } from '../../utils';
+import { ActionDialog, Column, NormalHeader, NormalText, PrimaryButton, Row } from '../../components';
+import { colors, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
+import { AuthGraph, MainGraph, OrderGraph } from '../../layouts/graphs';
+import { Toaster } from '../../utils';
 
 const { width } = Dimensions.get('window');
 
@@ -27,7 +27,7 @@ const DeliveryMapScreen = ({ navigation, route }) => {
         try {
             const response = await getOrderDetail(orderId);
             setOrderDetail(response);
-            console.log('response', JSON.stringify(response, null, 3))
+
         } catch (error) {
             console.error('error', error);
         } finally {

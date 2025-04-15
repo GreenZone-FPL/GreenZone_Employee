@@ -28,7 +28,7 @@ export default function LoginScreen(props) {
       storeUserInfo({ userId, lastName })
   
       // Init the call service
-      onUserLoginZego(userId, lastName, props)
+      onUserLoginZego(userId, lastName, navigation)
       .then(() => {
         // Jump to HomeScreen to make new call
         navigation.navigate('InviteCallScreen', { userId });

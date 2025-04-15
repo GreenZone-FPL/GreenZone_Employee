@@ -27,12 +27,8 @@ class ShipperSocketService {
       });
 
       this.socket.on('connect', () => {
-        console.log('Socket connected');
-
         this.socket.emit('store.join', storeId);
         console.log(`Shipper join store room: ${storeId}`);
-
-
       });
 
       this.socket.on('order.updateStatus', data => {

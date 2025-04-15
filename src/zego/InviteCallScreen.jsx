@@ -53,7 +53,7 @@ export default function InviteCallScreen(props) {
     getUserInfo().then((info) => {
       if (info) {
         setUserPhoneNumber(info.phoneNumber);
-        onUserLogin(info.phoneNumber, info.lastName, props); // Dùng phoneNumber
+        onUserLogin(info.phoneNumber, info.lastName, navigation); // Dùng phoneNumber
       } else {
         props.navigation.navigate('LoginScreen');
       }

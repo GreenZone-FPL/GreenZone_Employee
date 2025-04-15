@@ -1,67 +1,36 @@
-import { Call, Send2 } from 'iconsax-react-native';
-import { useNavigation } from '@react-navigation/native';
 import { ZegoSendCallInvitationButton } from '@zegocloud/zego-uikit-prebuilt-call-rn';
-import ZegoUIKit, { ZegoToast, ZegoToastType } from '@zegocloud/zego-uikit-rn';
+import ZegoUIKit from '@zegocloud/zego-uikit-rn';
+import React, { useEffect } from 'react';
+import { Linking, Pressable, StyleSheet } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
-import React, { useEffect, useRef, useState } from 'react';
-import { Linking, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import { Icon } from 'react-native-paper';
 import { Column, NormalText, Row } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 import { Title } from './Title';
-import { Icon } from 'react-native-paper'
-import { AppAsyncStorage } from '../../../utils';
-import { onUserLoginZego } from '../../../zego/common';
 
 export const RecipientInfo = ({ detail }) => {
-    const { shipper, consigneeName, consigneePhone } = detail;
-    const navigation = useNavigation();
-    const [userPhoneNumber, setUserPhoneNumber] = useState('');
-    const [isToastVisable, setIsToastVisable] = useState(false);
-    const [toastExtendedData, setToastExtendedData] = useState({});
-    const toastInvisableTimeoutRef = useRef(null);
-
-    const getUserInfo = async () => {
-        try {
-            const phoneNumber = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.phoneNumber);
-            const lastName = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.lastName);
-            if (!phoneNumber) return undefined;
-            return { phoneNumber, lastName };
-        } catch (e) {
-            return undefined;
-        }
-    };
-
-    const resetToastInvisableTimeout = () => {
-        clearTimeout(toastInvisableTimeoutRef.current);
-        toastInvisableTimeoutRef.current = setTimeout(() => {
-            setIsToastVisable(false);
-        }, 3000);
-    };
-
+    const { consigneeName, consigneePhone } = detail;
+  
     useEffect(() => {
-        Orientation.addOrientationListener((orientation) => {
+        const handleOrientationChange = (orientation) => {
             let orientationValue = 0;
-            if (orientation === 'PORTRAIT') orientationValue = 0;
-            else if (orientation === 'LANDSCAPE-LEFT') orientationValue = 1;
+            if (orientation === 'LANDSCAPE-LEFT') orientationValue = 1;
             else if (orientation === 'LANDSCAPE-RIGHT') orientationValue = 3;
-   
+            console.log('📱 Orientation:', orientation, orientationValue);
             ZegoUIKit.setAppOrientation(orientationValue);
-        });
+        };
+
+        Orientation.addOrientationListener(handleOrientationChange);
+        return () => {
+            Orientation.removeOrientationListener(handleOrientationChange);
+        };
     }, []);
 
     const handleCallInvitationPress = (errorCode, errorMessage, errorInvitees) => {
-        console.log('📞 invitees used in call:', [consigneePhone]);
-        if (errorCode === 0) {
-            clearTimeout(toastInvisableTimeoutRef.current);
-            setIsToastVisable(false);
+        if (errorCode !== 0) {
+            console.log('🚨 Zego call error:', { errorCode, errorMessage, errorInvitees });
         } else {
-
-            setIsToastVisable(true);
-            setToastExtendedData({
-                type: ZegoToastType.error,
-                text: `error: ${errorCode}\n\n${errorMessage}`,
-            });
-            resetToastInvisableTimeout();
+            console.log('📞 Call invitation sent successfully.');
         }
     };
 
@@ -78,7 +47,6 @@ export const RecipientInfo = ({ detail }) => {
         <Column style={[styles.areaContainer, { paddingHorizontal: 16 }]}>
             <Row style={{ justifyContent: 'space-between' }}>
                 <Title title="Người nhận" icon="map-marker" />
-
                 <Row>
                     <ZegoSendCallInvitationButton
                         invitees={[
@@ -102,8 +70,6 @@ export const RecipientInfo = ({ detail }) => {
                     </Pressable>
 
                 </Row>
-
-
             </Row>
 
             <NormalText
@@ -112,11 +78,7 @@ export const RecipientInfo = ({ detail }) => {
             />
 
             <NormalText text={detail.shippingAddress} style={styles.normalText} />
-            <ZegoToast
-                visable={isToastVisable}
-                type={toastExtendedData.type}
-                text={toastExtendedData.text}
-            />
+
         </Column>
     );
 };

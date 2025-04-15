@@ -31,7 +31,7 @@ const OrderHistoryScreen = ({ navigation }) => {
     setLoading(true);
     try {
       const phoneNumber = await AppAsyncStorage.readData('phoneNumber');
-      console.log('phoneNumber', phoneNumber)
+      // console.log('phoneNumber', phoneNumber)
       const response = await getOrdersByStatus(statuses[index]);
       const filteredOrders = response.filter(o => o.shipper.phoneNumber === phoneNumber && o.deliveryMethod === 'delivery');
       setOrders(filteredOrders);
@@ -49,7 +49,6 @@ const OrderHistoryScreen = ({ navigation }) => {
         const storeId = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.storeId);
         if (storeId) {
           const response = await getMerchant(storeId);
-          console.log('response', JSON.stringify(response, null, 2))
           setMerchant(response);
         }
       } catch (error) {
