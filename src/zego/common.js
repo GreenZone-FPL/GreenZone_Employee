@@ -19,8 +19,6 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
   try {
     const profile = await getProfile();
     const avatar = profile.avatar;
-
-
     await ZegoUIKitPrebuiltCallService.init(
       KeyCenter.appID,
       KeyCenter.appSign,
