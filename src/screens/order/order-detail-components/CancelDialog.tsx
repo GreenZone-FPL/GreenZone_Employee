@@ -1,21 +1,33 @@
 import React from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput, Text } from 'react-native';
 import { RadioButton } from 'react-native-paper';
-import { Column, DialogBasic, LabelInput, NormalLoading, NormalText, PrimaryButton, Row } from '../../../components';
+import {
+  Column,
+  DialogBasic,
+  NormalLoading,
+  NormalText,
+  PrimaryButton,
+  Row,
+  LabelInput
+} from '../../../components';
+
 import { colors, GLOBAL_KEYS } from '../../../constants';
-import { useCancelDialogContainer } from '../../../containers/useCancelDialogContainer';
-
-
+import { useCancelDialogContainer } from '../../../containers';
 
 interface CancelDialogProps {
   visible: boolean;
   onHide: () => void;
-  orderId: string,
-  shipperId: string,
-  callBack: () => Promise<void>
+  orderId: string;
+  shipperId: string;
+  callBack: () => Promise<void>;
 }
 
-export const CancelDialog: React.FC<CancelDialogProps> = ({ visible, onHide, orderId, callBack }) => {
+export const CancelDialog: React.FC<CancelDialogProps> = ({
+  visible,
+  onHide,
+  orderId,
+  callBack,
+}) => {
   const {
     cancelReasons,
     customReason,
@@ -26,11 +38,21 @@ export const CancelDialog: React.FC<CancelDialogProps> = ({ visible, onHide, ord
     setSelectedReason,
     onConfirm,
     handleCustomReasonChange,
-  } = useCancelDialogContainer(orderId, onHide, callBack)
+  } = useCancelDialogContainer(orderId, onHide, callBack);
+
+  const MAX_REASON_LENGTH = 100;
+
+  const handleChangeReason = (text: string) => {
+    if (text.length <= MAX_REASON_LENGTH) {
+      handleCustomReasonChange(text);
+      setError(false);
+    }
+  };
 
   return (
     <DialogBasic visible={visible} onHide={onHide} title="Chọn lý do Hủy">
       <NormalLoading visible={loading} />
+
       <RadioButton.Group
         onValueChange={value => {
           setSelectedReason(value);
@@ -40,7 +62,7 @@ export const CancelDialog: React.FC<CancelDialogProps> = ({ visible, onHide, ord
       >
         <Column>
           {cancelReasons.map((reason: string, index: number) => (
-            <Row key={index} >
+            <Row key={index}>
               <RadioButton value={reason} color={colors.primary} />
               <NormalText text={reason} />
             </Row>
@@ -51,16 +73,24 @@ export const CancelDialog: React.FC<CancelDialogProps> = ({ visible, onHide, ord
               <LabelInput label="Nhập lý do của bạn" required />
               <TextInput
                 value={customReason}
-                onChangeText={handleCustomReasonChange}
+                onChangeText={handleChangeReason}
                 style={styles.input}
                 multiline
                 numberOfLines={4}
                 textAlignVertical="top"
                 placeholder="Ví dụ: Khách đổi ý"
               />
+              <Text style={styles.charCount}>
+                {customReason.length}/{MAX_REASON_LENGTH} ký tự
+              </Text>
+
               {error && (
                 <NormalText
-                  text="Vui lòng nhập lý do cụ thể"
+                  text={
+                    customReason.length > MAX_REASON_LENGTH
+                      ? 'Lý do không được vượt quá 100 ký tự'
+                      : 'Vui lòng nhập lý do cụ thể'
+                  }
                   style={styles.errorText}
                 />
               )}
@@ -87,6 +117,13 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     height: 100,
     backgroundColor: '#fff',
+  },
+  charCount: {
+    alignSelf: 'flex-end',
+    marginTop: 4,
+    marginBottom: 4,
+    fontSize: 12,
+    color: colors.gray700,
   },
   errorText: {
     color: colors.invalid,

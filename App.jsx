@@ -1,4 +1,4 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -8,7 +8,6 @@ import Toast from 'react-native-toast-message';
 import { AppContextProvider, useAppContext } from './src/context/appContext';
 import { AuthGraph, MainGraph, OrderGraph } from './src/layouts/graphs';
 import ShipperSocketService from './src/service/shipperSocketSevice';
-import { AppAsyncStorage } from './src/utils';
 
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SplashScreen from './src/screens/auth/SplashScreen';
@@ -28,7 +27,8 @@ import {
   ZegoUIKitPrebuiltCallInCallScreen,
 } from '@zegocloud/zego-uikit-prebuilt-call-rn';
 import ZegoCallUI from './src/zego/ZegoCallUI';
-
+import { AppAsyncStorage } from './src/utils';
+import { onUserLoginZego } from './src/zego/common';
 
 import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
@@ -57,6 +57,7 @@ function App() {
 }
 
 function AppNavigator() {
+
   const { showCallUI } = useAppContext();
   return (
     <NavigationContainer >
@@ -79,7 +80,13 @@ function RootNavigator() {
 
 
 function MainNavigator() {
+  const navigation = useNavigation()
   const { authState, showCallUI } = useAppContext();
+  const slideFromBottomOption = {
+    animation: 'slide_from_bottom',
+    presentation: 'transparentModal',
+    headerShown: false,
+  };
   useEffect(() => {
     async function checkLoginStatus() {
 
@@ -99,6 +106,29 @@ function MainNavigator() {
 
   };
 
+  const initZego = async () => {
+    const lastName = await AppAsyncStorage.readData(
+      AppAsyncStorage.STORAGE_KEYS.lastName,
+    );
+    const phoneNumber = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.phoneNumber);
+
+    if (phoneNumber && lastName) {
+      console.log('loginZego')
+      await onUserLoginZego(phoneNumber, lastName, navigation);
+    }
+  }
+
+  useEffect(() => {
+    console.log('authState', JSON.stringify(authState, null, 2))
+    if (authState.lastName) {
+
+      console.log('initZego')
+      initZego()
+    } else {
+      console.log('Khong the init Zego')
+    }
+  }, [authState.lastName])
+
   return (
     <BaseStack.Navigator screenOptions={{ headerShown: false }}>
       {!authState.needAuthen ? (
@@ -110,7 +140,7 @@ function MainNavigator() {
             />
           )}
           <BaseStack.Screen name={MainGraph.graphName} component={BottomTab} />
-          
+
           {
             showCallUI &&
             <>
@@ -130,18 +160,14 @@ function MainNavigator() {
             </>
           }
 
-   
+
           <BaseStack.Screen name={AuthGraph.DeliveryMapScreen} component={DeliveryMapScreen} />
           <BaseStack.Screen name={AuthGraph.ChatWithUser} component={ChatWithUser} />
           <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
           <BaseStack.Screen
             name={'MapScreen'}
             component={MapScreen}
-            options={{
-              animation: 'slide_from_bottom',
-              presentation: 'transparentModal',
-              headerShown: false,
-            }}
+            options={slideFromBottomOption}
           />
           <BaseStack.Screen name={AuthGraph.CallWithUser} component={CallWithUser} />
           <BaseStack.Screen name={OrderGraph.OrderDoneScreen} component={OrderDoneScreen} />

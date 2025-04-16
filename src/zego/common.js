@@ -4,17 +4,22 @@ import * as ZIM from 'zego-zim-react-native';
 
 import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 import ZegoUIKitPrebuiltCallService, {
-    ZegoInvitationType,
-    ZegoMenuBarButtonName,
+  ZegoInvitationType,
+  ZegoMenuBarButtonName,
 } from '@zegocloud/zego-uikit-prebuilt-call-rn';
 
 import KeyCenter from '../../KeyCenter';
-import { MainGraph, OrderGraph } from '../layouts/graphs';
+import { OrderGraph } from '../layouts/graphs';
+import { getProfile } from '../axios';
 
 const notificationStyle = 'CustomView';
 
-export const onUserLoginZego = async (userID, userName, props) => {
-    return ZegoUIKitPrebuiltCallService.init(
+export const onUserLoginZego = async (userID, userName, navigation) => {
+  console.log('onUserLoginZego')
+  try {
+    const profile = await getProfile();
+    const avatar = profile.avatar;
+    await ZegoUIKitPrebuiltCallService.init(
       KeyCenter.appID,
       KeyCenter.appSign,
       userID,
@@ -25,13 +30,13 @@ export const onUserLoginZego = async (userID, userName, props) => {
           incomingCallFileName: 'ring.mp3',
           outgoingCallFileName: 'zego_outgoing.mp3',
         },
-        avatarBuilder: ({userInfo}) => {
+        avatarBuilder: ({ userInfo }) => {
           return (
-            <View style={{width: '100%', height: '100%'}}>
+            <View style={{ width: '100%', height: '100%' }}>
               <Image
-                style={{width: '100%', height: '100%'}}
+                style={{ width: '100%', height: '100%' }}
                 resizeMode="cover"
-                source={{uri: `https://robohash.org/${userInfo.userId}.png`}}
+                source={{ uri: avatar ?? `https://robohash.org/${userInfo.userId}.png` }}
               />
             </View>
           );
@@ -108,7 +113,7 @@ export const onUserLoginZego = async (userID, userName, props) => {
             layout: {
               mode:
                 callInvitationData.invitees &&
-                callInvitationData.invitees.length > 1
+                  callInvitationData.invitees.length > 1
                   ? ZegoLayoutMode.gallery
                   : ZegoLayoutMode.pictureInPicture,
             },
@@ -119,9 +124,7 @@ export const onUserLoginZego = async (userID, userName, props) => {
                 reason,
                 duration,
               );
-               ZegoUIKitPrebuiltCallService.hangUp();
-              props.navigation.navigate(OrderGraph.OrderDetailScreen);
-
+              //  navigation.navigate(OrderGraph.OrderHistoryScreen);
             },
 
           
@@ -143,25 +146,37 @@ export const onUserLoginZego = async (userID, userName, props) => {
                 // ZegoMenuBarButtonName.showMemberListButton
               ],
             },
+            bottomMenuBarConfig: {
+              buttons: [
+                ZegoMenuBarButtonName.toggleCameraButton,
+                ZegoMenuBarButtonName.toggleMicrophoneButton,
+                ZegoMenuBarButtonName.hangUpButton, // Đây là nút tắt cuộc gọi
+              ],
+            },
+
             onWindowMinimized: () => {
               console.log('[Demo]CallInvitation onWindowMinimized');
-              props.navigation.navigate('HomeScreen');
+              navigation.navigate(OrderGraph.OrderHistoryScreen);
             },
             onWindowMaximized: () => {
               console.log('[Demo]CallInvitation onWindowMaximized');
-              props.navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');
+              navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');
             },
           };
         },
       },
-    ).then(() => {
-      if (notificationStyle === 'CallStyle') {
-        ZegoUIKitPrebuiltCallService.requestSystemAlertWindow({
-          message:
-            'We need your consent for the following permissions in order to use the offline call function properly',
-          allow: 'Allow',
-          deny: 'Deny',
-        });
-      }
-    });
-}
+    );
+
+    if (notificationStyle === 'CallStyle') {
+      ZegoUIKitPrebuiltCallService.requestSystemAlertWindow({
+        message:
+          'We need your consent for the following permissions in order to use the offline call function properly',
+        allow: 'Allow',
+        deny: 'Deny',
+      });
+    }
+
+  } catch (error) {
+    console.error('Error initializing Zego SDK:', error);
+  }
+};

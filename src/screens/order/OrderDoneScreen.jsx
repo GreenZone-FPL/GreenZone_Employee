@@ -4,8 +4,9 @@ import { TickCircle } from 'iconsax-react-native';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { BottomGraph, MainGraph } from '../../layouts/graphs';
 
-const OrderDoneScreen = (props) => {
 
+const OrderDoneScreen = (props) => {
+  const [loading, setLoading] = useState(false);
     const navigation = props.navigation;
   return (
     <View style={styles.container}>
@@ -15,7 +16,7 @@ const OrderDoneScreen = (props) => {
                       />
       <Text style={styles.title}>Bạn đã đến nơi cần được giao hàng</Text>
       <Text style={styles.subtitle}>Hãy kiểm tra lại đơn hàng trước khi giao đến khách hàng</Text>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate(MainGraph.graphName)}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate(MainGraph.graphName)} disabled={loading}>
         <Text style={styles.buttonText}>Hoàn tất</Text>
       </TouchableOpacity>
     </View>

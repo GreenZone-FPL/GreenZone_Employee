@@ -8,11 +8,12 @@ import { AppGraph } from '../../layouts/graphs';
 import { AuthActionTypes } from '../../reducers/authReducer';
 import shipperSocketSevice from '../../service/shipperSocketSevice';
 import { Toaster } from '../../utils';
+import { onUserLoginZego } from '../../zego/common';
 
 const { width, height } = Dimensions.get('window');
 
 const LoginScreen = ({ navigation }) => {
-  const [phoneNumber, setPhoneNumber] = useState('0822222222');
+  const [phoneNumber, setPhoneNumber] = useState('0911111111');
   const [password, setPassword] = useState('123456');
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
@@ -40,12 +41,18 @@ const LoginScreen = ({ navigation }) => {
     try {
       setLoading(true);
       const response = await login2({ phoneNumber, password });
+
       if (response) {
-        authDispatch({ type: AuthActionTypes.LOGIN })
+        authDispatch({
+          type: AuthActionTypes.LOGIN,
+          payload: { lastName: response.user.lastName }
+        })
+        await onUserLoginZego(phoneNumber, response.user.lastName, navigation)
+        console.log('✅Khởi tạo socket...');
+        await shipperSocketSevice.initialize();
+        navigation.navigate(AppGraph.MAIN);
       }
-      console.log('✅Khởi tạo socket...');
-      await shipperSocketSevice.initialize();
-      navigation.navigate(AppGraph.MAIN);
+
 
     } catch (error) {
       console.log('error', error);
@@ -55,7 +62,7 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
- 
+
 
   return (
     <Column style={styles.container}>
@@ -64,7 +71,7 @@ const LoginScreen = ({ navigation }) => {
         style={styles.image}
         source={require('../../assets/images/logo2.png')}
       />
-      <NormalLoading visible={loading}/>
+      <NormalLoading visible={loading} />
 
       <Text style={styles.headerText}>GreenZone Delivery</Text>
 
@@ -78,7 +85,7 @@ const LoginScreen = ({ navigation }) => {
           setValue={(value) => {
             setPhoneNumber(value)
             setPhoneNumberMessage('')
-            
+
           }}
           value={phoneNumber}
           invalidMessage={phoneNumberMessage}
@@ -98,7 +105,7 @@ const LoginScreen = ({ navigation }) => {
           invalidMessage={passwordMessage}
         />
 
-        <PrimaryButton onPress={handleLogin} title='Đăng nhập'/>
+        <PrimaryButton onPress={handleLogin} title='Đăng nhập' />
       </Column>
 
     </Column>

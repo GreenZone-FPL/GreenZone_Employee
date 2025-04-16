@@ -1,6 +1,6 @@
 import { AppAsyncStorage } from '../../utils';
 import axiosInstance from '../axiosInstance';
-import { onUserLoginZego } from '../../zego/common';
+
 export const login = async ({ phoneNumber, password }) => {
   try {
     const response = await axiosInstance.post('/auth/login', { phoneNumber, password });
@@ -40,7 +40,7 @@ export const login2 = async ({ phoneNumber, password }) => {
       phoneNumber,
     );
 
-    await onUserLoginZego(phoneNumber, merchant.lastName)
+   
 
     return data;
   } catch (error) {

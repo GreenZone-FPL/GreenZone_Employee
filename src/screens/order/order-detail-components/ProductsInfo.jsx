@@ -1,14 +1,14 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { HorizontalProductItem } from '../../../components';
-import { colors, GLOBAL_KEYS } from '../../../constants';
+import { Column, HorizontalProductItem } from '../../../components';
+import { colors } from '../../../constants';
 import { Title } from './Title';
 
 export const ProductsInfo = ({ orderItems }) => {
     return (
-        <View style={[styles.areaContainer, { borderBottomWidth: 0 }]}>
+        <Column style={styles.areaContainer}>
             <View style={{ marginHorizontal: 16 }}>
-                <Title title={'Danh sách sản phẩm'} icon="clipboard-list" />
+                <Title title={'Danh sách sản phẩm'} />
             </View>
 
             <FlatList
@@ -38,24 +38,13 @@ export const ProductsInfo = ({ orderItems }) => {
                 contentContainerStyle={styles.flatListContentContainer}
                 scrollEnabled={false}
             />
-        </View>
+        </Column>
     );
 };
 
 
 
 const styles = StyleSheet.create({
-    titleContainer: {
-        marginVertical: 4,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: GLOBAL_KEYS.GAP_SMALL,
-    },
-    greenText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        color: colors.primary,
-        fontWeight: '600',
-    },
     areaContainer: {
         backgroundColor: colors.white,
         paddingVertical: 12,

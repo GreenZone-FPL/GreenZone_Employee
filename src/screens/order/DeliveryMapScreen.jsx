@@ -1,13 +1,13 @@
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import { NormalHeader, PrimaryButton, ActionDialog, Row, Column, NormalText } from '../../components';
-import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
-import { Icon } from 'react-native-paper';
-import { AuthGraph, MainGraph, OrderGraph } from '../../layouts/graphs';
 import LottieView from 'lottie-react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Icon } from 'react-native-paper';
 import { getOrderDetail, updateOrderStatus } from '../../axios';
-import { Toaster } from '../../utils';
+import { ActionDialog, Column, NormalHeader, NormalText, PrimaryButton, Row } from '../../components';
+import { colors, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
+import { AuthGraph, MainGraph, OrderGraph } from '../../layouts/graphs';
+import { Toaster } from '../../utils';
 
 const { width } = Dimensions.get('window');
 
@@ -27,7 +27,7 @@ const DeliveryMapScreen = ({ navigation, route }) => {
         try {
             const response = await getOrderDetail(orderId);
             setOrderDetail(response);
-            console.log('response', JSON.stringify(response, null, 3))
+
         } catch (error) {
             console.error('error', error);
         } finally {
@@ -110,6 +110,7 @@ const DeliveryMapScreen = ({ navigation, route }) => {
                                 routes: [{ name: MainGraph.graphName }],
                             })}
                             title="Quay về trang chủ"
+                            disabled={loading}
                         />
                     ) : (
                         <Row style={{ gap: 16 }}>
@@ -117,11 +118,13 @@ const DeliveryMapScreen = ({ navigation, route }) => {
                                 style={{ flex: 1 }}
                                 onPress={() => onApprove("Hoàn tất đơn hàng", OrderStatus.COMPLETED.value, () => navigation.navigate(OrderGraph.OrderDoneScreen))}
                                 title="Hoàn thành"
+                                disabled={loading}
                             />
                             <PrimaryButton
                                 style={{ flex: 1, backgroundColor: colors.orange700 }}
                                 onPress={() => onApprove("Giao hàng thất bại", OrderStatus.FAILED_DELIVERY.value)}
                                 title="Giao hàng thất bại"
+                                disabled={loading}
                             />
                         </Row>
                     )}
@@ -146,7 +149,7 @@ const DeliveryMapScreen = ({ navigation, route }) => {
 const CustomerInfo = ({ navigation, orderDetail }) => {
     const shipper = orderDetail?.shipper;
     const shippingAddress = orderDetail?.shippingAddress;
-
+    const [loading, setLoading] = useState(false);
     return (
         <Column style={{ padding: 16, flex: 1 }}>
             <Row style={{ marginVertical: 8, gap: 16, justifyContent: 'space-between' }}>
@@ -156,10 +159,10 @@ const CustomerInfo = ({ navigation, orderDetail }) => {
                 </Row>
 
                 <Row style={{ gap: 16 }}>
-                    <TouchableOpacity style={styles.phoneButton}>
+                    <TouchableOpacity style={styles.phoneButton} disabled={loading}>
                         <Icon source='phone' size={24} color={colors.primary} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate(AuthGraph.ChatWithUser)}>
+                    <TouchableOpacity onPress={() => navigation.navigate(AuthGraph.ChatWithUser)} disabled={loading}>
                         <Icon source='message-badge-outline' size={22} color={colors.primary} />
                     </TouchableOpacity>
                 </Row>

@@ -62,7 +62,7 @@ const OrderDetailScreen = props => {
               animationDuration: 1000,
             });
           }
-          console.log('Vị trí người dùng', position);
+          // console.log('Vị trí người dùng', position);
         },
         error => console.log(error),
         { timeout: 5000 },
@@ -79,9 +79,9 @@ const OrderDetailScreen = props => {
       const latitude = response.latitude;
       const longitude = response.longitude;
       setCustomerLocation([longitude, latitude]);
-      console.log(
-        `Vị trí giao hàng: Latitude: ${latitude}, Longitude: ${longitude}`,
-      );
+      // console.log(
+      //   `Vị trí giao hàng: Latitude: ${latitude}, Longitude: ${longitude}`,
+      // );
       //   console.log('>>>>>>response', JSON.stringify(response, null, 2))
     } catch (error) {
       console.error('error', error);
@@ -264,6 +264,7 @@ const OrderDetailScreen = props => {
               onApprove('Bắt đầu giao hàng', OrderStatus.SHIPPING_ORDER.value)
             }
             title="Bắt đầu giao hàng"
+            disabled={loading}
           />
         )}
 
@@ -281,6 +282,7 @@ const OrderDetailScreen = props => {
           <Row style={{ gap: 16, backgroundColor: colors.white, padding: 16 }}>
             <PrimaryButton
               titleStyle={{ color: colors.red900 }}
+              disabled={loading}
               style={{
                 flex: 1,
                 backgroundColor: colors.white,

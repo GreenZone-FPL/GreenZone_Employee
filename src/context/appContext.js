@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useReducer, useState } from 'react';
+import { AuthActionTypes, authInitialState, authReducer } from '../reducers/authReducer';
 import { AppAsyncStorage } from '../utils';
-import { authReducer, authInitialState, AuthActionTypes } from '../reducers/authReducer';
-import { onUserLoginZego } from '../zego/common';
 
 export const AppContext = createContext();
 
@@ -21,15 +20,11 @@ export const AppContextProvider = ({ children }) => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
-      if (isValid) {
-        authDispatch({ type: AuthActionTypes.LOGIN })
-        const phoneNumber = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.phoneNumber);
-        const lastName = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.lastName);
-        if(phoneNumber && lastName){
-          console.log('loginZego')
-          await onUserLoginZego(phoneNumber, lastName);
-        }
-       
+      const lastName = await AppAsyncStorage.readData(
+        AppAsyncStorage.STORAGE_KEYS.lastName,
+      );
+      if (isValid && lastName) {
+        authDispatch({ type: AuthActionTypes.LOGIN, payload: {lastName}})
       }
     };
     checkLoginStatus();
