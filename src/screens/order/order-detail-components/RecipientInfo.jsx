@@ -56,7 +56,7 @@ export const RecipientInfo = ({ detail }) => {
                 <Title title="Người nhận"  />
                 <Row>
 
-                    <CustomCallButton consigneeName={consigneeName} consigneePhone={consigneePhone} navigation={navigation} />
+                    <CustomCallButton userName={consigneeName} userID={consigneePhone} navigation={navigation} />
                     {/* <ZegoSendCallInvitationButton
                         invitees={[
                             {

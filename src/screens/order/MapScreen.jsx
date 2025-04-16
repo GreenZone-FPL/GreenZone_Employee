@@ -32,6 +32,7 @@ const MapScreen = props => {
   const convertedCoordinates = routeCoordinates.map(([lat, lng]) => [lng, lat]);
 
   console.log(convertedCoordinates);
+
   // vị trí shipper
   useEffect(() => {
     const timeoutId = setTimeout(() => {
