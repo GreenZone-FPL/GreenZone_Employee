@@ -5,20 +5,20 @@ import { colors } from '../../constants';
 import { Toaster } from '../../utils';
 
 
-export const CustomCallButton = ({ consigneePhone, consigneeName, navigation }) => {
+export const CustomCallButton = ({ userID, userName, navigation }) => {
     const handleCallPress = async () => {
         try {
             const result = await ZegoUIKitPrebuiltCallInvitation.sendCallInvitation(
                 [ // invitees
                     {
-                        userID: consigneePhone,
-                        userName: consigneeName,
+                        userID: userID,
+                        userName: userName,
                     },
                 ],
-                false, // show waiting page
-                navigation,
-                {
-                    resourceID: 'zegouikit_call', // Thêm resourceID vào đây
+                false, // isVideoCall
+                navigation, // navigation
+                { // options
+                    resourceID: 'zegouikit_call', 
                     showWaitingPageWhenGroupCall: true,
                 }
             );
@@ -26,7 +26,7 @@ export const CustomCallButton = ({ consigneePhone, consigneeName, navigation }) 
 
         } catch (err) {
             if (err === 6000281) {
-                Toaster.show('Đây là đơn hàng ảo. Không thể gọi')
+                Toaster.show('Customer offline quá lâu. Không thể gọi')
             } else {
                 Toaster.show(err || err.message)
             }
