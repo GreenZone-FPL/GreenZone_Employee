@@ -9,11 +9,12 @@ import {
   View
 } from 'react-native';
 import { getMerchant, getOrdersByStatus } from '../../axios';
-import { Column, CustomTabView, LightStatusBar, NormalLoading, NormalText, Row, TitleText } from '../../components';
+import { Column, CustomTabView, EmptyView, LightStatusBar, NormalLoading, NormalText, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { OrderGraph } from '../../layouts/graphs';
 import { AppAsyncStorage, TextFormatter } from '../../utils';
+import FastImage from 'react-native-fast-image';
 
 const statuses = ['readyForPickup', 'shippingOrder', 'completed', 'failedDelivery'];
 const tabTitles = ['Đơn mới', 'Đang giao', 'Hoàn thành', 'Giao thất bại'];
@@ -116,7 +117,7 @@ const OrderHistoryScreen = ({ navigation }) => {
           <Column key={i} style={styles.tabView}>
 
 
-          
+
             {orders.filter(order => order.status === status).length > 0 ? (
               <FlatList
                 showsVerticalScrollIndicator={false}
@@ -129,7 +130,7 @@ const OrderHistoryScreen = ({ navigation }) => {
                   />
                 }
               />) :
-              <EmptyView />
+              <EmptyView message='Danh sách này đang trống' />
             }
 
 
@@ -140,16 +141,7 @@ const OrderHistoryScreen = ({ navigation }) => {
   );
 };
 
-const EmptyView = () => (
-  <View style={styles.emptyContainer}>
-    <Image
-      style={styles.emptyImage}
-      resizeMode="cover"
-      source={require('../../assets/images/logo.png')}
-    />
 
-  </View>
-);
 
 
 const OrderItem = ({ item, handleOrderPress }) => {
@@ -161,8 +153,9 @@ const OrderItem = ({ item, handleOrderPress }) => {
   } = shippingAddress;
   const formattedAddress = `${specificAddress}`;
   const [loading, setLoading] = useState(false);
+  const items = item?.orderItems || [];
   const getOrderItemsText = () => {
-    const items = item?.orderItems || [];
+    // const items = item?.orderItems || [];
     if (items.length > 2) {
       return `${items[0].product.name} - ${items[1].product.name} và ${items.length - 2
         } sản phẩm khác`;
@@ -174,16 +167,23 @@ const OrderItem = ({ item, handleOrderPress }) => {
 
 
   return (
-    <TouchableOpacity style={styles.orderItem} onPress={handleOrderPress} disabled={loading}> 
+    <TouchableOpacity style={styles.orderItem} onPress={handleOrderPress} disabled={loading}>
       <Column style={{ flex: 2 }}>
         <Row style={{ justifyContent: 'space-between' }}>
           <NormalText text={`#...${_id.slice(-8)}`} style={styles.orderIdText} />
           <TitleText text={TextFormatter.formatCurrency(totalPrice)} style={styles.priceText} />
         </Row>
 
-        <Text numberOfLines={2} style={styles.orderName}>
-          {getOrderItemsText()}
-        </Text>
+        <Row>
+          <FastImage
+            source={{ uri: items[0].product.image }}
+            style={{ width: 38, height: 38, borderRadius: 20 }}
+          />
+          <Text numberOfLines={2} style={styles.orderName}>
+            {getOrderItemsText()}
+          </Text>
+        </Row>
+
 
 
         <NormalText text={`${consigneeName} - ${consigneePhone}`} style={styles.recipientText} />
@@ -201,7 +201,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-    // backgroundColor: colors.white,
     flex: 1,
     color: colors.black
   },
@@ -224,8 +223,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     borderRadius: 80,
   },
-  emptyContainer: { justifyContent: 'center', alignItems: 'center', backgroundColor: colors.white },
-  emptyImage: { width: width / 2, height: width / 2, alignSelf: 'center' },
+
   orderItem: {
     backgroundColor: colors.white,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
