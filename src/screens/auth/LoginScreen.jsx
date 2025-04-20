@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
     gap: 8
   },
   image: {
-    width: width / 2,
-    height: width / 2,
+    width: width / 1.5,
+    height: width / 1.5,
   },
   formContainer: {
     padding: GLOBAL_KEYS.PADDING_DEFAULT,

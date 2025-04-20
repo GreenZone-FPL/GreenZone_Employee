@@ -6,14 +6,14 @@ import { BottomGraph, MainGraph } from '../../layouts/graphs';
 
 
 const OrderDoneScreen = (props) => {
-  const [loading, setLoading] = useState(false);
-    const navigation = props.navigation;
+  const [loading, setLoading] = React.useState(false);
+  const navigation = props.navigation;
   return (
     <View style={styles.container}>
-      <Image 
-                          source={require('../../assets/images/done.png')} 
-                          style={styles.checkIcon} 
-                      />
+      <Image
+        source={require('../../assets/images/done.png')}
+        style={styles.checkIcon}
+      />
       <Text style={styles.title}>Bạn đã đến nơi cần được giao hàng</Text>
       <Text style={styles.subtitle}>Hãy kiểm tra lại đơn hàng trước khi giao đến khách hàng</Text>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate(MainGraph.graphName)} disabled={loading}>
