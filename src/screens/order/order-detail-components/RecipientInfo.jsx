@@ -5,7 +5,7 @@ import { Linking, Pressable, StyleSheet } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import { Icon } from 'react-native-paper';
 import { Column, NormalText, Row, CustomCallButton } from '../../../components';
-import { colors, GLOBAL_KEYS } from '../../../constants';
+import { colors, GLOBAL_KEYS, OrderStatus } from '../../../constants';
 import { Title } from './Title';
 import { useNavigation } from '@react-navigation/native';
 
@@ -53,11 +53,16 @@ export const RecipientInfo = ({ detail }) => {
     return (
         <Column style={styles.areaContainer}>
             <Row style={{ justifyContent: 'space-between' }}>
-                <Title title="Người nhận"  />
-                <Row>
+                <Title title="Người nhận" />
 
-                    <CustomCallButton userName={consigneeName} userID={consigneePhone} navigation={navigation} />
-                    {/* <ZegoSendCallInvitationButton
+
+
+                {
+                    [OrderStatus.SHIPPING_ORDER.value, OrderStatus.READY_FOR_PICKUP.value]
+                        .includes(detail.status) &&
+                    <Row>
+                        <CustomCallButton userName={consigneeName} userID={consigneePhone} navigation={navigation} />
+                        {/* <ZegoSendCallInvitationButton
                         invitees={[
                             {
                                 userID: consigneePhone,
@@ -71,15 +76,19 @@ export const RecipientInfo = ({ detail }) => {
 
                     /> */}
 
-                    <Pressable style={styles.iconButton} onPress={handleSend}>
-                        <Icon
-                            source="message"
-                            color={colors.blue600}
-                            size={20}
-                        />
-                    </Pressable>
+                        <Pressable style={styles.iconButton} onPress={handleSend}>
+                            <Icon
+                                source="message"
+                                color={colors.blue600}
+                                size={20}
+                            />
+                        </Pressable>
+                    </Row>
 
-                </Row>
+                }
+
+
+
             </Row>
 
             <NormalText

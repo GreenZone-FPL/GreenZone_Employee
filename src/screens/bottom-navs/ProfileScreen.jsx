@@ -118,6 +118,13 @@ const ProfileScreen = ({ navigation }) => {
         />
 
         <ItemRow
+          title="My FlatList"
+          icon="headphones"
+          checkIcon={true}
+          onPress={() => navigation.navigate('MyFlatList')}
+        />
+
+        <ItemRow
           title="Đăng xuất"
           icon="logout"
           checkIcon={false}
@@ -127,6 +134,8 @@ const ProfileScreen = ({ navigation }) => {
             authDispatch({ type: AuthActionTypes.LOGOUT });
           }}
         />
+
+
       </Column>
 
     </ScrollView>
