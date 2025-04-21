@@ -31,6 +31,7 @@ import { AppAsyncStorage } from './src/utils';
 import { onUserLoginZego } from './src/zego/common';
 
 import { LogBox } from 'react-native';
+import MyFlatList from './src/screens/order/order-detail-components/MyFlatList';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs();//Ignore all log notifications
 
@@ -162,6 +163,7 @@ function MainNavigator() {
 
 
           <BaseStack.Screen name={AuthGraph.DeliveryMapScreen} component={DeliveryMapScreen} />
+          <BaseStack.Screen name={'MyFlatList'} component={MyFlatList} />
           <BaseStack.Screen name={AuthGraph.ChatWithUser} component={ChatWithUser} />
           <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
           <BaseStack.Screen
