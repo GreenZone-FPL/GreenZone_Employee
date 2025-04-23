@@ -17,21 +17,21 @@ import ChatWithUser from './src/screens/order/ChatWithUser';
 import DeliveryMapScreen from './src/screens/order/DeliveryMapScreen';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 
-import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
-import ProfileInfoScreen from './src/screens/user-profile/ProfileInfoScreen';
 import BottomTab from './src/layouts/BottomTab';
 import MapScreen from './src/screens/order/MapScreen';
+import OrderDoneScreen from './src/screens/order/OrderDoneScreen';
+import ProfileInfoScreen from './src/screens/user-profile/ProfileInfoScreen';
 
 import {
-  ZegoUIKitPrebuiltCallWaitingScreen,
   ZegoUIKitPrebuiltCallInCallScreen,
+  ZegoUIKitPrebuiltCallWaitingScreen,
 } from '@zegocloud/zego-uikit-prebuilt-call-rn';
-import ZegoCallUI from './src/zego/ZegoCallUI';
 import { AppAsyncStorage } from './src/utils';
 import { onUserLoginZego } from './src/zego/common';
+import ZegoCallUI from './src/zego/ZegoCallUI';
 
 import { LogBox } from 'react-native';
-import MyFlatList from './src/screens/order/order-detail-components/MyFlatList';
+import MyFlatList from './src/screens/user-profile/MyFlatList';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs();//Ignore all log notifications
 
@@ -59,12 +59,12 @@ function App() {
 
 function AppNavigator() {
 
-  const { showCallUI } = useAppContext();
+
   return (
     <NavigationContainer >
 
       <RootNavigator />
-      {showCallUI && <ZegoCallUI />}
+      <ZegoCallUI />
 
     </NavigationContainer>
   )
@@ -82,7 +82,7 @@ function RootNavigator() {
 
 function MainNavigator() {
   const navigation = useNavigation()
-  const { authState, showCallUI } = useAppContext();
+  const { authState } = useAppContext();
   const slideFromBottomOption = {
     animation: 'slide_from_bottom',
     presentation: 'transparentModal',
@@ -102,33 +102,9 @@ function MainNavigator() {
   }, [authState]);
 
   const initializeSocket = async () => {
-
     await ShipperSocketService.initialize();
-
   };
 
-  const initZego = async () => {
-    const lastName = await AppAsyncStorage.readData(
-      AppAsyncStorage.STORAGE_KEYS.lastName,
-    );
-    const phoneNumber = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.phoneNumber);
-
-    if (phoneNumber && lastName) {
-      console.log('loginZego')
-      await onUserLoginZego(phoneNumber, lastName, navigation);
-    }
-  }
-
-  useEffect(() => {
-    console.log('authState', JSON.stringify(authState, null, 2))
-    if (authState.lastName) {
-
-      console.log('initZego')
-      initZego()
-    } else {
-      console.log('Khong the init Zego')
-    }
-  }, [authState.lastName])
 
   return (
     <BaseStack.Navigator screenOptions={{ headerShown: false }}>
@@ -142,25 +118,18 @@ function MainNavigator() {
           )}
           <BaseStack.Screen name={MainGraph.graphName} component={BottomTab} />
 
-          {
-            showCallUI &&
-            <>
-
-              <BaseStack.Screen
-                options={{ headerShown: false }}
-                // DO NOT change the name 
-                name="ZegoUIKitPrebuiltCallWaitingScreen"
-                component={ZegoUIKitPrebuiltCallWaitingScreen}
-              />
-              <BaseStack.Screen
-                options={{ headerShown: false }}
-                // DO NOT change the name
-                name="ZegoUIKitPrebuiltCallInCallScreen"
-                component={ZegoUIKitPrebuiltCallInCallScreen}
-              />
-            </>
-          }
-
+          <BaseStack.Screen
+            options={{ headerShown: false }}
+            // DO NOT change the name 
+            name="ZegoUIKitPrebuiltCallWaitingScreen"
+            component={ZegoUIKitPrebuiltCallWaitingScreen}
+          />
+          <BaseStack.Screen
+            options={{ headerShown: false }}
+            // DO NOT change the name
+            name="ZegoUIKitPrebuiltCallInCallScreen"
+            component={ZegoUIKitPrebuiltCallInCallScreen}
+          />
 
           <BaseStack.Screen name={AuthGraph.DeliveryMapScreen} component={DeliveryMapScreen} />
           <BaseStack.Screen name={'MyFlatList'} component={MyFlatList} />
