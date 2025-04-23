@@ -15,6 +15,7 @@ import { useAppContext } from '../../context/appContext';
 import { OrderGraph } from '../../layouts/graphs';
 import { AppAsyncStorage, TextFormatter } from '../../utils';
 import FastImage from 'react-native-fast-image';
+import { onUserLoginZego } from '../../zego/common';
 
 const statuses = ['readyForPickup', 'shippingOrder', 'completed', 'failedDelivery'];
 const tabTitles = ['Đơn mới', 'Đang giao', 'Hoàn thành', 'Giao thất bại'];
@@ -25,7 +26,7 @@ const OrderHistoryScreen = ({ navigation }) => {
   const [merchant, setMerchant] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const { orderDualStatuses } = useAppContext();
+  const { orderDualStatuses, authState} = useAppContext();
 
 
   const fetchOrders = async () => {
@@ -75,6 +76,28 @@ const OrderHistoryScreen = ({ navigation }) => {
 
     return unsubscribe;
   }, [index]);
+
+
+  const initZego = async () => {
+    const lastName = await AppAsyncStorage.readData(
+      AppAsyncStorage.STORAGE_KEYS.lastName,
+    );
+    const phoneNumber = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.phoneNumber);
+
+    if (phoneNumber && lastName) {
+
+      await onUserLoginZego(phoneNumber, lastName, navigation);
+    }
+  }
+
+  useEffect(() => {
+
+    if (authState.lastName) {
+      initZego()
+    } else {
+      console.log('Khong the init Zego')
+    }
+  }, [authState.lastName])
 
   return (
     <View style={styles.container}>
