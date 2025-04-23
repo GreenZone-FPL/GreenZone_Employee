@@ -93,7 +93,7 @@ export const RecipientInfo = ({ detail }) => {
 
             <NormalText
                 text={[detail.consigneeName, detail.consigneePhone].join(' - ')}
-                style={{ color: colors.black, fontWeight: '500' }}
+                style={{ color: colors.blue600, fontWeight: '500' }}
             />
 
             <NormalText text={detail.shippingAddress} style={styles.normalText} />

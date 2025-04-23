@@ -110,17 +110,10 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
               callInvitationData.type === ZegoInvitationType.videoCall
                 ? true
                 : false,
-            // layout: {
-            //   mode:
-            //     callInvitationData.invitees &&
-            //     callInvitationData.invitees.length > 1
-            //       ? ZegoLayoutMode.gallery
-            //       : ZegoLayoutMode.pictureInPicture,
-            // },
             layout: {
               mode:
                 Array.isArray(callInvitationData.invitees) &&
-                callInvitationData.invitees.length > 1
+                  callInvitationData.invitees.length > 1
                   ? ZegoLayoutMode.gallery
                   : ZegoLayoutMode.pictureInPicture,
             },
@@ -131,8 +124,8 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 reason,
                 duration,
               );
-               ZegoUIKitPrebuiltCallService.hangUp();
-               navigation.navigate(OrderGraph.OrderHistoryScreen);
+              ZegoUIKitPrebuiltCallService.hangUp();
+              navigation.navigate(OrderGraph.OrderHistoryScreen);
             },
 
             timingConfig: {
