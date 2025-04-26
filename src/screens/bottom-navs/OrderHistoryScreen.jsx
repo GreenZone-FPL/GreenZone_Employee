@@ -120,7 +120,7 @@ const OrderHistoryScreen = ({ navigation }) => {
           <Text
             style={
               styles.titleText
-            }>{`${merchant.specificAddress}, ${merchant.ward}, ${merchant.district}, ${merchant.province}`}
+            }>{`${merchant.address}`}
           </Text>
         </Column>
 

@@ -172,7 +172,7 @@ const Header = ({ profile, merchant }) => {
         <TitleText text='Cửa hàng làm việc' />
         <RowContent title={merchant?.name} icon="store" />
         <RowContent
-          title={`${merchant?.specificAddress}, ${merchant?.ward}, ${merchant?.district}, ${merchant?.province}`}
+          title={`${merchant?.address}`}
           icon="map-marker" />
 
         <RowContent title={merchant?.phoneNumber} icon="phone" />

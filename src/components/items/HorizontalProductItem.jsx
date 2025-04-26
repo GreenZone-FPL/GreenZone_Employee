@@ -157,15 +157,14 @@ const styles = StyleSheet.create({
   quantityBadge: {
     position: 'absolute',
     top: 0,
-    right: 0,
+    right:-10 ,
     backgroundColor: colors.green100,
     borderColor: colors.white,
     borderWidth: 2,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    width: 20,
-    height: 20,
+    borderRadius: 999,
     justifyContent: 'center',
     alignItems: 'center',
+    padding:1,
   },
   quantityText: {
     color: colors.black,
