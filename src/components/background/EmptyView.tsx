@@ -29,8 +29,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.transparent
   },
   emptyImage: {
-    width: width / 1.5,
-    height: width / 1.5,
+    marginTop: 20,
+    width: width / 3,
+    height: width / 3,
   },
   message: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,

@@ -105,7 +105,7 @@ const OrderHistoryScreen = ({ navigation }) => {
       <NormalLoading visible={loading} />
       {
         merchant &&
-        <Column style={{ padding: 16, backgroundColor: colors.white }}>
+        <Column style={{ padding: 20, backgroundColor: colors.white }}>
           <Row>
 
             <View style={styles.avatar}>
@@ -222,8 +222,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.fbBg, gap: 8 },
   headerText: {
     fontWeight: 'bold',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+    fontSize: 16,
     flex: 1,
     color: colors.black
   },
@@ -234,16 +233,17 @@ const styles = StyleSheet.create({
   },
   avatar: {
     backgroundColor: colors.white,
-    width: width / 3,
-    height: width / 3,
+    width: width / 4,
+    height: width / 4,
     borderRadius: width / 6,
     alignSelf: 'center',
+   
   },
   avatarImage: {
     width: '100%',
     height: '100%',
     borderRadius: 999,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
     borderRadius: 80,
   },
 
