@@ -45,6 +45,7 @@ const OrderDetailScreen = props => {
   const [customerLocation, setCustomerLocation] = useState([null, null]);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
 
+
   const convertedCoordinates = routeCoordinates.map(([lat, lng]) => [lng, lat]);
 
   console.log(convertedCoordinates);
