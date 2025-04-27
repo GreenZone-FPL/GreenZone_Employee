@@ -13,6 +13,7 @@ import {
 import {colors, GLOBAL_KEYS, OrderStatus} from '../../../constants';
 
 export const PaymentDetails = ({detail}) => {
+
   const {
     _id,
     shippingFee,
@@ -30,7 +31,6 @@ export const PaymentDetails = ({detail}) => {
     0,
   );
 
-  // console.log('detail', JSON.stringify(detail, null, 3));
 
   const discount = voucher
     ? voucher.discountType === 'percentage'

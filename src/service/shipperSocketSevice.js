@@ -42,48 +42,12 @@ class ShipperSocketService {
         console.log('order.updateStatus:', data);
       });
 
-      // this.socket.on('order.new', data => {
-      //   console.log(' Received new order:', data);
-      //   /**
-      //    New Order: {"message": " Đơn hàng mới #67e036a784526a4a39d6509e cần xử lý trước
-      //    3/18/2025, 9:28:15 PM", "orderId": "67e036a784526a4a39d6509e", "storeId": "67b68d7698c1fc822e49fabd"}
-      //    */
-      //   this.socket.emit('order.join', data.orderId);
-      //   console.log('emit order join');
-      //   if (orderNewCallback) {
-      //     orderNewCallback(data);
-      //     console.log('Callback executed');
-      //   } else {
-      //     console.log('Callback is undefined');
-      //   }
-      // });
-
+     
       this.socket.on('order.updateStatus', data => {
         console.log(' Received new order:', data);
         if (updateOrderCallBack) {
           updateOrderCallBack(data);
         }
-      });
-
-
-
-
-
-
-
-
-
-
-
-      this.socket.on('order.assigned', (data) => {
-
-        console.log('order.assigned:', data);
-
-        this.socket.emit('order.join', data.orderId);
-
-
-        console.log(`Shipper join order: ${data.orderId}`);
-
       });
 
       this.socket.on('connect_error', error => {
@@ -105,7 +69,6 @@ class ShipperSocketService {
 
   disconnect() {
     if (this.socket) {
-      this.socket.off('order.assigned');
       this.socket.off('order.updateStatus');
       this.socket.off('disconnect');
       this.socket.disconnect();
