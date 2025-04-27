@@ -34,74 +34,74 @@ const MapScreen = props => {
 
   console.log(convertedCoordinates);
 
-  // vị trí shipper
-  // useEffect(() => {
-  //   const timeoutId = setTimeout(() => {
-  //     Geolocation.getCurrentPosition(
-  //       position => {
-  //         const { longitude, latitude } = position.coords;
-  //         setUserLocation([longitude, latitude]);
-  //         if (cameraRef.current) {
-  //           cameraRef.current.setCamera({
-  //             centerCoordinate: [longitude, latitude],
-  //             zoomLevel: 14,
-  //             animationDuration: 1000,
-  //           });
-  //         } 
-  //         // console.log('Vị trí người dùng', position)
-  //       },
-  //       error => console.log(error),
-  //       { timeout: 5000 },
-  //     );
-
-  //   }, 1000);
-
-  //   return () => clearTimeout(timeoutId);
-  // }, []);
-
+ // vị trí shipper
   useEffect(() => {
-    const watchId = Geolocation.watchPosition(
-      position => {
-        const {longitude, latitude} = position.coords;
-        setUserLocation([longitude, latitude]);
+    const timeoutId = setTimeout(() => {
+      Geolocation.getCurrentPosition(
+        position => {
+          const { longitude, latitude } = position.coords;
+          setUserLocation([longitude, latitude]);
+          if (cameraRef.current) {
+            cameraRef.current.setCamera({
+              centerCoordinate: [longitude, latitude],
+              zoomLevel: 14,
+              animationDuration: 1000,
+            });
+          } 
+          // console.log('Vị trí người dùng', position)
+        },
+        error => console.log(error),
+        { timeout: 5000 },
+      );
 
-        // Di chuyển camera (nếu cần)
-        if (cameraRef.current) {
-          cameraRef.current.setCamera({
-            centerCoordinate: [longitude, latitude],
-            zoomLevel: 14,
-            animationDuration: 1000,
-          });
-        }
+    }, 1000);
 
-        // ✅ Cập nhật Firebase Realtime Database
-        if (orderId) {
-        database()
-          .ref(`/locations/${orderId}`)
-          .set({
-            latitude,
-            longitude,
-            timestamp: Date.now(),
-          })
-          .then(() => {
-            console.log('Đã cập nhật vị trí thành công!');
-          })
-          .catch(err => {
-            console.error('Lỗi khi cập nhật vị trí lên Firebase:', err);
-          });
-
-        }
-      },
-      error => console.log(error),
-      {enableHighAccuracy: true, distanceFilter: 10, interval: 3000},
-    );
-
-    return () => {
-      if (watchId != null) {
-        Geolocation.clearWatch(watchId);
-      }
-    };
+    return () => clearTimeout(timeoutId);
   }, []);
+
+  // useEffect(() => {
+  //   const watchId = Geolocation.watchPosition(
+  //     position => {
+  //       const {longitude, latitude} = position.coords;
+  //       setUserLocation([longitude, latitude]);
+
+  //       // Di chuyển camera (nếu cần)
+  //       if (cameraRef.current) {
+  //         cameraRef.current.setCamera({
+  //           centerCoordinate: [longitude, latitude],
+  //           zoomLevel: 14,
+  //           animationDuration: 1000,
+  //         });
+  //       }
+
+  //       // ✅ Cập nhật Firebase Realtime Database
+  //       if (orderId) {
+  //       database()
+  //         .ref(`/locations/${orderId}`)
+  //         .set({
+  //           latitude,
+  //           longitude,
+  //           timestamp: Date.now(),
+  //         })
+  //         .then(() => {
+  //           console.log('Đã cập nhật vị trí thành công!');
+  //         })
+  //         .catch(err => {
+  //           console.error('Lỗi khi cập nhật vị trí lên Firebase:', err);
+  //         });
+
+  //       }
+  //     },
+  //     error => console.log(error),
+  //     {enableHighAccuracy: true, distanceFilter: 10, interval: 3000},
+  //   );
+
+  //   return () => {
+  //     if (watchId != null) {
+  //       Geolocation.clearWatch(watchId);
+  //     }
+  //   };
+  // }, []);
 
   const fetchOrderDetail = async () => {
     try {
