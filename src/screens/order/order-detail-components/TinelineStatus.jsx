@@ -102,8 +102,6 @@ export const TimelineStatus = ({ details }) => {
           />
         )}
       />
-
-      <CallSupportButton phoneNumber={details.store.phoneNumber} label="Gọi hỗ trợ" />
     </Column>
 
 

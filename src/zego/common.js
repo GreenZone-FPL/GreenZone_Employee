@@ -15,7 +15,7 @@ import { getProfile } from '../axios';
 const notificationStyle = 'CustomView';
 
 export const onUserLoginZego = async (userID, userName, navigation) => {
-  console.log('onUserLoginZego')
+  console.log('onUserLoginZego', userID, userName);
   try {
     const profile = await getProfile();
     const avatar = profile.avatar;
