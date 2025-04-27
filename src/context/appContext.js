@@ -16,6 +16,8 @@ export const AppContextProvider = ({ children }) => {
   const [orderDualStatuses, setOrderDualStatuses] = useState(null);
   const [activeOrders, setActiveOrders] = useState([]);
 
+  const [orderNew, setOrderNew] = useState(null)
+  const [orderUpdate, setOrderUpdate] = useState(null)
   useEffect(() => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
@@ -47,6 +49,10 @@ export const AppContextProvider = ({ children }) => {
       setActiveOrders,
       orderDualStatuses,
       setOrderDualStatuses,
+      orderNew,
+      setOrderNew,
+      orderUpdate,
+      setOrderUpdate
     }}>
       {children}
     </AppContext.Provider>

@@ -42,13 +42,13 @@ const OrderHistoryScreen = ({navigation}) => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
 
-  const {orderDualStatuses, authState} = useAppContext();
+  const {orderUpdate, authState} = useAppContext();
 
   const fetchProfile = async () => {
     try {
       setLoading(true);
       const reponse = await getProfile();
-      console.log('profile', JSON.stringify(reponse, null, 3));
+
       setProfile(reponse);
     } catch (error) {
       console.log('error', error);
@@ -104,7 +104,7 @@ const OrderHistoryScreen = ({navigation}) => {
   // Luôn tải danh sách đơn hàng khi chuyển tab
   useEffect(() => {
     fetchOrders();
-  }, [index, orderDualStatuses]);
+  }, [index, orderUpdate]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {

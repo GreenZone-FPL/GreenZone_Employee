@@ -17,11 +17,12 @@ import { useAppContext } from '../../context/appContext';
 import { AuthActionTypes } from '../../reducers/authReducer';
 import { AppAsyncStorage } from '../../utils';
 import Toast from 'react-native-toast-message';
-
+import shipperSocketSevice from '../../service/shipperSocketSevice';
+import {showMessage} from 'react-native-flash-message';
 const { width } = Dimensions.get('window');
 
 const ProfileScreen = ({ navigation }) => {
-  const { authDispatch } = useAppContext()
+  const { authDispatch, orderUpdate } = useAppContext()
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [merchant, setMerchant] = useState(null);
@@ -31,7 +32,7 @@ const ProfileScreen = ({ navigation }) => {
     try {
       setLoading(true);
       const reponse = await getProfile();
-      console.log('profile', JSON.stringify(reponse, null, 3));
+
       setProfile(reponse)
 
 
@@ -98,7 +99,11 @@ const ProfileScreen = ({ navigation }) => {
     <ScrollView style={styles.container}>
       <LightStatusBar />
       <Text style={styles.headerTitle}>Cá nhân</Text>
-      <Header profile={profile} merchant={merchant} />
+      {
+        profile && merchant &&
+        <Header profile={profile} merchant={merchant} />
+      }
+
 
       <Column style={{ gap: 16, paddingVertical: 8 }}>
         <Text style={styles.bodyTitle}>Tùy chọn</Text>
@@ -117,12 +122,24 @@ const ProfileScreen = ({ navigation }) => {
           onPress={handleSupportPress}
         />
 
-        <ItemRow
-          title="My FlatList"
+        {/* <ItemRow
+          title="Show new Order"
           icon="headphones"
           checkIcon={true}
-          onPress={() => navigation.navigate('MyFlatList')}
-        />
+          onPress={() => {
+            showMessage({
+              message: 'Đơn hàng mới',
+              description: orderUpdate.message,
+              type: 'success',
+              icon: 'success',
+              duration: 5000,
+              titleStyle: { fontSize: 14, fontWeight: 'bold' },
+              textStyle: { fontSize: 12, color: 'white' },
+            });
+          }}
+        /> */}
+
+
 
         <ItemRow
           title="Đăng xuất"
@@ -132,6 +149,7 @@ const ProfileScreen = ({ navigation }) => {
             await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
             await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
             authDispatch({ type: AuthActionTypes.LOGOUT });
+            shipperSocketSevice.disconnect()
           }}
         />
 

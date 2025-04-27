@@ -97,8 +97,9 @@ const OrderDetailScreen = props => {
     setApproveAction(() => async () => {
       try {
         const oldStatus = orderDetail?.status;
-
+        setActionDialogVisible(false);
         await updateOrderStatus(_id, newStatus);
+
         await fetchOrderDetail();
         setOrderDualStatuses({ status: newStatus, oldStatus });
         Toaster.show('Cập nhật đơn hàng thành công');
@@ -109,7 +110,7 @@ const OrderDetailScreen = props => {
         console.log('error', error);
         Toaster.show('Cập nhật đơn hàng thất bại');
       } finally {
-        setActionDialogVisible(false);
+       
       }
     });
   };
