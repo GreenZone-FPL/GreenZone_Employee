@@ -1,13 +1,12 @@
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { AppContextProvider, useAppContext } from './src/context/appContext';
 import { AuthGraph, MainGraph, OrderGraph } from './src/layouts/graphs';
-import ShipperSocketService from './src/service/shipperSocketSevice';
 
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SplashScreen from './src/screens/auth/SplashScreen';
@@ -26,12 +25,11 @@ import {
   ZegoUIKitPrebuiltCallInCallScreen,
   ZegoUIKitPrebuiltCallWaitingScreen,
 } from '@zegocloud/zego-uikit-prebuilt-call-rn';
-import { AppAsyncStorage } from './src/utils';
-import { onUserLoginZego } from './src/zego/common';
-import ZegoCallUI from './src/zego/ZegoCallUI';
-
 import { LogBox } from 'react-native';
+import FlashMessage from 'react-native-flash-message';
+import { useAppContainer } from './src/containers';
 import MyFlatList from './src/screens/user-profile/MyFlatList';
+import ZegoCallUI from './src/zego/ZegoCallUI';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs();//Ignore all log notifications
 
@@ -47,6 +45,7 @@ function App() {
           <SafeAreaProvider>
             <AppNavigator />
             <Toast />
+            <FlashMessage position="top" />
           </SafeAreaProvider>
         </GestureHandlerRootView>
       </PaperProvider>
@@ -81,30 +80,14 @@ function RootNavigator() {
 
 
 function MainNavigator() {
-  const navigation = useNavigation()
+
   const { authState } = useAppContext();
   const slideFromBottomOption = {
     animation: 'slide_from_bottom',
     presentation: 'transparentModal',
     headerShown: false,
   };
-  useEffect(() => {
-    async function checkLoginStatus() {
-
-      if (await AppAsyncStorage.isTokenValid()) {
-        await initializeSocket();
-      }
-    }
-    checkLoginStatus();
-    return (() => {
-      ShipperSocketService.disconnect()
-    })
-  }, [authState]);
-
-  const initializeSocket = async () => {
-    await ShipperSocketService.initialize();
-  };
-
+  useAppContainer()
 
   return (
     <BaseStack.Navigator screenOptions={{ headerShown: false }}>

@@ -19,7 +19,7 @@ export default function ZegoCallUI() {
   return (
     <>
       <ZegoCallInvitationDialog />
-      <ZegoUIKitPrebuiltCallFloatingMinimizedView />
+      {/* <ZegoUIKitPrebuiltCallFloatingMinimizedView /> */}
     </>
   )
 }

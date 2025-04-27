@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     borderRadius: 4,
-    gap: GLOBAL_KEYS.GAP_SMALL,
+    gap: 16,
     backgroundColor: colors.white,
   },
   itemImage: {

@@ -7,7 +7,7 @@ class ShipperSocketService {
     this.socket = null;
   }
 
-  async initialize() {
+  async initialize( updateOrderCallBack) {
     if (this.socket && this.socket.connected) return;
 
     try {
@@ -41,6 +41,39 @@ class ShipperSocketService {
          */
         console.log('order.updateStatus:', data);
       });
+
+      // this.socket.on('order.new', data => {
+      //   console.log(' Received new order:', data);
+      //   /**
+      //    New Order: {"message": " Đơn hàng mới #67e036a784526a4a39d6509e cần xử lý trước
+      //    3/18/2025, 9:28:15 PM", "orderId": "67e036a784526a4a39d6509e", "storeId": "67b68d7698c1fc822e49fabd"}
+      //    */
+      //   this.socket.emit('order.join', data.orderId);
+      //   console.log('emit order join');
+      //   if (orderNewCallback) {
+      //     orderNewCallback(data);
+      //     console.log('Callback executed');
+      //   } else {
+      //     console.log('Callback is undefined');
+      //   }
+      // });
+
+      this.socket.on('order.updateStatus', data => {
+        console.log(' Received new order:', data);
+        if (updateOrderCallBack) {
+          updateOrderCallBack(data);
+        }
+      });
+
+
+
+
+
+
+
+
+
+
 
       this.socket.on('order.assigned', (data) => {
 
@@ -83,47 +116,5 @@ class ShipperSocketService {
 
 }
 
-// customer 
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlVG9rZW4iOiJhY2Nlc3NUb2tlbiIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImlhdCI6MTc0MjMwOTc5MSwiZXhwIjoxNzQzMTczNzkxfQ.UXGO5kpJbvVS43AiLwI8z4VPA5Pp-nDh2vXMlQf4Kik
 
-
-
-// merchant nv2
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlVG9rZW4iOiJhY2Nlc3NUb2tlbiIsInBob25lTnVtYmVyIjoiMDkyMjIyMjIyMiIsImlhdCI6MTc0MjMxMDczNSwiZXhwIjoxNzQzMTc0NzM1fQ.Nrq1amC-2d44cfSnKZ_YJZ4x4hE1ekVmI5T4R322eHw
-/**
-{
-  "deliveryMethod": "delivery",
-  "fulfillmentDateTime": "2025-03-18T14:28:15.135Z",
-  "note": "",
-  "totalPrice": 111200,
-  "paymentMethod": "cod",
-  "consigneeName": "Nguyễn Văn A",
-  "consigneePhone": "0987654321",
-  "shippingAddress": "Địa chỉ fake, 123 Nguyễn Xí, Bình Thạnh, HCM",
-  "store": "67b68d7698c1fc822e49fabd",
-  "voucher": "67be982856cc7b945d83be16",
-  "orderItems": [
-    {
-      "variant": "67ae040d145c78765a8f8aff",
-      "quantity": 2,
-      "price": 47000,
-      "toppingItems": [
-        {
-          "topping": "67aca53c145c78765a8f88b3",
-          "quantity": 2,
-          "price": 5000
-        }
-      ]
-    },
-    {
-      "variant": "67c12cc615f3b6d663e4f747",
-      "quantity": 2,
-      "price": 29000,
-      "toppingItems": []
-    }
-  ],
-   "latitude": "10.7769",
-   "longitude": "106.7009"
-}
- */
 export default new ShipperSocketService();

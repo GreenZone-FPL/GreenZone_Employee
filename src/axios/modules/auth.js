@@ -5,7 +5,7 @@ export const login = async ({ phoneNumber, password }) => {
   try {
     const response = await axiosInstance.post('/auth/login', { phoneNumber, password });
     const { data } = response;
-    console.log('>>>>>>>>>>>>>>>>', JSON.stringify(data, null, 2));
+   
     return response.data;
   } catch (error) {
     console.log('Lỗi gọi API Login:', error);
@@ -18,9 +18,7 @@ export const login2 = async ({ phoneNumber, password }) => {
   try {
     const response = await axiosInstance.post('/auth/login', { phoneNumber, password });
     const { data } = response;
-    console.log('>>>>>>>>>>>>>>>>', JSON.stringify(data, null, 2));
-
-
+  
     const merchant = data?.user;
 
 
