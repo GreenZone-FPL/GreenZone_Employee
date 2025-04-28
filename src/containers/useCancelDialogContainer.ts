@@ -53,7 +53,7 @@ export const useCancelDialogContainer = (
                             const merchant = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.merchant, null)
                             if (merchant) {
                                 console.log('shipperId', merchant._id)
-                                await updateOrderStatus(orderId, OrderStatus.FAILED_DELIVERY.value, DeliveryMethod.DELIVERY.value, merchant._id, reasonToSubmit);
+                                await updateOrderStatus(orderId, OrderStatus.CANCELLED.value, DeliveryMethod.DELIVERY.value, merchant._id, reasonToSubmit);
                                 setSelectedReason('');
                                 setCustomReason('');
                                 setError(false);

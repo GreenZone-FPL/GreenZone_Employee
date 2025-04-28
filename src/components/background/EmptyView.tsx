@@ -26,7 +26,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     gap: 20,
-    backgroundColor: colors.transparent
+    backgroundColor: colors.transparent,
+    minHeight: 300
   },
   emptyImage: {
     marginTop: 20,

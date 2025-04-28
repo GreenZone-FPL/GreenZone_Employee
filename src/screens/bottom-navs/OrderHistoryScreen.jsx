@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {getMerchant, getOrdersByStatus, getProfile} from '../../axios';
+import { getMerchant, getOrdersByStatus, getProfile } from '../../axios';
 import {
   Column,
   CustomTabView,
@@ -19,30 +19,31 @@ import {
   Row,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {OrderGraph} from '../../layouts/graphs';
-import {AppAsyncStorage, TextFormatter} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { OrderGraph } from '../../layouts/graphs';
+import { AppAsyncStorage, TextFormatter } from '../../utils';
 import FastImage from 'react-native-fast-image';
-import {onUserLoginZego} from '../../zego/common';
-import {Icon} from 'react-native-paper';
+import { onUserLoginZego } from '../../zego/common';
+import { Icon } from 'react-native-paper';
+import { useAppContainer, useSocketContainer } from '../../containers';
 
 const statuses = [
   'readyForPickup',
   'shippingOrder',
   'completed',
-  'failedDelivery',
+  'cancelled',
 ];
-const tabTitles = ['Đơn mới', 'Đang giao', 'Hoàn thành', 'Giao thất bại'];
-const {width} = Dimensions.get('window');
-const OrderHistoryScreen = ({navigation}) => {
+const tabTitles = ['Đơn mới', 'Đang giao', 'Hoàn thành', 'Đơn hủy'];
+const { width } = Dimensions.get('window');
+const OrderHistoryScreen = ({ navigation }) => {
   const [index, setIndex] = useState(1);
   const [orders, setOrders] = useState([]);
   const [merchant, setMerchant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
 
-  const {orderUpdate, authState} = useAppContext();
+  const { orderUpdate, authState } = useAppContext();
 
   const fetchProfile = async () => {
     try {
@@ -56,6 +57,7 @@ const OrderHistoryScreen = ({navigation}) => {
       setLoading(false);
     }
   };
+  useSocketContainer()
 
   useEffect(() => {
     fetchProfile();
@@ -138,24 +140,25 @@ const OrderHistoryScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <LightStatusBar />
-      <NormalLoading visible={loading} />
+
       {merchant && (
-        <Column style={{paddingHorizontal: 16, backgroundColor: colors.white}}>
+        <Column style={{ padding: 16, backgroundColor: colors.white }}>
           <Row>
             <View style={styles.avatar}>
               <Image
                 style={styles.avatar}
-                source={{uri: merchant.images[0] || ''}}
+                source={{ uri: merchant.images[0] || '' }}
               />
             </View>
             <View>
               <Text style={styles.headerText}>{merchant?.name}</Text>
               <Row>
                 <Icon
-                  source="account-outline"
+                  source="account-circle"
                   color={colors.primary}
-                  size={20}
+                  size={24}
                 />
+
                 <Text
                   style={{
                     color: '#000',
@@ -171,32 +174,43 @@ const OrderHistoryScreen = ({navigation}) => {
       <CustomTabView
         tabIndex={index}
         setTabIndex={setIndex}
+
         tabBarConfig={{
           titles: tabTitles,
           titleActiveColor: colors.primary,
           titleInActiveColor: colors.gray700,
+          scrollable: true,
+          containerStyle: { backgroundColor: colors.white }
         }}>
         {statuses.map((status, i) => (
           <Column key={i} style={styles.tabView}>
-            {orders.filter(order => order.status === status).length > 0 ? (
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                data={orders.filter(order => order.status === status)}
-                keyExtractor={item => item._id}
-                renderItem={({item}) => (
-                  <OrderItem
-                    item={item}
-                    handleOrderPress={() =>
-                      navigation.navigate(OrderGraph.OrderDetailScreen, {
-                        orderId: item._id,
-                      })
-                    }
+            {
+              loading ?
+                <View style={{ flex: 1, minHeight: 300 }}>
+                  <NormalLoading visible={loading} />
+
+                </View>
+                :
+
+                orders.filter(order => order.status === status).length > 0 ? (
+                  <FlatList
+                    showsVerticalScrollIndicator={false}
+                    data={orders.filter(order => order.status === status)}
+                    keyExtractor={item => item._id}
+                    renderItem={({ item }) => (
+                      <OrderItem
+                        item={item}
+                        handleOrderPress={() =>
+                          navigation.navigate(OrderGraph.OrderDetailScreen, {
+                            orderId: item._id,
+                          })
+                        }
+                      />
+                    )}
                   />
+                ) : (
+                  <EmptyView message="Danh sách này đang trống" />
                 )}
-              />
-            ) : (
-              <EmptyView message="Danh sách này đang trống" />
-            )}
           </Column>
         ))}
       </CustomTabView>
@@ -204,8 +218,8 @@ const OrderHistoryScreen = ({navigation}) => {
   );
 };
 
-const OrderItem = ({item, handleOrderPress}) => {
-  const {_id, totalPrice, shippingAddress, createdAt} = item;
+const OrderItem = ({ item, handleOrderPress }) => {
+  const { _id, totalPrice, shippingAddress, createdAt } = item;
   const {
     consigneeName = item.consigneeName,
     consigneePhone = item.consigneePhone,
@@ -217,9 +231,8 @@ const OrderItem = ({item, handleOrderPress}) => {
   const getOrderItemsText = () => {
     // const items = item?.orderItems || [];
     if (items.length > 2) {
-      return `${items[0].product.name} - ${items[1].product.name} và ${
-        items.length - 2
-      } sản phẩm khác`;
+      return `${items[0].product.name} - ${items[1].product.name} và ${items.length - 2
+        } sản phẩm khác`;
     }
     return (
       items.map(item => item.product.name).join(' - ') || 'Chưa có sản phẩm'
@@ -231,8 +244,8 @@ const OrderItem = ({item, handleOrderPress}) => {
       style={styles.orderItem}
       onPress={handleOrderPress}
       disabled={loading}>
-      <Column style={{flex: 2}}>
-        <Row style={{justifyContent: 'space-between'}}>
+      <Column style={{ flex: 2 }}>
+        <Row style={{ justifyContent: 'space-between' }}>
           <NormalText
             text={`#...${_id.slice(-8)}`}
             style={styles.orderIdText}
@@ -245,8 +258,8 @@ const OrderItem = ({item, handleOrderPress}) => {
 
         <Row>
           <FastImage
-            source={{uri: items[0].product.image}}
-            style={{width: 38, height: 38, borderRadius: 20}}
+            source={{ uri: items[0].product.image }}
+            style={{ width: 38, height: 38, borderRadius: 20 }}
           />
           <Text numberOfLines={2} style={styles.orderName}>
             {getOrderItemsText()}
@@ -268,7 +281,7 @@ const OrderItem = ({item, handleOrderPress}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: colors.fbBg, gap: 8},
+  container: { flex: 1, backgroundColor: colors.fbBg, gap: 8 },
   headerText: {
     fontWeight: 'bold',
     fontSize: 16,
@@ -307,10 +320,10 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
 
-  recipientText: {color: colors.black, fontWeight: '500'},
-  orderIdText: {color: colors.pink500, fontWeight: '500'},
-  priceText: {color: colors.primary},
-  dateText: {color: colors.gray700},
+  recipientText: { color: colors.black, fontWeight: '500' },
+  orderIdText: { color: colors.pink500, fontWeight: '500' },
+  priceText: { color: colors.primary },
+  dateText: { color: colors.gray700 },
   orderName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '500',

@@ -25,19 +25,19 @@ export const TimelineStatus = ({ details }) => {
       time: formatTime(createdAt),
       title: 'Đơn mới',
       status: OrderStatus.PENDING_CONFIRMATION.value,
-      description: 'Đơn hàng của bạn vừa được tạo'
+      description: 'Đơn hàng vừa được tạo'
     },
     readyForPickupAt && {
       time: formatTime(readyForPickupAt),
       title: 'Đơn hàng sẵn sàng',
       status: OrderStatus.READY_FOR_PICKUP.value,
-      description: 'Đơn hàng của bạn đã chuẩn bị xong'
+      description: 'Cửa hàng đã chuẩn bị món xong'
     },
     shippingOrderAt && {
       time: formatTime(shippingOrderAt),
       title: 'Đang giao hàng',
       status: OrderStatus.SHIPPING_ORDER.value,
-      description: 'Nhân viên GreenZone đang giao hàng đến bạn'
+      description: 'Nhân viên GreenZone đang giao hàng'
     },
     completedAt && {
       time: formatTime(completedAt),
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   rightContent: {
     flex: 1,
     paddingLeft: 5,
-    marginTop: 6
+    marginTop: 8
   },
   bubble: {
     backgroundColor: colors.white,
