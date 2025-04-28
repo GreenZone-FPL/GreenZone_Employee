@@ -258,6 +258,7 @@ const OrderDetailScreen = props => {
 
         <ProductsInfo orderItems={orderItems} />
 
+
         <PaymentDetails detail={orderDetail} />
 
         {status === OrderStatus.READY_FOR_PICKUP.value && (

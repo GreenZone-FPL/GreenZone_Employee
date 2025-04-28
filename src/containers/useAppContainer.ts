@@ -5,7 +5,7 @@ import shipperSocketSevice from '../service/shipperSocketSevice';
 import { AppAsyncStorage } from '../utils';
 
 export const useAppContainer = () => {
-  const { orderUpdate, setOrderUpdate} = useAppContext();
+  const { orderUpdate, setOrderUpdate, authState} = useAppContext();
   const [tokenValid, setTokenValid] = useState<boolean>(false);
   const [loadingSplash, setLoadingSplash] = useState<boolean>(true);
 
@@ -13,10 +13,6 @@ export const useAppContainer = () => {
   const updateOrderCallBack = (data: any) => {
     console.log('updateOrder', data);
     setOrderUpdate(data);
-    // if (data.status === OrderStatus.READY_FOR_PICKUP.value) {
-    //   console.log('updateOrder', data);
-    //   setOrderUpdate(data);
-    // }
   };
 
   useEffect(() => {
@@ -31,9 +27,12 @@ export const useAppContainer = () => {
   // Check token validity
   useEffect(() => {
     const checkToken = async () => {
-      const tokenIsValid = await AppAsyncStorage.isTokenValid();
-      setTokenValid(tokenIsValid);
-      setLoadingSplash(false);
+      if(authState.needAuthen){
+        const tokenIsValid = await AppAsyncStorage.isTokenValid();
+        setTokenValid(tokenIsValid);
+        setLoadingSplash(false);
+      }
+     
     };
     checkToken();
   }, []);

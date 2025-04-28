@@ -2,23 +2,22 @@ import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
+  Linking,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
-  Linking
+  View
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { getProfile, getMerchant } from '../../axios';
+import Toast from 'react-native-toast-message';
+import { getMerchant, getProfile } from '../../axios';
 import { Column, LightStatusBar, NormalLoading, NormalText, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { AuthActionTypes } from '../../reducers/authReducer';
-import { AppAsyncStorage } from '../../utils';
-import Toast from 'react-native-toast-message';
 import shipperSocketSevice from '../../service/shipperSocketSevice';
-import {showMessage} from 'react-native-flash-message';
+import { AppAsyncStorage } from '../../utils';
 const { width } = Dimensions.get('window');
 
 const ProfileScreen = ({ navigation }) => {
@@ -109,7 +108,7 @@ const ProfileScreen = ({ navigation }) => {
         <Text style={styles.bodyTitle}>Tùy chọn</Text>
         <ItemRow
           title="Thông tin tài khoản"
-          icon="account-outline"
+          icon="account"
           onPress={() => {
             navigation.navigate('ProfileInfoScreen', { profile });
           }}
@@ -122,22 +121,6 @@ const ProfileScreen = ({ navigation }) => {
           onPress={handleSupportPress}
         />
 
-        {/* <ItemRow
-          title="Show new Order"
-          icon="headphones"
-          checkIcon={true}
-          onPress={() => {
-            showMessage({
-              message: 'Đơn hàng mới',
-              description: orderUpdate.message,
-              type: 'success',
-              icon: 'success',
-              duration: 5000,
-              titleStyle: { fontSize: 14, fontWeight: 'bold' },
-              textStyle: { fontSize: 12, color: 'white' },
-            });
-          }}
-        /> */}
 
 
 
@@ -181,8 +164,8 @@ const Header = ({ profile, merchant }) => {
         </View>
 
         <Column style={{ flex: 1, backgroundColor: colors.white }}>
-          <RowContent title={`${profile?.firstName} ${profile?.lastName}`} icon="account-outline" />
-          <RowContent title={profile?.phoneNumber} icon="phone-outline" />
+          <RowContent title={`${profile?.firstName} ${profile?.lastName}`} icon="account-circle" />
+          <RowContent title={profile?.phoneNumber} icon="phone" />
         </Column>
 
       </Row>
@@ -204,7 +187,7 @@ const Header = ({ profile, merchant }) => {
 
 const ItemRow = ({ icon, title, onPress }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.itemRow}>
+    <Pressable onPress={onPress} style={styles.itemRow}>
       <Row style={{ flex: 1 }}>
         <Icon
           source={icon}
@@ -214,7 +197,7 @@ const ItemRow = ({ icon, title, onPress }) => {
         <NormalText text={title} />
       </Row>
 
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -226,6 +209,7 @@ const RowContent = ({ title, icon }) => {
         size={GLOBAL_KEYS.ICON_SIZE_SMALL}
         color={colors.primary}
       />
+
       <NormalText text={title} />
 
     </Row>
