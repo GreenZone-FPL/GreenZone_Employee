@@ -17,8 +17,8 @@ const notificationStyle = 'CustomView';
 export const onUserLoginZego = async (userID, userName, navigation) => {
   console.log('onUserLoginZego', userID, userName);
   try {
-    const profile = await getProfile();
-    const avatar = profile.avatar;
+    // const profile = await getProfile();
+    const avatar = 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360'
     await ZegoUIKitPrebuiltCallService.init(
       KeyCenter.appID,
       KeyCenter.appSign,
