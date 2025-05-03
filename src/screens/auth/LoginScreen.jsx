@@ -13,7 +13,7 @@ import { onUserLoginZego } from '../../zego/common';
 const { width, height } = Dimensions.get('window');
 
 const LoginScreen = ({ navigation }) => {
-  const [phoneNumber, setPhoneNumber] = useState('0422222222');
+  const [phoneNumber, setPhoneNumber] = useState('0322222222');
   const [password, setPassword] = useState('123456');
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');

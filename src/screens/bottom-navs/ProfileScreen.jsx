@@ -18,6 +18,7 @@ import { useAppContext } from '../../context/appContext';
 import { AuthActionTypes } from '../../reducers/authReducer';
 import shipperSocketSevice from '../../service/shipperSocketSevice';
 import { AppAsyncStorage } from '../../utils';
+import ZegoUIKitPrebuiltCallService from '@zegocloud/zego-uikit-prebuilt-call-rn'
 const { width } = Dimensions.get('window');
 
 const ProfileScreen = ({ navigation }) => {
@@ -133,6 +134,7 @@ const ProfileScreen = ({ navigation }) => {
             await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
             authDispatch({ type: AuthActionTypes.LOGOUT });
             shipperSocketSevice.disconnect()
+            await ZegoUIKitPrebuiltCallService.uninit()
           }}
         />
 

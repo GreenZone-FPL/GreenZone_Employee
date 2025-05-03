@@ -61,20 +61,20 @@ export const RecipientInfo = ({ detail }) => {
                     [OrderStatus.SHIPPING_ORDER.value, OrderStatus.READY_FOR_PICKUP.value]
                         .includes(detail.status) &&
                     <Row>
-                        <CustomCallButton userName={consigneeName} userID={consigneePhone} navigation={navigation} />
-                        {/* <ZegoSendCallInvitationButton
-                        invitees={[
-                            {
-                                userID: consigneePhone,
-                                userName: consigneeName
-                            }
-                        ]}
-                        isVideoCall={false}
-                        resourceID={"zegouikit_call"}
-                        showWaitingPageWhenGroupCall={true}
-                        onPressed={handleCallInvitationPress}
+                        {/* <CustomCallButton userName={consigneeName} userID={consigneePhone} navigation={navigation} /> */}
+                        <ZegoSendCallInvitationButton
+                            invitees={[
+                                {
+                                    userID: consigneePhone,
+                                    userName: consigneeName
+                                }
+                            ]}
+                            isVideoCall={false}
+                            resourceID={"zegouikit_call"}
+                            showWaitingPageWhenGroupCall={true}
+                            onPressed={handleCallInvitationPress}
 
-                    /> */}
+                        />
 
                         <Pressable style={styles.iconButton} onPress={handleSend}>
                             <Icon

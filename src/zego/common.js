@@ -2,11 +2,11 @@ import { Image, View } from 'react-native';
 
 import * as ZIM from 'zego-zim-react-native';
 
-import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 import ZegoUIKitPrebuiltCallService, {
   ZegoInvitationType,
   ZegoMenuBarButtonName,
 } from '@zegocloud/zego-uikit-prebuilt-call-rn';
+import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 
 import KeyCenter from '../../KeyCenter';
 import { OrderGraph } from '../layouts/graphs';
@@ -17,8 +17,10 @@ const notificationStyle = 'CustomView';
 export const onUserLoginZego = async (userID, userName, navigation) => {
   console.log('onUserLoginZego', userID, userName);
   try {
-    // const profile = await getProfile();
-    const avatar = 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360'
+    const profile = await getProfile();
+    console.log('profile', JSON.stringify(profile, null, 2))
+    // const avatar = 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360'
+    const avatar = profile.avatar
     await ZegoUIKitPrebuiltCallService.init(
       KeyCenter.appID,
       KeyCenter.appSign,
